@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://d1u1vy63g3u1a"]
+
+[ext_resource type="Texture2D" uid="uid://cmt82gxi0ptdf" path="res://menus/main_menu/main_menu_fullhd.png" id="1_1nwmw"]
+[ext_resource type="Theme" uid="uid://bnnsol31t7ddn" path="res://menus/menu_theme.tres" id="1_vu5tu"]
+[ext_resource type="Script" uid="uid://bs0qlmuraofwo" path="res://menus/main_menu/main_menu.gd" id="2_ml8bw"]
+
+[node name="MainMenu" type="Control" unique_id=1462287131]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_vu5tu")
+script = ExtResource("2_ml8bw")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=2114774930]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_1nwmw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1156901627]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 42
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1270240172]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="VBoxContainer" unique_id=993179411]
+custom_minimum_size = Vector2(420, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "PLAY"
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer" unique_id=1680886528]
+custom_minimum_size = Vector2(420, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "OPTIONS"
+
+[connection signal="pressed" from="VBoxContainer/OptionsButton" to="." method="_on_options_button_pressed"]
