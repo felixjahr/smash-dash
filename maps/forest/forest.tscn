@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://bfjt273t0er8"]
+
+[ext_resource type="Texture2D" uid="uid://bfe1fmbg2mu72" path="res://maps/forest/sprites/forest_background_l1.png" id="1_x5joe"]
+[ext_resource type="Texture2D" uid="uid://47odhunw13ik" path="res://maps/forest/sprites/forest_background_l2.png" id="2_fytou"]
+[ext_resource type="Texture2D" uid="uid://byovuhqrauwn5" path="res://maps/forest/sprites/forest_background_l3.png" id="3_id7e5"]
+[ext_resource type="Texture2D" uid="uid://dqxdwfkw2h64e" path="res://maps/forest/sprites/forest_background_l4.png" id="4_fb6i4"]
+[ext_resource type="Texture2D" uid="uid://y5acrvwd4wop" path="res://maps/forest/sprites/forest_background_l5.png" id="5_0xq07"]
+[ext_resource type="Texture2D" uid="uid://c80a8lqc2h0ep" path="res://maps/forest/sprites/forest_platforms.png" id="6_0xq07"]
+[ext_resource type="Texture2D" uid="uid://dowb2ykuj5ur3" path="res://maps/forest/sprites/forest_spikes.png" id="7_ug5rr"]
+[ext_resource type="PackedScene" uid="uid://bc4wjc3ydyyvs" path="res://player/player.tscn" id="8_fb6i4"]
+
+[node name="Forest" type="Node2D" unique_id=1672519937]
+
+[node name="Layer1" type="Sprite2D" parent="." unique_id=1179159011]
+texture = ExtResource("1_x5joe")
+
+[node name="Parallax2DLayer2" type="Parallax2D" parent="." unique_id=1348541009]
+scroll_scale = Vector2(0.2, 1)
+
+[node name="Layer2" type="Sprite2D" parent="Parallax2DLayer2" unique_id=901324856]
+position = Vector2(-183, 310)
+texture = ExtResource("2_fytou")
+
+[node name="Parallax2DLayer3" type="Parallax2D" parent="." unique_id=39862951]
+scroll_scale = Vector2(0.3, 1)
+
+[node name="Layer3" type="Sprite2D" parent="Parallax2DLayer3" unique_id=1388724065]
+position = Vector2(-7, -126)
+texture = ExtResource("3_id7e5")
+
+[node name="Parallax2DLayer4" type="Parallax2D" parent="." unique_id=741815766]
+scroll_scale = Vector2(0.4, 1)
+
+[node name="Layer4" type="Sprite2D" parent="Parallax2DLayer4" unique_id=876538861]
+position = Vector2(-125, 1)
+texture = ExtResource("4_fb6i4")
+
+[node name="Parallax2DLayer5" type="Parallax2D" parent="." unique_id=1505475693]
+scroll_scale = Vector2(0.5, 1)
+
+[node name="Layer5" type="Sprite2D" parent="Parallax2DLayer5" unique_id=1296318344]
+position = Vector2(131, 1067)
+texture = ExtResource("5_0xq07")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=2074694177]
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D" unique_id=945329027]
+position = Vector2(0, 594)
+texture = ExtResource("6_0xq07")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D" unique_id=1753621951]
+position = Vector2(0, 594)
+polygon = PackedVector2Array(-382, -487.5, -813, -487.5, -813, -223.5, 813, -223.5, 813, -487.5, 382, -487.5, 382, -313.5, -382, -313.5)
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="StaticBody2D" unique_id=318068810]
+position = Vector2(0, 594)
+polygon = PackedVector2Array(-384, 221.5, -811, 221.5, -811, 223.20001, -813, 224.29999, -813, 403.5, -1920, 403.5, -1920, 487.5, 1920, 487.5, 1920, 403.5, 813, 403.5, 811, 224.5, 811, 221.5, 382, 223.5, 382, 403.5, -382, 403.5, -384, 224.5)
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="." unique_id=2002253118]
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2" unique_id=102851026]
+position = Vector2(0, 251)
+texture = ExtResource("7_ug5rr")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D2" unique_id=1840627266]
+position = Vector2(5.9604645e-08, 259)
+scale = Vector2(1, 0.9528985)
+polygon = PackedVector2Array(284, -33.9, 284, -34.5, 276.2, -34.5, 249.5, 24.7, 222, -33, 222, -34.5, 214.20001, -34.5, 187.40002, 24.8, 159, -34, 151.70001, -34.5, 124.70001, 25.2, 97, -33.9, 97, -34.5, 89.20001, -34.5, 62.5, 24.7, 35, -33, 35, -34.5, 27.200012, -34.5, 0.3999939, 24.8, -28, -34, -35.299988, -34.5, -62.299988, 25.2, -90, -33.9, -90, -34.5, -97.79999, -34.5, -124.5, 24.7, -152, -33, -152, -34.5, -159.8, -34.5, -186.6, 24.8, -215, -34, -222.3, -34.5, -249.3, 25.2, -277, -33.9, -277, -34.5, -284.8, -34.5, -311.5, 24.7, -339, -33, -339, -34.5, -346, -34.5, -346, -33.9, -374, 29.400002, -374, 34.5, 374, 34.5, 374, 29.400002, 346, -33.9, 346, -34.5, 341, -34, 311.7, 25.2)
+
+[node name="SpikesArea" type="Area2D" parent="." unique_id=1214505953]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="SpikesArea" unique_id=953422499]
+position = Vector2(0, 251)
+polygon = PackedVector2Array(345, -34.5, 340.8, -34.5, 311.5, 27.8, 283, -33.9, 283, -34.5, 278.8, -34.5, 249.29999, 27.2, 221, -33, 221, -34.5, 216.79999, -34.5, 187.5, 26.8, 158, -34, 153.79999, -34.5, 124.5, 27.8, 96, -33.9, 96, -34.5, 91.79999, -34.5, 62.299988, 27.2, 34, -33, 34, -34.5, 29.799988, -34.5, 0.5, 26.8, -29, -34, -33.200012, -34.5, -62.5, 27.8, -91, -33.9, -91, -34.5, -95.20001, -34.5, -124.7, 27.2, -153, -33, -153, -34.5, -157.2, -34.5, -186.5, 26.8, -215.8, -34.5, -221.2, -34.5, -249.5, 29.699997, -277.9, -34.5, -283.2, -34.5, -311.6, 29.699997, -340.8, -34.5, -345, -34.5, -345, -33.9, -374, 29.699997, -374, 34.5, 374, 34.5, 374, 29.699997, 345, -33.9)
+
+[node name="Player" parent="." unique_id=1544266739 instance=ExtResource("8_fb6i4")]
+position = Vector2(-598, -39)
