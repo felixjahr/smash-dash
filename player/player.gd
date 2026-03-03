@@ -1,10 +1,10 @@
 extends CharacterBody2D
 
-@export var speed := 250.0
+@export var speed := 500.0
 @export var acceleration := 1500.0
 @export var friction := 1200.0
-@export var gravity := 1200.0
-@export var jump_force := -450.0
+@export var gravity := 1500.0
+@export var jump_force := -1200.0
 
 @export var facing := 1
 var jumping := false
