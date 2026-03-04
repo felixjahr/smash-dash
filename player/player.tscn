@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ckhfhpu5341hl" path="res://player/player.gd" id="1_4flbx"]
 [ext_resource type="Texture2D" uid="uid://dd7kfvr4j568x" path="res://player/player.png" id="2_rkbax"]
+[ext_resource type="PackedScene" uid="uid://cnuol5gko20ed" path="res://weapons/gun/gun.tscn" id="3_g1dw6"]
 
 [sub_resource type="Animation" id="Animation_yw30f"]
 length = 0.001
@@ -476,7 +477,7 @@ tracks/12/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [-2.0097322, -1.7364494]
+"values": [-5.1504664, -4.8781953]
 }
 tracks/13/type = "value"
 tracks/13/imported = false
@@ -1283,6 +1284,7 @@ size = Vector2(64, 208)
 
 [node name="Player" type="CharacterBody2D" unique_id=1544266739]
 script = ExtResource("1_4flbx")
+speed = 1000.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1259938466]
 libraries/ = SubResource("AnimationLibrary_g6k8r")
@@ -1338,6 +1340,23 @@ texture = ExtResource("2_rkbax")
 region_enabled = true
 region_rect = Rect2(0, 240, 80, 48)
 
+[node name="LeftShoulder" type="Node2D" parent="Sprite" unique_id=146226745]
+position = Vector2(29, -48)
+
+[node name="LeftUpperArm" type="Sprite2D" parent="Sprite/LeftShoulder" unique_id=1918446841]
+position = Vector2(53, -40)
+scale = Vector2(0.9999999, 0.9999999)
+texture = ExtResource("2_rkbax")
+region_enabled = true
+region_rect = Rect2(0, 96, 88, 48)
+
+[node name="LeftLowerArm" type="Sprite2D" parent="Sprite/LeftShoulder" unique_id=835682656]
+position = Vector2(101, -40)
+scale = Vector2(0.9999997, 0.9999997)
+texture = ExtResource("2_rkbax")
+region_enabled = true
+region_rect = Rect2(0, 144, 88, 48)
+
 [node name="RightShoulder" type="Node2D" parent="Sprite" unique_id=2024168292]
 position = Vector2(29, -48)
 
@@ -1355,22 +1374,10 @@ texture = ExtResource("2_rkbax")
 region_enabled = true
 region_rect = Rect2(0, 48, 88, 48)
 
-[node name="LeftShoulder" type="Node2D" parent="Sprite" unique_id=146226745]
-position = Vector2(29, -48)
-
-[node name="LeftUpperArm" type="Sprite2D" parent="Sprite/LeftShoulder" unique_id=1918446841]
-position = Vector2(53, -40)
-scale = Vector2(0.9999999, 0.9999999)
-texture = ExtResource("2_rkbax")
-region_enabled = true
-region_rect = Rect2(0, 96, 88, 48)
-
-[node name="LeftLowerArm" type="Sprite2D" parent="Sprite/LeftShoulder" unique_id=835682656]
-position = Vector2(101, -40)
-scale = Vector2(0.9999997, 0.9999997)
-texture = ExtResource("2_rkbax")
-region_enabled = true
-region_rect = Rect2(0, 144, 88, 48)
+[node name="Gun" parent="Sprite/RightShoulder/RightLowerArm" unique_id=1173898847 instance=ExtResource("3_g1dw6")]
+show_behind_parent = true
+position = Vector2(35.112526, -8.95051)
+scale = Vector2(0.2, 0.2)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2014367572]
 visible = false

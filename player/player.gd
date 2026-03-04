@@ -22,9 +22,11 @@ var last_aim_direction := Vector2.ZERO
 @onready var right_shoulder := $Sprite/RightShoulder
 @onready var right_upper_arm := $Sprite/RightShoulder/RightUpperArm
 @onready var right_lower_arm := $Sprite/RightShoulder/RightLowerArm
+@onready var gun := $Sprite/RightShoulder/RightLowerArm/Gun
 
 
-func set_upper_arm_rotations_enabled(enabled: bool) -> void:
+# Enables right arm adjustments
+func set_right_arm_adjustments_enabled(enabled: bool) -> void:
 	var anim_names = ["idle", "move", "jump"]
 	var target_tracks = [
 		"Sprite/RightShoulder:rotation",
@@ -46,7 +48,6 @@ func set_upper_arm_rotations_enabled(enabled: bool) -> void:
 
 func _physics_process(delta: float) -> void:
 	var input_dir = Input.get_axis("move_left", "move_right")
-	var mouse_pos = get_global_mouse_position()
 	
 	if input_dir != 0:
 		velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
@@ -67,14 +68,18 @@ func _physics_process(delta: float) -> void:
 		was_aiming = true
 		last_aim_direction = aim_joystick.output
 		
-		set_upper_arm_rotations_enabled(false)
+		gun.visible = true
+		set_right_arm_adjustments_enabled(false)
 		
+		#right_shoulder.look_at(right_shoulder.global_position + Vector2.UP)
 		right_shoulder.look_at(right_shoulder.global_position + aim_joystick.output)
 		
 		right_upper_arm.position = Vector2(27.0, 0.0)
 		right_upper_arm.rotation = 0
-		right_lower_arm.position = right_upper_arm.position + Vector2(44.0, 0.0)
-		right_lower_arm.rotation = 0
+		right_lower_arm.position = right_upper_arm.position + Vector2(40.0, -11.0)
+		right_lower_arm.rotation = -PI/6
+		
+		right_shoulder.rotate(PI/6)
 
 		
 	else:
@@ -82,7 +87,8 @@ func _physics_process(delta: float) -> void:
 			was_aiming = false
 			if last_aim_direction.length() > .2:
 				print("Piu!")
-		set_upper_arm_rotations_enabled(true)
+		gun.visible = false
+		set_right_arm_adjustments_enabled(true)
 
 		
 	
@@ -102,4 +108,3 @@ func _physics_process(delta: float) -> void:
 		animation_player.play("idle")
 	
 	move_and_slide()
-	
