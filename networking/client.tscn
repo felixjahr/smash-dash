@@ -15,7 +15,7 @@ script = ExtResource("4_43dsu")
 
 [node name="UIContainer" type="CanvasLayer" parent="." unique_id=978794642]
 
-[connection signal="match_started" from="Net" to="." method="_on_net_match_started"]
+[connection signal="init_received" from="Net" to="Game" method="_on_net_init_received"]
 [connection signal="peer_connected" from="Net" to="Game" method="_on_net_peer_connected"]
 [connection signal="peer_disconnected" from="Net" to="Game" method="_on_net_peer_disconnected"]
 [connection signal="snapshot_received" from="Net" to="Game" method="_on_net_snapshot_received"]

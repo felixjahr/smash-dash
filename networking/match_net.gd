@@ -15,14 +15,18 @@ func start_match() -> void:
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
+func send_init(tick: int) -> void:
+	rpc("receive_init", tick)
+
+
 func send_snapshot(tick: int, snapshot: Dictionary) -> void:
 	rpc("receive_snapshot", tick, snapshot)
 
 
 @rpc("any_peer", "unreliable")
-func receive_input(packed_input: int) -> void:
+func receive_input(input: Dictionary) -> void:
 	var pid := multiplayer.get_remote_sender_id()
-	emit_signal("input_received", pid, Protocol.unpack_input(packed_input))
+	emit_signal("input_received", pid, input)
 
 
 func _on_peer_connected(pid: int) -> void:
@@ -37,6 +41,16 @@ func _on_peer_connected(pid: int) -> void:
 func _on_peer_disconnected(pid: int) -> void:
 	rpc("disconnect_peer", pid)
 	emit_signal("peer_disconnected", pid)
+
+
+
+
+
+
+
+@rpc("authority", "reliable")
+func receive_init(tick: int, snapshot: Dictionary) -> void:
+	pass
 
 
 @rpc("authority", "unreliable")

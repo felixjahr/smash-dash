@@ -1,7 +1,46 @@
 [gd_scene format=3 uid="uid://bc4wjc3ydyyvs"]
 
 [ext_resource type="Script" uid="uid://ckhfhpu5341hl" path="res://player/player.gd" id="1_4flbx"]
+[ext_resource type="Shader" uid="uid://bcwr2d8cri1nn" path="res://player/player.gdshader" id="2_g1dw6"]
 [ext_resource type="Texture2D" uid="uid://dd7kfvr4j568x" path="res://player/player.png" id="2_rkbax"]
+
+[sub_resource type="Animation" id="Animation_g1dw6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:material:shader_parameter/white_amount")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_boad6"]
+resource_name = "hit"
+length = 0.3
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:material:shader_parameter/white_amount")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rgyib"]
+_data = {
+&"RESET": SubResource("Animation_g1dw6"),
+&"hit": SubResource("Animation_boad6")
+}
 
 [sub_resource type="Animation" id="Animation_yw30f"]
 length = 0.001
@@ -1085,18 +1124,41 @@ _data = {
 &"move": SubResource("Animation_qjkh3")
 }
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rkbax"]
-size = Vector2(64, 208)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g1dw6"]
+size = Vector2(64, 224)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yw30f"]
+resource_local_to_scene = true
+shader = ExtResource("2_g1dw6")
+shader_parameter/white_amount = 0.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yw30f"]
+radius = 24.0
+height = 208.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1544266739]
+z_index = 1
+collision_layer = 0
 script = ExtResource("1_4flbx")
+
+[node name="EffectPlayer" type="AnimationPlayer" parent="." unique_id=53302114]
+libraries/ = SubResource("AnimationLibrary_rgyib")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1259938466]
 libraries/ = SubResource("AnimationLibrary_g6k8r")
 
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1485402505]
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=48765921]
+shape = SubResource("RectangleShape2D_g1dw6")
+
 [node name="Sprite" type="Node2D" parent="." unique_id=77773979]
+material = SubResource("ShaderMaterial_yw30f")
 
 [node name="RightUpperArm" type="Sprite2D" parent="Sprite" unique_id=615372214]
+use_parent_material = true
 position = Vector2(-13.000001, -37)
 rotation = -1.0919003
 scale = Vector2(0.99999994, 0.99999994)
@@ -1105,6 +1167,7 @@ region_enabled = true
 region_rect = Rect2(0, 0, 88, 48)
 
 [node name="RightLowerArm" type="Sprite2D" parent="Sprite" unique_id=165468648]
+use_parent_material = true
 position = Vector2(-4, -3.9999995)
 rotation = -2.506275
 scale = Vector2(0.99999994, 0.99999994)
@@ -1113,6 +1176,7 @@ region_enabled = true
 region_rect = Rect2(0, 48, 88, 48)
 
 [node name="LeftUpperArm" type="Sprite2D" parent="Sprite" unique_id=1918446841]
+use_parent_material = true
 position = Vector2(-5, -33)
 rotation = 1.7540324
 texture = ExtResource("2_rkbax")
@@ -1120,6 +1184,7 @@ region_enabled = true
 region_rect = Rect2(0, 96, 88, 48)
 
 [node name="LeftLowerArm" type="Sprite2D" parent="Sprite" unique_id=835682656]
+use_parent_material = true
 position = Vector2(11, -3)
 rotation = -2.7120194
 texture = ExtResource("2_rkbax")
@@ -1127,6 +1192,7 @@ region_enabled = true
 region_rect = Rect2(0, 144, 88, 48)
 
 [node name="RightUpperLeg" type="Sprite2D" parent="Sprite" unique_id=809241903]
+use_parent_material = true
 position = Vector2(-9, 31.000002)
 rotation = -1.3800223
 texture = ExtResource("2_rkbax")
@@ -1134,6 +1200,7 @@ region_enabled = true
 region_rect = Rect2(88, 0, 96, 48)
 
 [node name="RightLowerLeg" type="Sprite2D" parent="Sprite" unique_id=852559389]
+use_parent_material = true
 position = Vector2(-15.999998, 74)
 rotation = 1.7345113
 texture = ExtResource("2_rkbax")
@@ -1141,6 +1208,7 @@ region_enabled = true
 region_rect = Rect2(88, 48, 96, 48)
 
 [node name="LeftUpperLeg" type="Sprite2D" parent="Sprite" unique_id=1449323607]
+use_parent_material = true
 position = Vector2(2, 31)
 rotation = 1.2554442
 scale = Vector2(0.99999994, 0.99999994)
@@ -1149,6 +1217,7 @@ region_enabled = true
 region_rect = Rect2(88, 96, 96, 48)
 
 [node name="LeftLowerLeg" type="Sprite2D" parent="Sprite" unique_id=1185643097]
+use_parent_material = true
 position = Vector2(8.000002, 74)
 rotation = 1.5834183
 texture = ExtResource("2_rkbax")
@@ -1156,12 +1225,14 @@ region_enabled = true
 region_rect = Rect2(88, 144, 96, 48)
 
 [node name="Head" type="Sprite2D" parent="Sprite" unique_id=872670012]
+use_parent_material = true
 position = Vector2(1, -81)
 texture = ExtResource("2_rkbax")
 region_enabled = true
 region_rect = Rect2(88, 192, 80, 80)
 
 [node name="UpperTorso" type="Sprite2D" parent="Sprite" unique_id=136698451]
+use_parent_material = true
 position = Vector2(-3.0000005, -37)
 rotation = 1.5827934
 texture = ExtResource("2_rkbax")
@@ -1169,6 +1240,7 @@ region_enabled = true
 region_rect = Rect2(0, 192, 80, 48)
 
 [node name="LowerTorso" type="Sprite2D" parent="Sprite" unique_id=523735675]
+use_parent_material = true
 position = Vector2(-5, -7.000001)
 rotation = 1.5913894
 texture = ExtResource("2_rkbax")
@@ -1176,5 +1248,7 @@ region_enabled = true
 region_rect = Rect2(0, 240, 80, 48)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2014367572]
-shape = SubResource("RectangleShape2D_rkbax")
+shape = SubResource("CapsuleShape2D_yw30f")
 metadata/_edit_lock_ = true
+
+[connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]

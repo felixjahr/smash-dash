@@ -1,6 +1,6 @@
 extends Node
 
-signal match_started
+signal init_received(tick: int)
 signal snapshot_received(tick: int, snapshot: Dictionary)
 signal peer_connected(pid: int)
 signal peer_disconnected(pid: int)
@@ -14,13 +14,15 @@ func start_match() -> void:
 	var peer := ENetMultiplayerPeer.new()
 	peer.create_client(IP_ADDRESS, PORT)
 	multiplayer.multiplayer_peer = peer
-	await multiplayer.connected_to_server
-	emit_signal("match_started")
 
 
 func send_input(input: Dictionary) -> void:
-	var packed_input := Protocol.pack_input(input)
-	rpc_id(1, "receive_input", packed_input)
+	rpc_id(1, "receive_input", input)
+
+
+@rpc("authority", "reliable")
+func receive_init(tick: int) -> void:
+	emit_signal("init_received", tick)
 
 
 @rpc("authority", "unreliable")
@@ -36,6 +38,13 @@ func connect_peer(pid: int) -> void:
 @rpc("authority", "reliable")
 func disconnect_peer(pid: int) -> void:
 	emit_signal("peer_disconnected", pid)
+
+
+
+
+
+
+
 
 
 @rpc("any_peer", "unreliable")

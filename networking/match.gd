@@ -7,7 +7,3 @@ extends Node
 func _ready() -> void:
 	net.start_match()
 	game.start_match()
-
-
-func _physics_process(delta: float) -> void:
-	game.game_tick(delta)
