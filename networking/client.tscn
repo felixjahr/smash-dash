@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dbadsd2pwibq5" path="res://networking/client_net.gd" id="2_30660"]
 [ext_resource type="Script" uid="uid://dqsxm57ibh1wi" path="res://networking/client_game.gd" id="4_43dsu"]
 
-[node name="Test" type="Node" unique_id=63357991]
+[node name="Controller" type="Node" unique_id=63357991]
 script = ExtResource("1_ti1oh")
 
 [node name="Net" type="Node" parent="." unique_id=1034516271]
@@ -17,4 +17,5 @@ script = ExtResource("4_43dsu")
 
 [connection signal="match_started" from="Net" to="." method="_on_net_match_started"]
 [connection signal="peer_connected" from="Net" to="Game" method="_on_net_peer_connected"]
+[connection signal="peer_disconnected" from="Net" to="Game" method="_on_net_peer_disconnected"]
 [connection signal="snapshot_received" from="Net" to="Game" method="_on_net_snapshot_received"]

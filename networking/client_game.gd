@@ -38,9 +38,12 @@ func _on_net_snapshot_received(tick: int, snapshot: Dictionary) -> void:
 
 
 func _on_net_peer_connected(pid: int) -> void:
-	if players.has(pid):
-		return
 	var new_player := Player.instantiate()
 	new_player.name = str(pid)
 	add_child(new_player)
 	players[pid] = new_player
+
+
+func _on_net_peer_disconnected(pid: int) -> void:
+	players[pid].queue_free()
+	players.erase(pid)

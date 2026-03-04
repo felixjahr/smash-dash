@@ -58,3 +58,8 @@ func _on_net_peer_connected(pid: int) -> void:
 	add_child(new_player)
 	players[pid] = new_player
 	inputs[pid] = DEFAULT_INPUT
+
+
+func _on_net_peer_disconnected(pid: int) -> void:
+	players[pid].queue_free()
+	players.erase(pid)

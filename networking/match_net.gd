@@ -2,6 +2,7 @@ extends Node
 
 signal input_received(pid: int, input: Dictionary)
 signal peer_connected(pid: int)
+signal peer_disconnected(pid: int)
 
 const PORT := 9000
 
@@ -11,6 +12,7 @@ func start_match() -> void:
 	peer.create_server(PORT, 8)
 	multiplayer.multiplayer_peer = peer
 	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
 func send_snapshot(tick: int, snapshot: Dictionary) -> void:
@@ -32,6 +34,11 @@ func _on_peer_connected(pid: int) -> void:
 	emit_signal("peer_connected", pid)
 
 
+func _on_peer_disconnected(pid: int) -> void:
+	rpc("disconnect_peer", pid)
+	emit_signal("peer_disconnected", pid)
+
+
 @rpc("authority", "unreliable")
 func receive_snapshot(tick: int, snapshot: Dictionary) -> void:
 	pass
@@ -39,4 +46,9 @@ func receive_snapshot(tick: int, snapshot: Dictionary) -> void:
 
 @rpc("authority", "reliable")
 func connect_peer(pid: int) -> void:
+	pass
+
+
+@rpc("authority", "reliable")
+func disconnect_peer(pid: int) -> void:
 	pass
