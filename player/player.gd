@@ -36,7 +36,7 @@ func simulate(input_dir: float, jump_pressed: bool, delta: float) -> void:
 	
 	if not is_on_floor():
 		velocity.y += gravity * delta
-	elif jump_pressed:
+	elif jump_pressed and not jumping:
 		velocity.y = jump_force
 		jumping = true
 	else:

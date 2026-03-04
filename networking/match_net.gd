@@ -1,6 +1,6 @@
 extends Node
 
-signal input_received(pid: int, tick: int, input: Dictionary)
+signal input_received(pid: int, input: Dictionary)
 signal peer_connected(pid: int)
 
 const PORT := 9000
@@ -18,9 +18,9 @@ func send_snapshot(tick: int, snapshot: Dictionary) -> void:
 
 
 @rpc("any_peer", "unreliable")
-func receive_input(tick: int, packed_input: int) -> void:
+func receive_input(packed_input: int) -> void:
 	var pid := multiplayer.get_remote_sender_id()
-	emit_signal("input_received", pid, tick, Protocol.unpack_input(packed_input))
+	emit_signal("input_received", pid, Protocol.unpack_input(packed_input))
 
 
 func _on_peer_connected(pid: int) -> void:

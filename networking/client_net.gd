@@ -4,7 +4,8 @@ signal match_started
 signal snapshot_received(tick: int, snapshot: Dictionary)
 signal peer_connected(pid: int)
 
-const IP_ADDRESS := "127.0.0.1"
+#const IP_ADDRESS := "127.0.0.1"
+const IP_ADDRESS := "34.185.168.1"
 const PORT := 9000
 
 
@@ -16,9 +17,9 @@ func start_match() -> void:
 	emit_signal("match_started")
 
 
-func send_input(tick: int, input: Dictionary) -> void:
+func send_input(input: Dictionary) -> void:
 	var packed_input := Protocol.pack_input(input)
-	rpc_id(1, "receive_input", tick, packed_input)
+	rpc_id(1, "receive_input", packed_input)
 
 
 @rpc("authority", "unreliable")
@@ -32,5 +33,5 @@ func connect_peer(pid: int) -> void:
 
 
 @rpc("any_peer", "unreliable")
-func receive_input(tick: int, packed_input: int) -> void:
+func receive_input(packed_input: int) -> void:
 	pass
