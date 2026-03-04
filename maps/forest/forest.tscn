@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://bfjt273t0er8"]
 
-[ext_resource type="Script" uid="uid://dmptg2m0cixx5" path="res://maps/forest/forest.gd" id="1_fb6i4"]
 [ext_resource type="Texture2D" uid="uid://bfe1fmbg2mu72" path="res://maps/forest/forest_background_l1.png" id="1_x5joe"]
 [ext_resource type="Texture2D" uid="uid://47odhunw13ik" path="res://maps/forest/forest_background_l2.png" id="2_fytou"]
 [ext_resource type="Texture2D" uid="uid://byovuhqrauwn5" path="res://maps/forest/forest_background_l3.png" id="3_id7e5"]
@@ -10,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dcnh410asayul" path="res://maps/forest/spikes/spikes.tscn" id="6_fb6i4"]
 
 [node name="Forest" type="Node2D" unique_id=1672519937]
-script = ExtResource("1_fb6i4")
+z_index = -1
 
 [node name="Layer1" type="Sprite2D" parent="." unique_id=1179159011]
 texture = ExtResource("1_x5joe")

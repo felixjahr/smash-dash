@@ -6,17 +6,19 @@ const DEFAULT_INPUT = {
 	"jump_pressed" : false,
 }
 
-var speed := 500.0
-var acceleration := 1500.0
-var friction := 1200.0
-var gravity := 1500.0
-var jump_force := -1200.0
+const SPEED := 500.0
+const ACCELERATION := 1500.0
+const FRICTION := 1200.0
+const GRAVITY := 1500.0
+const JUMP_FORCE := -1200.0
+const KNOCKBACK_DECAY := 10.0
 
 var jumping := false
 var health := 100
 
 @onready var sprite := $Sprite
 @onready var hurtbox := $Hurtbox
+@onready var health_bar := $HealthBar
 @onready var animation_player := $AnimationPlayer
 @onready var effect_player := $EffectPlayer
 
@@ -24,7 +26,6 @@ var health := 100
 func _ready() -> void:
 	if !OS.has_feature("match"):
 		collision_mask = 0
-		hurtbox.collision_mask = 0
 		hurtbox.collision_layer = 0
 
 
@@ -37,6 +38,7 @@ func apply_snapshot(player: Dictionary, own: bool) -> void:
 	if health > player["health"]:
 		effect_player.play("hit")
 	health = player["health"]
+	health_bar.value = player["health"]
 	
 	if own:
 		get_parent().get_node("Forest/Camera2D").global_position = global_position
@@ -70,14 +72,14 @@ func apply_input(input: Dictionary, delta: float) -> void:
 	var jump_pressed = input["jump_pressed"]
 	
 	if direction != 0:
-		velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
+		velocity.x = move_toward(velocity.x, direction * SPEED, ACCELERATION * delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0, friction * delta)
+		velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
 	
 	if not is_on_floor():
-		velocity.y += gravity * delta
+		velocity.y += GRAVITY * delta
 	elif jump_pressed and not jumping:
-		velocity.y = jump_force
+		velocity.y = JUMP_FORCE
 		jumping = true
 	else:
 		jumping = false
@@ -93,5 +95,11 @@ static func get_input() -> Dictionary:
 	}
 
 
-func _on_hurtbox_area_entered(area: Area2D) -> void:
-	health -= 10
+func apply_knockback(position: Vector2, knockback: float):
+	velocity = position.direction_to(global_position) * knockback
+
+
+func apply_damage(damage: int):
+	health -= damage
+	if health <= 0:
+		pass

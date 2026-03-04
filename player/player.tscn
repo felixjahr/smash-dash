@@ -1137,7 +1137,6 @@ radius = 24.0
 height = 208.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1544266739]
-z_index = 1
 collision_layer = 0
 script = ExtResource("1_4flbx")
 
@@ -1147,9 +1146,18 @@ libraries/ = SubResource("AnimationLibrary_rgyib")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1259938466]
 libraries/ = SubResource("AnimationLibrary_g6k8r")
 
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1958921574]
+offset_left = -64.0
+offset_top = -152.0
+offset_right = 64.0
+offset_bottom = -125.0
+step = 1.0
+value = 100.0
+show_percentage = false
+
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1485402505]
-collision_layer = 4
-collision_mask = 2
+collision_layer = 2
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=48765921]
 shape = SubResource("RectangleShape2D_g1dw6")
