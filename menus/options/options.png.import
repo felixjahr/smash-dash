@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmt82gxi0ptdf"
-path="res://.godot/imported/homescreen_fullhd.png-02a8b390134e3e4c5b2efbb344a619f7.ctex"
+uid="uid://dfvpauulose7w"
+path="res://.godot/imported/options.png-7911b8bc5dd39f9aa588e7e00e205c96.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://menus/homescreen/homescreen_fullhd.png"
-dest_files=["res://.godot/imported/homescreen_fullhd.png-02a8b390134e3e4c5b2efbb344a619f7.ctex"]
+source_file="res://menus/options/options.png"
+dest_files=["res://.godot/imported/options.png-7911b8bc5dd39f9aa588e7e00e205c96.ctex"]
 
 [params]
 

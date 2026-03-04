@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://bnnsol31t7ddn" path="res://menus/menu_theme.tres" id="1_tgpby"]
 [ext_resource type="Script" uid="uid://bs0qlmuraofwo" path="res://menus/homescreen/homescreen.gd" id="2_jm2do"]
-[ext_resource type="Texture2D" uid="uid://cmt82gxi0ptdf" path="res://menus/homescreen/homescreen_fullhd.png" id="3_ga7vy"]
+[ext_resource type="Texture2D" uid="uid://cmt82gxi0ptdf" path="res://menus/homescreen/homescreen.png" id="3_ga7vy"]
 
 [node name="Homescreen" type="Control" unique_id=1462287131]
 layout_mode = 3

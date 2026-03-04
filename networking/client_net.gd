@@ -4,8 +4,8 @@ signal match_started
 signal snapshot_received(tick: int, snapshot: Dictionary)
 signal peer_connected(pid: int)
 
-#const IP_ADDRESS := "127.0.0.1"
-const IP_ADDRESS := "34.185.168.1"
+const IP_ADDRESS := "127.0.0.1"
+#const IP_ADDRESS := "34.185.168.1"
 const PORT := 9000
 
 

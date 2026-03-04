@@ -34,7 +34,7 @@ func _on_net_snapshot_received(tick: int, snapshot: Dictionary) -> void:
 		player.global_position = Vector2(s["px"], s["py"])
 		player.velocity = Vector2(s["vx"], s["vy"])
 		player.animate(s["j"])
-		get_node("Forest/Camera2D").global_position = player.global_position
+	get_node("Forest/Camera2D").global_position = players[multiplayer.get_unique_id()].global_position
 
 
 func _on_net_peer_connected(pid: int) -> void:
