@@ -1,6 +1,6 @@
 [gd_resource type="Theme" format=3 uid="uid://bnnsol31t7ddn"]
 
-[ext_resource type="FontFile" uid="uid://oa5dfbx7gq6k" path="res://menus/FiraSans-ExtraBold.ttf" id="1_o2r72"]
+[ext_resource type="FontFile" uid="uid://oa5dfbx7gq6k" path="res://menus/fira_sans.ttf" id="1_o2r72"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ml8bw"]
 bg_color = Color(0, 0, 0, 0.35686275)

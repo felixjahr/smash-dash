@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Stickman Draft Game"
-run/main_scene="uid://bfjt273t0er8"
+run/main_scene="uid://cnxwscj2y2tnj"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
 
 [input]
 
@@ -42,6 +43,11 @@ jump={
 
 pointing/emulate_touch_from_mouse=true
 pointing/emulate_mouse_from_touch=false
+
+[layer_names]
+
+2d_physics/layer_1="Objects"
+2d_physics/layer_2="Hurtboxes"
 
 [physics]
 

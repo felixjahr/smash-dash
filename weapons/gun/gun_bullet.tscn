@@ -1,3 +1,10 @@
 [gd_scene format=3 uid="uid://cqc5d4dd1qs5a"]
 
-[node name="Bullet" type="Node2D" unique_id=402827402]
+[ext_resource type="Script" uid="uid://bj0t666umcug4" path="res://weapons/gun/gun_bullet.gd" id="1_htg8x"]
+[ext_resource type="Texture2D" uid="uid://gt6lletrh4qh" path="res://weapons/gun/gun_bullet.png" id="2_j03j3"]
+
+[node name="GunBullet" type="Node2D" unique_id=402827402]
+script = ExtResource("1_htg8x")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=47247193]
+texture = ExtResource("2_j03j3")

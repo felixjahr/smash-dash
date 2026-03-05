@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bl6ni0fuvaabx"]
+
+[ext_resource type="Script" uid="uid://w80576hemwa3" path="res://networking/match.gd" id="1_8p3m5"]
+[ext_resource type="Script" uid="uid://bq5rniobd6d38" path="res://networking/match_net.gd" id="2_f7mly"]
+[ext_resource type="Script" uid="uid://cdt3x0t2axpjt" path="res://networking/match_game.gd" id="5_f5kmp"]
+
+[node name="Controller" type="Node" unique_id=118878982]
+script = ExtResource("1_8p3m5")
+
+[node name="Net" type="Node" parent="." unique_id=1134371787]
+script = ExtResource("2_f7mly")
+
+[node name="Game" type="Node" parent="." unique_id=690975222]
+script = ExtResource("5_f5kmp")
+
+[connection signal="input_received" from="Net" to="Game" method="_on_net_input_received"]
+[connection signal="peer_connected" from="Net" to="Game" method="_on_net_peer_connected"]
+[connection signal="peer_disconnected" from="Net" to="Game" method="_on_net_peer_disconnected"]
