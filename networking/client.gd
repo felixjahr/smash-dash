@@ -8,12 +8,12 @@ enum ClientState {
 
 const Homescreen := preload("res://menus/homescreen/homescreen.tscn")
 const Options := preload("res://menus/options/options.tscn")
-const Match := preload("res://menus/match/match.tscn")
+const Overlay := preload("res://menus/overlay/overlay.tscn")
 
 var state: ClientState
 
-@onready var net := $Net
 @onready var ui_container := $UIContainer
+@onready var game = $Game
 
 
 func _ready() -> void:
@@ -39,9 +39,10 @@ func _enter_state(new_state: ClientState) -> void:
 		ui_container.add_child(new_options)
 		new_options.back_button.connect("pressed", _on_options_back_pressed)
 	elif new_state == ClientState.MATCH:
-		net.start_match()
-		var new_match = Match.instantiate()
-		ui_container.add_child(new_match)
+		var new_overlay = Overlay.instantiate()
+		ui_container.add_child(new_overlay)
+		game.overlay = new_overlay
+		game.start_match()
 
 
 func _exit_state(new_state: ClientState) -> void:

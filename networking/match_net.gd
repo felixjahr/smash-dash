@@ -15,12 +15,36 @@ func start_match() -> void:
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
-func send_init(tick: int) -> void:
-	rpc("receive_init", tick)
+func send_init(pid: int, tick: int, pids: Array, map_id: String) -> void:
+	rpc_id(pid, "receive_init", tick, pids, map_id)
 
 
 func send_snapshot(tick: int, snapshot: Dictionary) -> void:
 	rpc("receive_snapshot", tick, snapshot)
+
+
+func send_shoot_event(tick: int, pid: int, weapon_number: int, shoot: Dictionary) -> void:
+	rpc("receive_shoot_event", tick, pid, weapon_number, shoot)
+
+
+func send_melee_event(tick: int, pid: int):
+	rpc("receive_melee_event", tick, pid)
+
+
+func send_ability_event(tick: int, pid: int):
+	rpc("receive_ability_event", tick, pid)
+
+
+func send_hit_event(tick: int, pid: int):
+	rpc("receive_hit_event", tick, pid)
+
+
+func send_connect_peer_event(pid: int) -> void:
+	rpc("receive_connect_peer_event", pid)
+
+
+func send_diconnect_peer_event(pid: int) -> void:
+	rpc("receive_disconnect_peer_event", pid)
 
 
 @rpc("any_peer", "unreliable")
@@ -30,16 +54,10 @@ func receive_input(input: Dictionary) -> void:
 
 
 func _on_peer_connected(pid: int) -> void:
-	for existing_pid in multiplayer.get_peers():
-		if existing_pid == pid:
-			continue
-		rpc_id(pid, "connect_peer", existing_pid)
-	rpc("connect_peer", pid)
 	emit_signal("peer_connected", pid)
 
 
 func _on_peer_disconnected(pid: int) -> void:
-	rpc("disconnect_peer", pid)
 	emit_signal("peer_disconnected", pid)
 
 
@@ -48,8 +66,9 @@ func _on_peer_disconnected(pid: int) -> void:
 
 
 
+
 @rpc("authority", "reliable")
-func receive_init(tick: int, snapshot: Dictionary) -> void:
+func receive_init(tick: int, pids: Array, map_id: String) -> void:
 	pass
 
 
@@ -59,10 +78,30 @@ func receive_snapshot(tick: int, snapshot: Dictionary) -> void:
 
 
 @rpc("authority", "reliable")
-func connect_peer(pid: int) -> void:
+func receive_shoot_event(tick: int, pid: int, weapon_number: int, shoot: Dictionary) -> void:
 	pass
 
 
 @rpc("authority", "reliable")
-func disconnect_peer(pid: int) -> void:
+func receive_melee_event(tick: int, pid: int):
+	pass
+
+
+@rpc("authority", "reliable")
+func receive_ability_event(tick: int, pid: int):
+	pass
+
+
+@rpc("authority", "reliable")
+func receive_hit_event(tick: int, pid: int):
+	pass
+
+
+@rpc("authority", "reliable")
+func receive_connect_peer_event(pid: int) -> void:
+	pass
+
+
+@rpc("authority", "reliable")
+func receive_disconnect_peer_event(pid: int) -> void:
 	pass

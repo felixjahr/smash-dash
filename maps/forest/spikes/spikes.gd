@@ -6,7 +6,7 @@ extends StaticBody2D
 
 
 func _on_hitbox_area_entered(area: Area2D) -> void:
-	area.get_parent().apply_damage(damage)
+	area.get_parent().simulate_hit(damage)
 	collision_shape.set_deferred("disabled", true)
 	await get_tree().create_timer(0.2).timeout
 	collision_shape.set_deferred("disabled", false)

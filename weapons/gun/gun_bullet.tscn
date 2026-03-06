@@ -1,10 +1,25 @@
-[gd_scene format=3 uid="uid://cqc5d4dd1qs5a"]
+[gd_scene format=3 uid="uid://ianx84lmdmjm"]
 
 [ext_resource type="Script" uid="uid://bj0t666umcug4" path="res://weapons/gun/gun_bullet.gd" id="1_htg8x"]
 [ext_resource type="Texture2D" uid="uid://gt6lletrh4qh" path="res://weapons/gun/gun_bullet.png" id="2_j03j3"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j03j3"]
+size = Vector2(240, 80)
+
 [node name="GunBullet" type="Node2D" unique_id=402827402]
+scale = Vector2(0.2, 0.2)
 script = ExtResource("1_htg8x")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=47247193]
 texture = ExtResource("2_j03j3")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=478361774]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=306782570]
+position = Vector2(-1.4305112e-05, 3.576278e-06)
+scale = Vector2(0.9999998, 0.9999998)
+shape = SubResource("RectangleShape2D_j03j3")
+
+[connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]

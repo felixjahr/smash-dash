@@ -1,10 +1,11 @@
-class_name Player
 extends CharacterBody2D
 
-const DEFAULT_INPUT = {
-	"direction" : 0,
-	"jump_pressed" : false,
-	"aim_direction" : Vector2.ZERO,
+const BULLETS = {
+	"gun" : preload("res://weapons/gun/gun_bullet.tscn"),
+}
+
+const WEAPONS = {
+	"gun" : preload("res://weapons/gun/gun.tscn"),
 }
 
 const SPEED := 500.0
@@ -14,11 +15,17 @@ const GRAVITY := 1500.0
 const JUMP_FORCE := -1200.0
 const KNOCKBACK_DECAY := 10.0
 
-#const GunBullet := preload("res://weapons/gun/gun_bullet.tscn")
-
 var jumping := false
-var aim_direction := Vector2.ZERO
+var aim_direction_1 := Vector2.ZERO
+var aim_direction_2 := Vector2.ZERO
 var health := 100
+var weapon_1_id := "gun"
+var weapon_2_id := "gun"
+
+var camera: Camera2D
+
+var weapon_1
+var weapon_2
 
 @onready var sprite := $Sprite
 @onready var hurtbox := $Hurtbox
@@ -28,48 +35,43 @@ var health := 100
 @onready var right_shoulder := $Sprite/RightShoulder
 @onready var right_upper_arm := $Sprite/RightShoulder/RightUpperArm
 @onready var right_lower_arm := $Sprite/RightShoulder/RightLowerArm
-@onready var gun := $Sprite/RightShoulder/RightLowerArm/Gun
-
-var aim_joystick: VirtualJoystick
-var camera: Camera2D
 
 
 func _ready() -> void:
 	if !OS.has_feature("match"):
 		collision_mask = 0
 		hurtbox.collision_layer = 0
-		if str(multiplayer.get_unique_id()) == name:
-			aim_joystick = get_parent().get_parent().get_node("UIContainer/Match/VirtualJoystick")
 		var lib: AnimationLibrary = animation_player.get_animation_library("").duplicate(true)
 		animation_player.remove_animation_library("")
 		animation_player.add_animation_library("", lib)
+	var new_weapon_1 = WEAPONS[weapon_1_id].instantiate()
+	right_lower_arm.add_child(new_weapon_1)
+	new_weapon_1.player = self
+	weapon_1 = new_weapon_1
+	var new_weapon_2 = WEAPONS[weapon_2_id].instantiate()
+	right_lower_arm.add_child(new_weapon_2)
+	new_weapon_2.player = self
+	new_weapon_2.scale = Vector2(0.5, 0.5) # Test
+	new_weapon_2.hide()
+	weapon_2 = new_weapon_2
 
 
-# Apply snapshot on client
-func apply_snapshot(player: Dictionary) -> void:
-	global_position = player["global_position"]
-	velocity = player["velocity"]
-	jumping = player["jumping"]
-	aim_direction = player["aim_direction"]
+func animate_snapshot(player_snapshot: Dictionary) -> void:
+	global_position = player_snapshot["global_position"]
+	velocity = player_snapshot["velocity"]
 	
-	if health > player["health"]:
-		effect_player.play("hit")
-	health = player["health"]
-	health_bar.value = player["health"]
+	health_bar.value = player_snapshot["health"]
 	
-	if not aim_direction == Vector2.ZERO:
-		right_shoulder.look_at(right_shoulder.global_position + aim_direction)
-		right_shoulder.rotate(PI/6)
-		
-		gun.visible = true
-		_set_arm_animations(false)
-		right_upper_arm.position = Vector2(27.0, 0.0)
-		right_upper_arm.rotation = 0
-		right_lower_arm.position = right_upper_arm.position + Vector2(40.0, -11.0)
-		right_lower_arm.rotation = -PI/6
-	else:
-		gun.visible = false
-		_set_arm_animations(true)
+	if not player_snapshot["aim_direction_1"] == Vector2.ZERO:
+		weapon_1.show()
+		weapon_2.hide()
+	elif not player_snapshot["aim_direction_2"] == Vector2.ZERO:
+		weapon_1.hide()
+		weapon_2.show()
+	if weapon_1.visible:
+		weapon_1.animate_aim(player_snapshot["aim_direction_1"])
+	elif weapon_2.visible:
+		weapon_2.animate_aim(player_snapshot["aim_direction_2"])
 	
 	if camera:
 		camera.global_position = global_position
@@ -79,7 +81,7 @@ func apply_snapshot(player: Dictionary) -> void:
 	elif velocity.x < 0:
 		sprite.scale.x = -1
 	
-	if jumping:
+	if player_snapshot["jumping"]:
 		animation_player.play("jump")
 	elif velocity.x != 0:
 		animation_player.play("move")
@@ -92,24 +94,31 @@ func apply_snapshot(player: Dictionary) -> void:
 		sprite.scale.x = -1
 
 
-# Get input for server
-func get_input() -> Dictionary:
-	return {
-		"direction" : int(Input.get_axis("move_left", "move_right")),
-		"jump_pressed" : Input.is_action_pressed("jump"),
-		"aim_direction" : aim_joystick.output,
-	}
+func animate_shoot_event(weapon_number: int, shoot: Dictionary) -> void:
+	get("weapon_" + str(weapon_number)).animate_shoot_event(shoot)
 
 
-# Apply input on server
-func apply_input(input: Dictionary, delta: float) -> void:
-	if aim_direction.length() > 0.2 and input["aim_direction"] == Vector2.ZERO:
-		print("Piu!")
-		#var new_bullet = GunBullet.instantiate()
-		#new_bullet.global_position = gun.get_node("Marker2D").global_position
-		#new_bullet.direction = aim_direction.normalized()
-		#get_parent().add_child(new_bullet)
-	aim_direction = input["aim_direction"]
+func animate_melee_event() -> void:
+	pass
+
+
+func animate_ability_event() -> void:
+	pass
+
+
+func animate_hit_event() -> void:
+	effect_player.play("hit")
+
+
+func simulate_input(input: Dictionary, delta: float) -> void:
+	if aim_direction_1.length() > 0.2 and input["aim_direction_1"] == Vector2.ZERO:
+		var shoot: Dictionary = weapon_1.simulate_shoot(aim_direction_1)
+		get_parent().send_shoot_event(int(name), 1, shoot)
+	aim_direction_1 = input["aim_direction_1"]
+	if aim_direction_2.length() > 0.2 and input["aim_direction_2"] == Vector2.ZERO:
+		var shoot: Dictionary = weapon_2.simulate_shoot(aim_direction_2)
+		get_parent().send_shoot_event(int(name), 2, shoot)
+	aim_direction_2 = input["aim_direction_2"]
 	
 	var direction = input["direction"]
 	var jump_pressed = input["jump_pressed"]
@@ -130,39 +139,12 @@ func apply_input(input: Dictionary, delta: float) -> void:
 	move_and_slide()
 
 
-# Get snapshot for client
-func get_snapshot() -> Dictionary:
-	return {
-		"global_position" : global_position,
-		"velocity" : velocity,
-		"jumping" : jumping,
-		"aim_direction" : aim_direction,
-		"health" : health,
-	}
-
-
-func apply_knockback(position: Vector2, knockback: float):
+func simulate_knockback(position: Vector2, knockback: float) -> void:
 	velocity = position.direction_to(global_position) * knockback
 
 
-func apply_damage(damage: int):
+func simulate_hit(damage: int) -> void:
 	health -= damage
+	get_parent().send_hit_event(int(name))
 	if health <= 0:
 		pass
-
-
-func _set_arm_animations(enabled: bool) -> void:
-	var target_tracks = [
-		"Sprite/RightShoulder:rotation",
-		"Sprite/RightShoulder/RightUpperArm:position",
-		"Sprite/RightShoulder/RightLowerArm:position",
-		"Sprite/RightShoulder/RightUpperArm:rotation",
-		"Sprite/RightShoulder/RightLowerArm:rotation"
-	]
-	
-	for anim_name in animation_player.get_animation_list():
-		var anim = animation_player.get_animation(anim_name)
-		for track_path in target_tracks:
-			var track_idx = anim.find_track(track_path, Animation.TYPE_VALUE)
-			if track_idx != -1:
-				anim.track_set_enabled(track_idx, enabled)
