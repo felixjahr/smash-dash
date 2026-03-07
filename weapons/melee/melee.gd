@@ -8,9 +8,11 @@ var attacking := false
 
 
 func _ready() -> void:
+	super()
 	if OS.has_feature("match"):
 		player.hitbox.connect("area_entered", _on_hitbox_area_entered)
 		player.hitbox.get_node("CollisionShape2D").set_deferred("disabled", true)
+
 
 func animate_aim(aim_direction: Vector2) -> void:
 	if aim_direction.x > 0:
@@ -26,6 +28,11 @@ func animate_attack_event(attack: Dictionary) -> void:
 
 
 func simulate_attack(aim_direction: Vector2) -> void:
+	if ammunition <= 0:
+		return
+	ammunition -= 1
+	reload_timer.start()
+	
 	player.right_shoulder.look_at(player.right_shoulder.global_position + aim_direction)
 	if aim_direction.x > 0:
 		player.facing = 1

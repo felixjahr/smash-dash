@@ -47,6 +47,8 @@ func _physics_process(delta: float) -> void:
 				"jumping" : player.jumping,
 				"aim_direction_1" : player.aim_direction_1,
 				"aim_direction_2" : player.aim_direction_2,
+				"ammunition_1" : player.weapon_1.ammunition,
+				"ammunition_2" : player.weapon_2.ammunition,
 				"health" : player.health,
 				"attacking" : player.attacking,
  			}

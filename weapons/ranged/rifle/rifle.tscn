@@ -9,10 +9,12 @@ bullet = ExtResource("2_27qar")
 bullet_speed = 4000
 aim_animation = "aim_ranged"
 attack_animation = "attack_ranged"
+max_ammunition = 2
+reload_time = 0.5
 
-[node name="Sprite2D" parent="." index="0" unique_id=2019106634]
+[node name="Sprite2D" parent="." index="1" unique_id=927824755]
 position = Vector2(47, -6)
 texture = ExtResource("2_vcuc1")
 
-[node name="Marker2D" parent="." index="1" unique_id=1004940766]
+[node name="Marker2D" parent="." index="2" unique_id=1171964161]
 position = Vector2(158, -24)

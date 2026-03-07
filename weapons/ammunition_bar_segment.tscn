@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cfala1p3ibtbu"]
+
+[node name="AmmunitionBarSegment" type="ProgressBar" unique_id=497963735]
+size_flags_horizontal = 3
+size_flags_vertical = 1
+value = 40.0
+show_percentage = false

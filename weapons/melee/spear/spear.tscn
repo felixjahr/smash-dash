@@ -8,6 +8,8 @@ position = Vector2(0, -48)
 knockback = 2000
 aim_animation = "aim_spear"
 attack_animation = "attack_spear"
+max_ammunition = 1
+reload_time = 1.0
 
-[node name="Sprite2D" parent="." index="0" unique_id=1940988748]
+[node name="Sprite2D" parent="." index="1" unique_id=1764062412]
 texture = ExtResource("2_lh484")

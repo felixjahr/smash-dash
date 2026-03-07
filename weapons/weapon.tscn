@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cht37bdeqrtij"]
+
+[ext_resource type="Script" uid="uid://o3kvab8nb8xx" path="res://weapons/weapon.gd" id="1_rma5x"]
+
+[node name="Weapon" type="Node2D" unique_id=1429498491]
+script = ExtResource("1_rma5x")
+metadata/_custom_type_script = "uid://o3kvab8nb8xx"
+
+[node name="ReloadTimer" type="Timer" parent="." unique_id=1692597676]
+one_shot = true
+
+[connection signal="timeout" from="ReloadTimer" to="." method="_on_reload_timer_timeout"]

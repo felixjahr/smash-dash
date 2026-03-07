@@ -1934,6 +1934,14 @@ _data = {
 &"hit": SubResource("Animation_boad6")
 }
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yw30f"]
+bg_color = Color(0.11050001, 0.65, 0.2184, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qjkh3"]
 resource_local_to_scene = true
 shader = ExtResource("2_g1dw6")
@@ -1964,12 +1972,27 @@ libraries/ = SubResource("AnimationLibrary_rgyib")
 
 [node name="HealthBar" type="ProgressBar" parent="." unique_id=1958921574]
 offset_left = -64.0
-offset_top = -152.0
+offset_top = -184.0
 offset_right = 64.0
-offset_bottom = -125.0
+offset_bottom = -160.0
+theme_override_styles/fill = SubResource("StyleBoxFlat_yw30f")
 step = 1.0
 value = 100.0
 show_percentage = false
+
+[node name="AmmunitionBar1" type="HBoxContainer" parent="." unique_id=1951846417]
+offset_left = -64.0
+offset_top = -160.0
+offset_right = 64.0
+offset_bottom = -144.0
+theme_override_constants/separation = 2
+
+[node name="AmmunitionBar2" type="HBoxContainer" parent="." unique_id=499202368]
+offset_left = -64.0
+offset_top = -144.0
+offset_right = 64.0
+offset_bottom = -128.0
+theme_override_constants/separation = 2
 
 [node name="Sprite" type="Node2D" parent="." unique_id=1825420154]
 material = SubResource("ShaderMaterial_qjkh3")

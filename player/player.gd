@@ -27,8 +27,8 @@ var health := 100
 var facing := 1
 
 var weapon_1_id := "spear"
-var weapon_2_id := "gun"
-var armout_id := "heavy_armour"
+var weapon_2_id := "rifle"
+var armout_id := "light_armour"
 
 var camera: Camera2D
 
@@ -40,6 +40,8 @@ var armour: Armour
 @onready var hurtbox := $Hurtbox
 @onready var collision_shape := $CollisionShape2D
 @onready var health_bar := $HealthBar
+@onready var ammunition_bar_1 := $AmmunitionBar1
+@onready var ammunition_bar_2 := $AmmunitionBar2
 @onready var arm_player := $ArmPlayer
 @onready var body_player := $BodyPlayer
 @onready var effect_player := $EffectPlayer
@@ -66,17 +68,24 @@ func _ready() -> void:
 		hurtbox.queue_free()
 		hitbox.queue_free()
 		collision_shape.queue_free()
+	
 	var new_weapon_1 = WEAPONS[weapon_1_id].instantiate()
 	new_weapon_1.player = self
 	new_weapon_1.weapon_number = 1
 	weapon_pivot.add_child(new_weapon_1)
 	weapon_1 = new_weapon_1
+	
 	var new_weapon_2 = WEAPONS[weapon_2_id].instantiate()
 	new_weapon_2.player = self
 	new_weapon_2.weapon_number = 2
 	new_weapon_2.hide()
 	weapon_pivot.add_child(new_weapon_2)
 	weapon_2 = new_weapon_2
+	
+	if not OS.has_feature("match") and name == str(multiplayer.get_unique_id()):
+		new_weapon_1.set_ammunition_bar(ammunition_bar_1)
+		new_weapon_2.set_ammunition_bar(ammunition_bar_2)
+	
 	armour = ARMOUR[armout_id]
 	for armour_sprite in armour_sprites:
 		armour_sprite.texture = armour.texture
@@ -114,6 +123,10 @@ func animate_snapshot(player_snapshot: Dictionary) -> void:
 		else:
 			right_shoulder.rotation = 0
 			arm_player.play(body_player.current_animation)
+	
+	if name == str(multiplayer.get_unique_id()):
+		weapon_1.animate_ammunition_bar(player_snapshot["ammunition_1"])
+		weapon_2.animate_ammunition_bar(player_snapshot["ammunition_2"])
 
 
 func animate_attack_event(weapon_number: int, attack: Dictionary) -> void:

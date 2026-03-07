@@ -8,6 +8,8 @@
 bullet = ExtResource("2_go88y")
 aim_animation = "aim_ranged"
 attack_animation = "attack_ranged"
+ammunition = 5
+reload_time = 1.0
 
 [node name="Sprite2D" parent="." index="0" unique_id=2019106634]
 position = Vector2(28, -8)

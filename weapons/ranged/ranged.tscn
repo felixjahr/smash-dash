@@ -1,12 +1,15 @@
 [gd_scene format=3 uid="uid://cmhdn8j3ha5yw"]
 
 [ext_resource type="Script" uid="uid://dc58rhvdfubb2" path="res://weapons/ranged/ranged.gd" id="1_e0r0w"]
+[ext_resource type="PackedScene" uid="uid://cht37bdeqrtij" path="res://weapons/weapon.tscn" id="1_wec3a"]
 
-[node name="Ranged" type="Node2D" unique_id=1173898847]
-use_parent_material = true
+[node name="Ranged" unique_id=1429498491 instance=ExtResource("1_wec3a")]
 script = ExtResource("1_e0r0w")
+bullet = null
+bullet_speed = 2000
+bullet_damage = 10
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2019106634]
+[node name="Sprite2D" type="Sprite2D" parent="." index="1" unique_id=927824755]
 use_parent_material = true
 
-[node name="Marker2D" type="Marker2D" parent="." unique_id=1004940766]
+[node name="Marker2D" type="Marker2D" parent="." index="2" unique_id=1171964161]

@@ -7,7 +7,6 @@ extends Weapon
 
 @onready var marker := $Marker2D
 
-
 var bullet_counter := 0
 
 
@@ -27,6 +26,11 @@ func animate_attack_event(attack: Dictionary) -> void:
 
 
 func simulate_attack(aim_direction: Vector2) -> void:
+	if ammunition <= 0:
+		return
+	ammunition -= 1
+	reload_timer.start()
+	
 	player.sprite.scale.x = player.facing
 	player.right_shoulder.look_at(player.right_shoulder.global_position + aim_direction)
 	player.arm_player.current_animation = aim_animation
