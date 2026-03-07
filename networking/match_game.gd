@@ -9,12 +9,13 @@ const DEFAULT_INPUT = {
 
 const MAPS = {
 	"forest" : preload("res://maps/forest/forest.tscn"),
+	"mountains" : preload("res://maps/mountains/mountains.tscn"),
 }
 
 const Player := preload("res://player/player.tscn")
 
 var tick: int = 0
-var map_id: String = "forest"
+var map_id: String = "mountains"
 
 var players := {}
 var inputs := {}

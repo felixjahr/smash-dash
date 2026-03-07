@@ -2,6 +2,7 @@ extends Node
 
 const MAPS = {
 	"forest" : preload("res://maps/forest/forest.tscn"),
+	"mountains" : preload("res://maps/mountains/mountains.tscn"),
 }
 
 const Player := preload("res://player/player.tscn")
