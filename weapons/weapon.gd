@@ -7,7 +7,6 @@ const AMMUNITION_BAR_SEGMENT := preload("res://weapons/ammunition_bar_segment.ts
 @export var aim_animation: String
 @export var attack_animation: String
 @export var max_ammunition: int
-@export var reload_time: float
 
 var ammunition: int
 
