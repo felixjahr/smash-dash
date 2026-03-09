@@ -11,7 +11,6 @@ const BulletView := preload("res://bullet/bullet_view.tscn")
 var estimated_server_tick: float
 var last_snapshot_tick := -1
 
-var local_pid := -1
 var players: Dictionary[int, Node2D] = {}
 var bullets: Dictionary[int, Node2D] = {}
 
@@ -94,16 +93,16 @@ func _apply_entity_snapshots(entities: Dictionary, entity_snapshots: Array, get_
 			entities[id] = entity
 	
 	for entity_snapshot in entity_snapshots:
-		var id = get_id.call(entity_snapshot)
+		var id: int = get_id.call(entity_snapshot)
 		entities[id].apply_snapshot(entity_snapshot)
 
 
 func _on_net_init_received(init: Init) -> void:
-	var new_map = Data.MAPS[init.map_id].instantiate()
+	var new_map := Data.MAPS[init.map_id].instantiate()
 	map_container.add_child(new_map)
 	
-	local_pid = multiplayer.get_unique_id()
-	var new_player = PlayerView.instantiate()
+	var local_pid := multiplayer.get_unique_id()
+	var new_player := PlayerView.instantiate()
 	new_player.name = str(local_pid)
 	new_player.local = true
 	new_player.camera = new_map.camera

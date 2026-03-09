@@ -197,11 +197,3 @@ func _on_hitbox_area_entered(area: Area2D) -> void:
 		return
 	area.get_parent().apply_hit(weapon.damage)
 	area.get_parent().apply_knockback(pivot.global_position, weapon.knockback)
-
-
-func _on_reload_timeout(weapon_idx: int) -> void:
-	var weapon := Data.WEAPONS[weapon_ids[weapon_idx]]
-	if weapon_ammunitions[weapon_idx] < weapon.max_ammunition:
-		weapon_ammunitions[weapon_idx] += 1
-	if weapon_ammunitions[weapon_idx] < weapon.max_ammunition:
-		get_tree().create_timer(weapon.reload_time).timeout.connect(_on_reload_timeout.bind(weapon_idx))
