@@ -15,7 +15,7 @@ func _ready() -> void:
 
 
 func _on_hitbox_area_entered(area: Area2D) -> void:
-	area.get_parent().simulate_hit(damage)
+	area.get_parent().apply_hit(damage)
 	hitbox_collision_shape.set_deferred("disabled", true)
 	await get_tree().create_timer(0.2).timeout
 	hitbox_collision_shape.set_deferred("disabled", false)

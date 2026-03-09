@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Ranged" format=3 uid="uid://5gq6m1m060o4"]
+
+[ext_resource type="Script" uid="uid://dc58rhvdfubb2" path="res://weapons/ranged/ranged.gd" id="1_d4671"]
+[ext_resource type="Texture2D" uid="uid://cv3v8wjcl15vt" path="res://weapons/ranged/gun/gun.png" id="2_t3ahn"]
+
+[resource]
+script = ExtResource("1_d4671")
+bullet_offset = Vector2(147, -26)
+attack_duration = 0.5
+aim_animation = "aim_ranged"
+attack_animation = "attack_ranged"
+max_ammunition = 3
+reload_time = 1.0
+sprite_texture = ExtResource("2_t3ahn")
+sprite_offset = Vector2(28, -9)
+metadata/_custom_type_script = "uid://dc58rhvdfubb2"

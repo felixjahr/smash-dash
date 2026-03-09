@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://mrx73yralrmc"]
 
-[ext_resource type="Script" uid="uid://cey8cauvutinj" path="res://networking/client.gd" id="1_ti1oh"]
+[ext_resource type="Script" uid="uid://cey8cauvutinj" path="res://networking/client_controller.gd" id="1_ti1oh"]
 [ext_resource type="Script" uid="uid://dbadsd2pwibq5" path="res://networking/client_net.gd" id="2_30660"]
-[ext_resource type="Script" uid="uid://dqsxm57ibh1wi" path="res://networking/client_game.gd" id="4_43dsu"]
+[ext_resource type="Script" uid="uid://dqsxm57ibh1wi" path="res://networking/client_view.gd" id="4_43dsu"]
 
 [node name="Controller" type="Node" unique_id=63357991]
 script = ExtResource("1_ti1oh")
@@ -10,16 +10,18 @@ script = ExtResource("1_ti1oh")
 [node name="Net" type="Node" parent="." unique_id=1034516271]
 script = ExtResource("2_30660")
 
-[node name="Game" type="Node" parent="." unique_id=935680825]
+[node name="View" type="Node" parent="." unique_id=935680825]
 script = ExtResource("4_43dsu")
 
-[node name="UIContainer" type="CanvasLayer" parent="." unique_id=978794642]
+[node name="MapContainer" type="Node2D" parent="View" unique_id=130569814]
 
-[connection signal="ability_event_received" from="Net" to="Game" method="_on_net_ability_event_received"]
-[connection signal="attack_event_received" from="Net" to="Game" method="_on_net_attack_event_received"]
-[connection signal="connect_peer_event_received" from="Net" to="Game" method="_on_net_connect_peer_event_received"]
-[connection signal="despawn_bullet_event_received" from="Net" to="Game" method="_on_net_despawn_bullet_event_received"]
-[connection signal="diconnect_peer_event_received" from="Net" to="Game" method="_on_net_diconnect_peer_event_received"]
-[connection signal="hit_event_received" from="Net" to="Game" method="_on_net_hit_event_received"]
-[connection signal="init_received" from="Net" to="Game" method="_on_net_init_received"]
-[connection signal="snapshot_received" from="Net" to="Game" method="_on_net_snapshot_received"]
+[node name="RemotePlayerContainer" type="Node2D" parent="View" unique_id=1851973517]
+
+[node name="LocalPlayerContainer" type="Node2D" parent="View" unique_id=1135505247]
+
+[node name="BulletContainer" type="Node2D" parent="View" unique_id=1703388447]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=978794642]
+
+[connection signal="init_received" from="Net" to="View" method="_on_net_init_received"]
+[connection signal="snapshot_received" from="Net" to="View" method="_on_net_snapshot_received"]

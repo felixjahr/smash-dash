@@ -28,7 +28,7 @@ var facing := 1
 
 var weapon_1_id := "spear"
 var weapon_2_id := "rifle"
-var armout_id := "light_armour"
+var armour_id := "light_armour"
 
 var camera: Camera2D
 
@@ -86,7 +86,7 @@ func _ready() -> void:
 		new_weapon_1.set_ammunition_bar(ammunition_bar_1)
 		new_weapon_2.set_ammunition_bar(ammunition_bar_2)
 	
-	armour = ARMOUR[armout_id]
+	armour = ARMOUR[armour_id]
 	for armour_sprite in armour_sprites:
 		armour_sprite.texture = armour.texture
 

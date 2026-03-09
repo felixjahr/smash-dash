@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Melee" format=3 uid="uid://1h8ggt7fvdjo"]
+
+[ext_resource type="Script" uid="uid://dma0ut8h4lfxi" path="res://weapons/melee/melee.gd" id="1_wgnqg"]
+[ext_resource type="Texture2D" uid="uid://dooyxado1gvf5" path="res://weapons/melee/sword/sword.png" id="2_wj0lo"]
+
+[resource]
+script = ExtResource("1_wgnqg")
+moonwalk = true
+attack_duration = 0.3
+aim_animation = "aim_sword"
+attack_animation = "attack_sword"
+max_ammunition = 2
+reload_time = 3.0
+sprite_texture = ExtResource("2_wj0lo")
+sprite_offset = Vector2(0, -82)
+metadata/_custom_type_script = "uid://dma0ut8h4lfxi"

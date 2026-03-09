@@ -12,14 +12,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1xumj")
 
-[node name="AimJoystick1" parent="." unique_id=185311994 instance=ExtResource("1_yc8ku")]
+[node name="AimJoystick0" parent="." unique_id=185311994 instance=ExtResource("1_yc8ku")]
 layout_mode = 1
 offset_left = 1500.0
 offset_top = -378.0
 offset_right = 1800.0
 offset_bottom = -78.0
 
-[node name="AimJoystick2" parent="." unique_id=274906869 instance=ExtResource("1_yc8ku")]
+[node name="AimJoystick1" parent="." unique_id=274906869 instance=ExtResource("1_yc8ku")]
 layout_mode = 1
 offset_left = 1500.0
 offset_top = -622.0

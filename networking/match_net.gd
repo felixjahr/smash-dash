@@ -1,6 +1,6 @@
 extends Node
 
-signal input_received(pid: int, input: Dictionary)
+signal input_received(pid: int, input: PlayerInput)
 signal peer_connected(pid: int)
 signal peer_disconnected(pid: int)
 
@@ -11,53 +11,29 @@ func start_match() -> void:
 	var peer := ENetMultiplayerPeer.new()
 	peer.create_server(PORT, 8)
 	multiplayer.multiplayer_peer = peer
-	multiplayer.peer_connected.connect(_on_peer_connected)
-	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	multiplayer.connect("peer_connected", _on_net_peer_connected)
+	multiplayer.connect("peer_disconnected", _on_net_peer_disconnected)
 
 
-func send_init(pid: int, tick: int, pids: Array, map_id: String) -> void:
-	rpc_id(pid, "receive_init", tick, pids, map_id)
+func send_snapshot(snapshot: Snapshot) -> void:
+	rpc("receive_snapshot", snapshot.to_dict())
 
 
-func send_snapshot(tick: int, snapshot: Dictionary) -> void:
-	rpc("receive_snapshot", tick, snapshot)
-
-
-func send_attack_event(tick: int, pid: int, weapon_number: int, attack: Dictionary) -> void:
-	rpc("receive_attack_event", tick, pid, weapon_number, attack)
-
-
-func send_despawn_bullet_event(tick: int, bullet_id: int) -> void:
-	rpc("receive_despawn_bullet_event", tick, bullet_id)
-
-
-func send_ability_event(tick: int, pid: int):
-	rpc("receive_ability_event", tick, pid)
-
-
-func send_hit_event(tick: int, pid: int):
-	rpc("receive_hit_event", tick, pid)
-
-
-func send_connect_peer_event(pid: int) -> void:
-	rpc("receive_connect_peer_event", pid)
-
-
-func send_diconnect_peer_event(pid: int) -> void:
-	rpc("receive_disconnect_peer_event", pid)
+func send_init(pid: int, init: Init) -> void:
+	rpc_id(pid, "receive_init", init.to_dict())
 
 
 @rpc("any_peer", "unreliable")
 func receive_input(input: Dictionary) -> void:
 	var pid := multiplayer.get_remote_sender_id()
-	emit_signal("input_received", pid, input)
+	emit_signal("input_received", pid, PlayerInput.from_dict(input))
 
 
-func _on_peer_connected(pid: int) -> void:
+func _on_net_peer_connected(pid: int) -> void:
 	emit_signal("peer_connected", pid)
 
 
-func _on_peer_disconnected(pid: int) -> void:
+func _on_net_peer_disconnected(pid: int) -> void:
 	emit_signal("peer_disconnected", pid)
 
 
@@ -65,43 +41,11 @@ func _on_peer_disconnected(pid: int) -> void:
 
 
 
-
-
-@rpc("authority", "reliable")
-func receive_init(tick: int, pids: Array, map_id: String) -> void:
-	pass
-
-
 @rpc("authority", "unreliable")
-func receive_snapshot(tick: int, snapshot: Dictionary) -> void:
+func receive_snapshot(snapshot: Dictionary) -> void:
 	pass
 
 
 @rpc("authority", "reliable")
-func receive_attack_event(tick: int, pid: int, weapon_number: int, attack: Dictionary) -> void:
-	pass
-
-
-@rpc("authority", "reliable")
-func receive_despawn_bullet_event(tick: int, bullet_id: int) -> void:
-	pass
-
-
-@rpc("authority", "reliable")
-func receive_ability_event(tick: int, pid: int):
-	pass
-
-
-@rpc("authority", "reliable")
-func receive_hit_event(tick: int, pid: int):
-	pass
-
-
-@rpc("authority", "reliable")
-func receive_connect_peer_event(pid: int) -> void:
-	pass
-
-
-@rpc("authority", "reliable")
-func receive_disconnect_peer_event(pid: int) -> void:
+func receive_init(init: Dictionary) -> void:
 	pass
