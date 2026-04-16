@@ -1,14 +1,10 @@
 [gd_scene format=3 uid="uid://bhu2qbr7kc6cc"]
 
 [ext_resource type="Script" uid="uid://c8yu43bgcflc4" path="res://games/draft/draft_server.gd" id="1_6k1wc"]
-[ext_resource type="Script" uid="uid://bq5rniobd6d38" path="res://games/game_net_server.gd" id="2_65w2n"]
 [ext_resource type="Script" uid="uid://cdt3x0t2axpjt" path="res://games/game_logic_server.gd" id="2_d7tvd"]
 
 [node name="Draft" type="Node" unique_id=2126793095]
 script = ExtResource("1_6k1wc")
-
-[node name="Net" type="Node" parent="." unique_id=1684990813]
-script = ExtResource("2_65w2n")
 
 [node name="Logic" type="Node" parent="." unique_id=1031067248]
 script = ExtResource("2_d7tvd")

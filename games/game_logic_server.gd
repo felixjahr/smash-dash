@@ -16,7 +16,6 @@ var bullets: Dictionary[int, Node2D] = {}
 
 var inputs: Dictionary[int, Array] = {}
 
-@onready var net := $"../Net"
 @onready var map_container := $MapContainer
 @onready var player_container := $PlayerContainer
 @onready var bullet_container := $BulletContainer
@@ -29,7 +28,7 @@ func _physics_process(delta: float) -> void:
 	_tick_bullets(delta)
 	
 	if tick % SNAPSHOT_FREQUENCY == 0:
-		net.send_snapshot(_build_snapshot())
+		get_parent().game_net.send_snapshot(_build_snapshot())
 
 
 func spawn_map(map_id: String) -> void:

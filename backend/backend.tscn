@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://dckjau564evkm"]
+
+[ext_resource type="Script" uid="uid://bi6otpe7ofwi0" path="res://backend/backend_controller.gd" id="1_ioxd7"]
+[ext_resource type="Script" uid="uid://c4shlg6lbs66t" path="res://backend/backend_net.gd" id="2_xwdif"]
+
+[node name="Controller" type="Node" unique_id=664113444]
+script = ExtResource("1_ioxd7")
+
+[node name="Net" type="Node" parent="." unique_id=791744277]
+
+[node name="BackendNet" type="Node" parent="Net" unique_id=1267463409]
+script = ExtResource("2_xwdif")

@@ -1,6 +1,12 @@
 [gd_scene format=3 uid="uid://bl6ni0fuvaabx"]
 
-[ext_resource type="Script" uid="uid://w80576hemwa3" path="res://server/controller_server.gd" id="1_adogo"]
+[ext_resource type="Script" uid="uid://w80576hemwa3" path="res://server/server_controller.gd" id="1_adogo"]
+[ext_resource type="Script" uid="uid://dbadsd2pwibq5" path="res://games/game_net.gd" id="3_u3pyk"]
 
 [node name="Controller" type="Node" unique_id=118878982]
 script = ExtResource("1_adogo")
+
+[node name="Net" type="Node" parent="." unique_id=1599096995]
+
+[node name="GameNet" type="Node" parent="Net" unique_id=1448908801]
+script = ExtResource("3_u3pyk")

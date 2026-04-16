@@ -20,7 +20,6 @@ var inputs: Array[PlayerInput]
 var overlay: Control
 var map
 
-@onready var net := $"../Net"
 @onready var map_container := $MapContainer
 @onready var remote_player_container := $RemotePlayerContainer
 @onready var local_player_container := $LocalPlayerContainer
@@ -60,7 +59,7 @@ func _physics_process(delta: float) -> void:
 	input.current_weapon = overlay.current_weapon
 	input.weapon_aim_directions = overlay.weapon_aim_directions
 	inputs[input.tick % INPUT_BUFFER_SIZE] = input
-	net.send_input(input)
+	get_parent().game_net.send_input(input)
 
 
 func _on_net_snapshot_received(snapshot: Snapshot) -> void:

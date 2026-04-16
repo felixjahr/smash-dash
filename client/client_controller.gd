@@ -5,12 +5,13 @@ enum ClientState {
 	OPTIONS,
 	CREATE,
 	JOIN,
+	CONNECTING,
 	GAME,
 }
 
-const LOBBY_IP_ADDRESS := "127.0.0.1"
-#const LOBBY_IP_ADDRESS := "35.198.127.12"
-const LOBBY_PORT := 8000
+const BACKEND_IP := "127.0.0.1"
+#const BACKEND_IP := "35.198.127.12"
+const BACKEND_PORT := 8000
 
 const GAMES: Dictionary[String, PackedScene] = {
 	"draft": preload("res://games/draft/draft_client.tscn"),
@@ -25,14 +26,15 @@ var state: ClientState
 
 var game: Node
 
-@onready var net := $Net
+@onready var backend_net := $Net/BackendNet
+@onready var game_net := $Net/GameNet
 @onready var ui := $UI
 
 
 func _ready() -> void:
-	net.connect("room_code_received", _on_net_room_code_received)
-	net.connect("room_start_received", _on_net_room_start_received)
-	net.connect("room_error_received", _on_net_room_error_received)
+	backend_net.connect("room_code_received", _on_net_room_code_received)
+	backend_net.connect("room_start_received", _on_net_room_start_received)
+	game_net.connect("init_received", _on_net_init_received)
 	_enter_state(ClientState.HOME)
 
 
@@ -58,22 +60,14 @@ func _enter_state(new_state: ClientState, data = null) -> void:
 	elif new_state == ClientState.CREATE:
 		var new_create := Create.instantiate()
 		ui.add_child(new_create)
-		net.create_client(LOBBY_PORT, LOBBY_IP_ADDRESS)
+		backend_net.create_client(BACKEND_PORT, BACKEND_IP)
 		await multiplayer.connected_to_server
-		net.send_create_room()
+		backend_net.send_create_room()
 	elif new_state == ClientState.JOIN:
 		var new_join := Join.instantiate()
 		ui.add_child(new_join)
 		new_join.submit_button.connect("pressed", _on_join_submit_pressed)
-		net.create_client(LOBBY_PORT, LOBBY_IP_ADDRESS)
-	elif new_state == ClientState.GAME:
-		var new_game := GAMES[data["game_id"]].instantiate()
-		new_game.port = data["port"]
-		new_game.ip = data["ip"]
-		new_game.game_id = data["game_id"]
-		new_game.map_id = data["map_id"]
-		add_child(new_game)
-		game = new_game
+		backend_net.create_client(BACKEND_PORT, BACKEND_IP)
 
 
 func _exit_state(new_state: ClientState, data = null) -> void:
@@ -99,7 +93,7 @@ func _on_options_back_pressed() -> void:
 
 func _on_join_submit_pressed() -> void:
 	var code: String = ui.get_child(0).code.text
-	net.send_join_room(code)
+	backend_net.send_join_room(code)
 
 
 func _on_net_room_code_received(code: String) -> void:
@@ -107,15 +101,16 @@ func _on_net_room_code_received(code: String) -> void:
 		ui.get_child(0).code.text = code
 
 
-func _on_net_room_start_received(port: int, ip: String, game_id: String, map_id: String) -> void:
-	net.close_client()
-	_change_state(ClientState.GAME, {
-		"port" : port,
-		"ip" : ip,
-		"game_id" : game_id,
-		"map_id" : map_id,
-	})
+func _on_net_room_start_received(port: int, ip: String) -> void:
+	_change_state(ClientState.CONNECTING)
+	await get_tree().create_timer(2.0).timeout
+	game_net.create_client(port, ip)
 
 
-func _on_net_room_error_received(error: String) -> void:
-	print(error)
+func _on_net_init_received(init: Init) -> void:
+	_change_state(ClientState.GAME)
+	var new_game := GAMES[init.game_id].instantiate()
+	new_game.map_id = init.map_id
+	new_game.game_net = game_net
+	add_child(new_game)
+	game = new_game

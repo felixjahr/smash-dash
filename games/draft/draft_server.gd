@@ -7,24 +7,22 @@ enum DraftState {
 
 var state: DraftState
 
+var game_id: String
+var map_id: String
+var game_net: Node
+
 var draft_pool: Array[Dictionary]
 var draft_options_by_pid: Dictionary[int, Array] = {}
 var draft_results := {}
 
-var port: int
-var game_id: String
-var map_id: String
-
-@onready var net := $Net
 @onready var logic := $Logic
 
 
 func _ready() -> void:
 	logic.spawn_map(map_id)
-	net.connect("input_received", logic._on_net_input_received)
-	net.connect("game_request_received", _on_net_game_request_received)
-	net.connect("peer_connected", _on_net_peer_connected)
-	net.create_server(port)
+	game_net.connect("input_received", logic._on_net_input_received)
+	game_net.connect("game_request_received", _on_net_game_request_received)
+	game_net.connect("peer_connected", _on_net_peer_connected)
 	_enter_state(DraftState.DRAFT)
 
 
@@ -123,7 +121,7 @@ func _resolve_draft_results() -> void:
 		logic.spawn_player(pid, loadouts[pid]["weapon_ids"], loadouts[pid]["armour_id"])
 		var new_game_event := GameEvent.new()
 		new_game_event.type = GameEvent.Type.DRAFT_FINISHED
-		net.send_game_event(pid, new_game_event)
+		game_net.send_game_event(pid, new_game_event)
 
 
 func _on_net_game_request_received(pid: int, game_request: GameRequest) -> void:
@@ -137,6 +135,12 @@ func _on_net_game_request_received(pid: int, game_request: GameRequest) -> void:
 
 
 func _on_net_peer_connected(pid: int) -> void:
+	print(pid)
+	var new_init := Init.new()
+	new_init.game_id = game_id
+	new_init.map_id = map_id
+	game_net.send_init(pid, new_init)
+	
 	var draft_options: Array[Dictionary] = []
 	draft_options.append(draft_pool.pop_back())
 	draft_options.append(draft_pool.pop_back())
@@ -145,4 +149,4 @@ func _on_net_peer_connected(pid: int) -> void:
 	var new_game_event := GameEvent.new()
 	new_game_event.type = GameEvent.Type.DRAFT_OPTIONS
 	new_game_event.payload = draft_options
-	net.send_game_event(pid, new_game_event)
+	game_net.send_game_event(pid, new_game_event)

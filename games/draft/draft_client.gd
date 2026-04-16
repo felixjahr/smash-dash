@@ -10,23 +10,19 @@ enum DraftState {
 
 var state: DraftState
 
-var port: int
-var ip: String
-var game_id: String
 var map_id: String
+var game_net: Node
 
 var draft_screen: Control
 
-@onready var net := $Net
 @onready var hud := $Hud
 @onready var logic := $Logic
 
 
 func _ready() -> void:
 	logic.spawn_map(map_id)
-	net.connect("snapshot_received", logic._on_net_snapshot_received)
-	net.connect("game_event_received", _on_net_game_event_received)
-	net.create_client(port, ip)
+	game_net.connect("snapshot_received", logic._on_net_snapshot_received)
+	game_net.connect("game_event_received", _on_net_game_event_received)
 
 
 func _change_state(new_state: DraftState, data = null) -> void:
@@ -61,7 +57,7 @@ func _on_draft_screen_draft_finished(draft_result: Array[int]) -> void:
 	var new_game_request := GameRequest.new()
 	new_game_request.type = GameRequest.Type.DRAFT_RESULT
 	new_game_request.payload = draft_result
-	net.send_game_request(new_game_request)
+	game_net.send_game_request(new_game_request)
 
 
 func _on_net_game_event_received(game_event: GameEvent) -> void:

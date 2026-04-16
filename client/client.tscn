@@ -1,12 +1,72 @@
 [gd_scene format=3 uid="uid://mrx73yralrmc"]
 
-[ext_resource type="Script" uid="uid://cey8cauvutinj" path="res://client/controller_client.gd" id="1_ti1oh"]
-[ext_resource type="Script" uid="uid://dgtky3frf4ijs" path="res://client/net_client.gd" id="2_gdxsl"]
+[ext_resource type="Script" uid="uid://cey8cauvutinj" path="res://client/client_controller.gd" id="1_ti1oh"]
+[ext_resource type="Script" uid="uid://c4shlg6lbs66t" path="res://backend/backend_net.gd" id="3_7kp2r"]
+[ext_resource type="Script" uid="uid://dbadsd2pwibq5" path="res://games/game_net.gd" id="3_mgmel"]
+
+[sub_resource type="GDScript" id="GDScript_mgmel"]
+script/source = "extends Node
+
+signal room_code_received(code: String)
+signal room_start_received(port: int, ip: String, game_id: String, map_id: String)
+signal room_error_received(error: String)
+
+
+func create_client(port: int, ip: String) -> void:
+	var peer := ENetMultiplayerPeer.new()
+	peer.create_client(ip, port)
+	multiplayer.multiplayer_peer = peer
+
+
+func close_client() -> void:
+	if multiplayer.multiplayer_peer:
+		multiplayer.multiplayer_peer.close()
+		multiplayer.multiplayer_peer = null
+
+
+func send_create_room() -> void:
+	rpc_id(1, \"receive_create_room\")
+
+
+func send_join_room(code: String) -> void:
+	rpc_id(1, \"receive_join_room\", code)
+
+
+@rpc(\"authority\", \"reliable\")
+func receive_room_code(code: String) -> void:
+	emit_signal(\"room_code_received\", code)
+
+
+@rpc(\"authority\", \"reliable\")
+func receive_room_start(port: int, ip: String, game_id: String, map_id: String) -> void:
+	emit_signal(\"room_start_received\", port, ip, game_id, map_id)
+
+
+@rpc(\"authority\", \"reliable\")
+func receive_room_error(error: String) -> void:
+	emit_signal(\"room_error_received\", error)
+
+
+@rpc(\"any_peer\", \"reliable\")
+func receive_create_room() -> void:
+	pass
+
+
+@rpc(\"any_peer\", \"reliable\")
+func receive_join_room(code: String) -> void:
+	pass
+"
 
 [node name="Controller" type="Node" unique_id=63357991]
 script = ExtResource("1_ti1oh")
 
 [node name="Net" type="Node" parent="." unique_id=1471941793]
-script = ExtResource("2_gdxsl")
+script = SubResource("GDScript_mgmel")
+
+[node name="BackendNet" type="Node" parent="Net" unique_id=1938416600]
+script = ExtResource("3_7kp2r")
+
+[node name="GameNet" type="Node" parent="Net" unique_id=1385322115]
+script = ExtResource("3_mgmel")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=978794642]
