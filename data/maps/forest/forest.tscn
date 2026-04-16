@@ -16,6 +16,14 @@ size = Vector2(3840, 1592)
 [node name="Forest" type="StaticBody2D" unique_id=1358148047]
 script = ExtResource("1_fb6i4")
 
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=875365987]
+
+[node name="Marker2D" type="Marker2D" parent="SpawnPoints" unique_id=652308863]
+position = Vector2(-1338, 337)
+
+[node name="Marker2D2" type="Marker2D" parent="SpawnPoints" unique_id=1258525238]
+position = Vector2(1338, 369)
+
 [node name="L1" type="Sprite2D" parent="." unique_id=1179159011]
 texture = ExtResource("1_x5joe")
 

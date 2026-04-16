@@ -10,6 +10,10 @@ extends Node2D
 	$CollisionShape2D4,
 	$CollisionShape2D5,
 ]
+@onready var spawn_points := [
+	$SpawnPoints/Marker2D,
+	$SpawnPoints/Marker2D2
+]
 
 
 func _ready() -> void:

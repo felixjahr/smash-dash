@@ -135,7 +135,6 @@ func _on_net_game_request_received(pid: int, game_request: GameRequest) -> void:
 
 
 func _on_net_peer_connected(pid: int) -> void:
-	print(pid)
 	var new_init := Init.new()
 	new_init.game_id = game_id
 	new_init.map_id = map_id

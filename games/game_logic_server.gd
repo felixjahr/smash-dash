@@ -14,7 +14,11 @@ var bullet_counter := 0
 var players: Dictionary[int, CharacterBody2D] = {}
 var bullets: Dictionary[int, Node2D] = {}
 
+var pids: Array[int] = []
+
 var inputs: Dictionary[int, Array] = {}
+
+var map: StaticBody2D
 
 @onready var map_container := $MapContainer
 @onready var player_container := $PlayerContainer
@@ -34,6 +38,7 @@ func _physics_process(delta: float) -> void:
 func spawn_map(map_id: String) -> void:
 	var new_map := Data.MAPS[map_id].instantiate()
 	map_container.add_child(new_map)
+	map = new_map
 
 
 func spawn_player(pid: int, weapon_ids: Array[String], armour_id: String) -> void:
@@ -41,6 +46,9 @@ func spawn_player(pid: int, weapon_ids: Array[String], armour_id: String) -> voi
 	new_player.name = str(pid)
 	new_player.weapon_ids = weapon_ids
 	new_player.armour_id = armour_id
+	if not pid in pids:
+		pids.append(pid)
+	new_player.global_position = map.spawn_points[pids.find(pid)].global_position
 	player_container.add_child(new_player)
 	players[pid] = new_player
 	var input_buffer: Array[PlayerInput] = []
