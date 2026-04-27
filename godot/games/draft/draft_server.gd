@@ -25,11 +25,10 @@ func _ready() -> void:
 	logic.spawn_map(map_id)
 	game_net.connect("input_received", logic._on_net_input_received)
 	game_net.connect("game_request_received", _on_net_game_request_received)
-	game_net.connect("player_received", _on_net_player_received)
 	_enter_state(GameState.DRAFT)
 
 
-func _on_net_player_received(player_id: String) -> void:
+func player_received(player_id: String) -> void:
 	var draft_options: Array[Dictionary] = []
 	draft_options.append(draft_pool.pop_back())
 	draft_options.append(draft_pool.pop_back())
@@ -39,6 +38,10 @@ func _on_net_player_received(player_id: String) -> void:
 	new_game_event.type = GameEvent.Type.DRAFT_OPTIONS
 	new_game_event.payload = draft_options
 	game_net.send_game_event(player_id, new_game_event)
+
+
+func player_abandoned(player_id: String) -> void:
+	logic.despawn_player(player_id)
 
 
 func gameover(ranking: Array[String]) -> void:

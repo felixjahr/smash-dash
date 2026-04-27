@@ -71,6 +71,12 @@ func spawn_player(player_id: String, weapon_ids: Array[String], armour_id: Strin
 	inputs[player_id] = input_buffer
 
 
+func despawn_player(player_id: String) -> void:
+	players[player_id].queue_free()
+	players.erase(player_id)
+	gameover()
+
+
 func spawn_bullet(position: Vector2, speed: int, damage: int, self_hit: bool, direction: Vector2, player_id: String) -> void:
 	var new_bullet := BulletServer.instantiate()
 	new_bullet.bullet_id = str(bullet_counter)

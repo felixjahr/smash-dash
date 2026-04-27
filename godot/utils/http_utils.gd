@@ -3,7 +3,6 @@ class_name HttpUtils
 
 
 static func request(parent: Node, url: String, method: int, body: Variant = null, headers: Array[String] = []) -> Variant:
-	print(url)
 	var http := HTTPRequest.new()
 	parent.add_child(http)
 
@@ -29,10 +28,9 @@ static func request(parent: Node, url: String, method: int, body: Variant = null
 	var text := response_body.get_string_from_utf8()
 
 	if response_code < 200 or response_code >= 300:
-		push_error(url + "HTTP error: %s" % response_code)
+		push_error("HTTP error: %s" % response_code)
 		return null
 	
 	if text.strip_edges().is_empty():
 		return null
-	
 	return JSON.parse_string(text)
