@@ -17,7 +17,7 @@ func to_dict() -> Dictionary:
 
 
 static func from_dict(data: Dictionary) -> GameRequest:
-	var game_event := GameRequest.new()
-	game_event.type = data["type"]
-	game_event.payload = data["payload"]
-	return game_event
+	var game_request := GameRequest.new()
+	game_request.type = data["type"]
+	game_request.payload = data["payload"]
+	return game_request

@@ -15,6 +15,7 @@ var map_id: String
 var draft_pool: Array[Dictionary]
 var draft_options_by_player_id: Dictionary[String, Array] = {}
 var draft_results := {}
+var gameover_ranking: Array[String] = []
 
 @onready var backend_net := $"../Net/BackendNet"
 @onready var game_net := $"../Net/GameNet"
@@ -25,7 +26,7 @@ func _ready() -> void:
 	logic.spawn_map(map_id)
 	game_net.connect("input_received", logic._on_net_input_received)
 	game_net.connect("game_request_received", _on_net_game_request_received)
-	_enter_state(GameState.DRAFT)
+	_change_state(GameState.DRAFT)
 
 
 func player_received(player_id: String) -> void:
@@ -33,11 +34,11 @@ func player_received(player_id: String) -> void:
 	draft_options.append(draft_pool.pop_back())
 	draft_options.append(draft_pool.pop_back())
 	draft_options_by_player_id[player_id] = draft_options
-	
-	var new_game_event := GameEvent.new()
-	new_game_event.type = GameEvent.Type.DRAFT_OPTIONS
-	new_game_event.payload = draft_options
-	game_net.send_game_event(player_id, new_game_event)
+	game_net.send_state_sync(player_id, _build_state_sync_for(player_id))
+
+
+func player_reconnected(player_id: String) -> void:
+	game_net.send_state_sync(player_id, _build_state_sync_for(player_id))
 
 
 func player_abandoned(player_id: String) -> void:
@@ -45,33 +46,29 @@ func player_abandoned(player_id: String) -> void:
 
 
 func gameover(ranking: Array[String]) -> void:
+	gameover_ranking = ranking
 	_change_state(GameState.GAMEOVER, ranking)
 
 
 func _change_state(new_state: GameState, data = null) -> void:
-	if new_state == state:
-		return
-	_exit_state(new_state, data)
-	_enter_state(new_state, data)
+	_exit_state(data)
 	state = new_state
+	_enter_state(data)
 
 
-func _enter_state(new_state: GameState, data = null) -> void:
-	if new_state == GameState.DRAFT:
+func _enter_state(data = null) -> void:
+	if state == GameState.DRAFT:
 		draft_pool = _generate_draft_pool()
-	elif new_state == GameState.FIGHT:
+	elif state == GameState.FIGHT:
 		_resolve_draft_results()
-	elif new_state == GameState.GAMEOVER:
+	elif state == GameState.GAMEOVER:
 		logic.stop()
-		var new_game_event = GameEvent.new()
-		new_game_event.type = GameEvent.Type.DRAFT_GAMEOVER
-		new_game_event.payload = data
-		for player_id in logic.players.keys():
-			game_net.send_game_event(player_id, new_game_event)
+		for player_id in draft_options_by_player_id.keys():
+			game_net.send_state_sync(player_id, _build_state_sync_for(player_id))
 		emit_signal("ended")
 
 
-func _exit_state(new_state: GameState, data = null) -> void:
+func _exit_state(data = null) -> void:
 	pass
 
 
@@ -150,9 +147,25 @@ func _resolve_draft_results() -> void:
 	for player_id in player_ids:
 		logic.spawn_player(player_id, loadouts[player_id]["weapon_ids"], loadouts[player_id]["armour_id"])
 		logic.start()
-		var new_game_event := GameEvent.new()
-		new_game_event.type = GameEvent.Type.DRAFT_FINISHED
-		game_net.send_game_event(player_id, new_game_event)
+		game_net.send_state_sync(player_id, _build_state_sync_for(player_id))
+
+
+func _build_state_sync_for(player_id: String) -> StateSync:
+	var state_sync := StateSync.new()
+	state_sync.phase = state
+	var payload := {}
+	match state:
+		GameState.DRAFT:
+			payload = {
+				"draft_options": draft_options_by_player_id.get(player_id, []),
+				"draft_submitted": draft_results.has(player_id),
+			}
+		GameState.GAMEOVER:
+			payload = {
+				"ranking": gameover_ranking,
+			}
+	state_sync.payload = payload
+	return state_sync
 
 
 func _on_net_game_request_received(player_id: String, game_request: GameRequest) -> void:
@@ -163,3 +176,5 @@ func _on_net_game_request_received(player_id: String, game_request: GameRequest)
 	
 	if draft_results.size() == 2:
 		_change_state(GameState.FIGHT)
+	else:
+		game_net.send_state_sync(player_id, _build_state_sync_for(player_id))

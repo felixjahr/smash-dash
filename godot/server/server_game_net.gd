@@ -16,6 +16,7 @@ func create_server(port: int) -> void:
 func send_snapshot(snapshot: Snapshot) -> void:
 	rpc("receive_snapshot", snapshot.to_dict())
 
+
 @rpc("authority", "unreliable")
 func receive_snapshot(snapshot: Dictionary) -> void:
 	pass
@@ -23,19 +24,21 @@ func receive_snapshot(snapshot: Dictionary) -> void:
 
 func send_init(player_id: String, game_id: String, map_id: String) -> void:
 	var pid: int = controller.pid_by_player_id[player_id]
-	rpc_id(pid, "receive_init", game_id, map_id)
+	rpc_id(pid, "receive_init",game_id, map_id)
+
 
 @rpc("authority", "reliable")
 func receive_init(game_id: String, map_id: String) -> void:
 	pass
 
 
-func send_game_event(player_id: String, game_event: GameEvent) -> void:
+func send_state_sync(player_id: String, state_sync: StateSync) -> void:
 	var pid: int = controller.pid_by_player_id[player_id]
-	rpc_id(pid, "receive_game_event", game_event.to_dict())
+	rpc_id(pid, "receive_state_sync", state_sync.to_dict())
+
 
 @rpc("authority", "reliable")
-func receive_game_event(game_event: Dictionary) -> void:
+func receive_state_sync(state_sync: Dictionary) -> void:
 	pass
 
 

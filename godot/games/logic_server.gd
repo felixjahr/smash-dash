@@ -37,7 +37,7 @@ func _physics_process(delta: float) -> void:
 	_tick_bullets(delta)
 	
 	if tick % SNAPSHOT_FREQUENCY == 0:
-		game_net.send_snapshot(_build_snapshot())
+		game_net.send_snapshot(build_snapshot())
 
 
 func start() -> void:
@@ -101,10 +101,10 @@ func despawn_bullet(bullet_id: String) -> void:
 func gameover() -> void:
 	var ranking: Array[String] = players.keys()
 	ranking.sort_custom(func(a, b): 
-		if players[a].hearts == players[a].hearts:
+		if players[a].hearts == players[b].hearts:
 			return players[a].health > players[b].health
 		else:
-			return players[a].hearts > players[a].hearts
+			return players[a].hearts > players[b].hearts
 	)
 	get_parent().gameover(ranking)
 
@@ -136,7 +136,7 @@ func _tick_bullets(delta: float) -> void:
 		bullet.tick(delta)
 
 
-func _build_snapshot() -> Snapshot:
+func build_snapshot() -> Snapshot:
 	var snapshot := Snapshot.new()
 	snapshot.tick = tick
 	for player_id in players.keys():

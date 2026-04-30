@@ -15,7 +15,8 @@ var access_token_expires_at := 0.0
 func _ready() -> void:
 	refresh_token = _load_refresh_token()
 	if refresh_token.is_empty():
-		_create_account()
+		await _create_account()
+		emit_signal("authed")
 		return
 	await _refresh_session()
 	emit_signal("authed")

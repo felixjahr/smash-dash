@@ -43,51 +43,49 @@ func _ready() -> void:
 
 
 func _change_state(new_state: ClientState, data = null) -> void:
-	if new_state == state:
-		return
-	_exit_state(new_state, data)
-	_enter_state(new_state, data)
+	_exit_state(data)
 	state = new_state
+	_enter_state(data)
 
 
-func _enter_state(new_state: ClientState, data = null) -> void:
-	if new_state == ClientState.LOADING:
+func _enter_state(data = null) -> void:
+	if state == ClientState.LOADING:
 		var new_loading := Loading.instantiate()
 		ui.add_child(new_loading)
-	elif new_state == ClientState.HOME:
+	elif state == ClientState.HOME:
 		var new_home := Home.instantiate()
 		ui.add_child(new_home)
 		new_home.create_button.connect("pressed", _on_home_create_pressed)
 		new_home.join_button.connect("pressed", _on_home_join_pressed)
 		new_home.options_button.connect("pressed", _on_home_options_pressed)
 		new_home.name_label.text = auth_net.player_id
-	elif new_state == ClientState.OPTIONS:
+	elif state == ClientState.OPTIONS:
 		var new_options := Options.instantiate()
 		ui.add_child(new_options)
 		new_options.back_button.connect("pressed", _on_options_back_pressed)
-	elif new_state == ClientState.CREATING:
+	elif state == ClientState.CREATING:
 		var new_loading := Loading.instantiate()
 		ui.add_child(new_loading)
 		backend_net.create_room()
-	elif new_state == ClientState.CREATE:
+	elif state == ClientState.CREATE:
 		var new_create := Create.instantiate()
 		ui.add_child(new_create)
 		new_create.code.text = data
-	elif new_state == ClientState.JOIN:
+	elif state == ClientState.JOIN:
 		var new_join := Join.instantiate()
 		ui.add_child(new_join)
 		new_join.submit_button.connect("pressed", _on_join_submit_pressed)
-	elif new_state == ClientState.JOINING:
+	elif state == ClientState.JOINING:
 		var new_loading := Loading.instantiate()
 		ui.add_child(new_loading)
 		backend_net.join_room(data)
-	elif new_state == ClientState.CONNECTING:
+	elif state == ClientState.CONNECTING:
 		var new_loading := Loading.instantiate()
 		ui.add_child(new_loading)
 		game_net.create_client(data["port"], data["ip"])
 		await multiplayer.connected_to_server
 		game_net.send_game_token(data["game_token"])
-	elif new_state == ClientState.GAME:
+	elif state == ClientState.GAME:
 		var new_game := GAMES[data["game_id"]].instantiate()
 		new_game.map_id = data["map_id"]
 		add_child(new_game)
@@ -95,7 +93,7 @@ func _enter_state(new_state: ClientState, data = null) -> void:
 		game = new_game
 
 
-func _exit_state(new_state: ClientState, data = null) -> void:
+func _exit_state(data = null) -> void:
 	if state == ClientState.GAME:
 		game.queue_free()
 	for child in ui.get_children():
@@ -146,7 +144,7 @@ func _on_net_room_start_received(port: int, ip: String, game_token: String) -> v
 func _on_net_init_received(game_id: String, map_id: String) -> void:
 	_change_state(ClientState.GAME, {
 		"game_id" : game_id,
-		"map_id" : map_id
+		"map_id" : map_id,
 	})
 
 

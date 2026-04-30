@@ -2,19 +2,13 @@ extends Node
 
 signal snapshot_received(snapshot: Snapshot)
 signal init_received(game_id: String, map_id: String)
-signal game_event_received(game_event: GameEvent)
+signal state_sync_received(state_sync: StateSync)
 
 
 func create_client(port: int, ip: String) -> void:
 	var peer := ENetMultiplayerPeer.new()
 	peer.create_client(ip, port)
 	multiplayer.multiplayer_peer = peer
-
-
-#func close_client() -> void:
-	#if multiplayer.multiplayer_peer:
-		#multiplayer.multiplayer_peer.close()
-		#multiplayer.multiplayer_peer = null
 
 
 func send_input(input: PlayerInput) -> void:
@@ -40,8 +34,8 @@ func receive_init(game_id: String, map_id: String) -> void:
 
 
 @rpc("authority", "reliable")
-func receive_game_event(game_event: Dictionary) -> void:
-	emit_signal("game_event_received", GameEvent.from_dict(game_event))
+func receive_state_sync(state_sync: Dictionary) -> void:
+	emit_signal("state_sync_received", StateSync.from_dict(state_sync))
 
 
 @rpc("any_peer", "unreliable")

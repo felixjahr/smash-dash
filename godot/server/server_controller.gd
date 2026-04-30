@@ -60,6 +60,7 @@ func _on_net_game_token_received(pid: int, game_token: String) -> void:
 	player_id_by_pid[pid] = player_id
 	if disconnected_players.has(player_id):
 		disconnected_players.erase(player_id)
+		game.player_reconnected(player_id)
 		return
 	game_net.send_init(player_id, game_id, map_id)
 	game.player_received(player_id)
