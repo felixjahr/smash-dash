@@ -9,10 +9,9 @@ import { RoomsGateway } from './rooms.gateway';
 import { Room } from './room.types';
 
 const ROOM_SIZE = 2;
-const GAME_IP = '127.0.0.1';
+const GAME_IP = '34.159.203.1';
 const GAME_BASE_PORT = 9000;
 const GAME_PORT_RANGE_SIZE = 1000;
-const SERVER_PATH = '/usr/local/bin/docker';
 
 @Injectable()
 export class RoomsService {
@@ -94,7 +93,7 @@ export class RoomsService {
       throw new NotFoundException('Room not found');
     }
 
-    spawn(SERVER_PATH, ['stop', room.code], {
+    spawn('docker', ['stop', room.code], {
       stdio: 'inherit',
     });
 
@@ -118,16 +117,21 @@ export class RoomsService {
 
     const args = [
       'run',
+      '-d',
       '--name',
       room.code,
+
       '--platform',
       'linux/amd64',
+
+      '--network',
+      'stickman-server_default',
+
       '-p',
       `${room.port}:${room.port}/udp`,
-      '-v',
-      '/Users/felixjahr/Documents/Projects/Stickman Draft Game/export/server:/app',
-      'ubuntu:24.04',
-      '/app/server.x86_64',
+
+      'stickman-godot-server:latest',
+
       '--headless',
       `port=${room.port}`,
       `code=${room.code}`,
@@ -136,7 +140,7 @@ export class RoomsService {
       `allowed_players=${JSON.stringify(allowedPlayers)}`,
     ];
 
-    spawn(SERVER_PATH, args, { stdio: 'inherit' });
+    spawn('docker', args, { stdio: 'inherit' });
   }
 
   private allocatePort(): number {

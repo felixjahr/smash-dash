@@ -134,6 +134,9 @@ func _on_join_submit_pressed() -> void:
 
 
 func _on_net_room_start_received(port: int, ip: String, game_token: String) -> void:
+	print(ip)
+	print(port)
+	print(game_token)
 	_change_state(ClientState.CONNECTING, {
 		"port" : port,
 		"ip" : ip,

@@ -1,6 +1,6 @@
 extends Node
 
-const HTTP_BASE := "http://host.docker.internal:8000"
+const HTTP_BASE := "http://backend:8000"
 
 
 func start_room(code: String) -> void:

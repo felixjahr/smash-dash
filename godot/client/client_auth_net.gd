@@ -2,7 +2,7 @@ extends Node
 
 signal authed
 
-const HTTP_BASE := "http://127.0.0.1:8000"
+const HTTP_BASE := "http://34.159.203.1:8000"
 const ACCESS_TOKEN_LIFETIME := 900
 const REFRESH_MARGIN := 30
 

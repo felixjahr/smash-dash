@@ -8,7 +8,7 @@ const JUMP_FORCE := -1200.0
 
 var player_id: String
 var health := 100
-var hearts := 1
+var hearts := 3
 var facing := 1
 var current_weapon := 0
 var attacking := false

@@ -3,9 +3,9 @@ extends Node
 signal room_code_received(code: String)
 signal room_start_received(port: int, ip: String, game_token: String)
 
-const HTTP_BASE := "http://127.0.0.1:8000"
+const HTTP_BASE := "http://34.159.203.1:8000"
 
-const WS_URL := "ws://127.0.0.1:8000/ws"
+const WS_URL := "ws://34.159.203.1:8000/ws"
 var socket := WebSocketPeer.new()
 
 @onready var auth_net := $"../AuthNet"
@@ -59,7 +59,7 @@ func _connect_ws() -> void:
 		await get_tree().process_frame
 	if socket.get_ready_state() != WebSocketPeer.STATE_OPEN:
 		push_error("WebSocket failed to connect")
-	socket.send_text(JSON.stringify({
+	await socket.send_text(JSON.stringify({
 		"event": "auth",
 		"data": {
 			"accessToken": auth_net.get_valid_access_token()
