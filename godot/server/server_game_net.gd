@@ -48,11 +48,11 @@ func send_snapshot(snapshot: Snapshot) -> void:
 		return
 	if multiplayer.get_peers().is_empty():
 		return
-	rpc("receive_snapshot", snapshot.to_dict())
+	rpc("receive_snapshot", snapshot.to_packet())
 
 
 @rpc("authority", "unreliable")
-func receive_snapshot(snapshot: Dictionary) -> void:
+func receive_snapshot(snapshot: PackedByteArray) -> void:
 	pass
 
 
@@ -85,12 +85,12 @@ func receive_state_sync(state_sync: Dictionary) -> void:
 
 
 @rpc("any_peer", "unreliable")
-func receive_input(input: Dictionary) -> void:
+func receive_input(input: PackedByteArray) -> void:
 	var pid := multiplayer.get_remote_sender_id()
 	if not player_id_by_pid.has(pid):
 		return
 	var player_id: String = player_id_by_pid[pid]
-	emit_signal("input_received", player_id, PlayerInput.from_dict(input))
+	emit_signal("input_received", player_id, PlayerInput.from_packet(input))
 
 
 @rpc("any_peer", "reliable")

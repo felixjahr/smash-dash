@@ -1,27 +1,169 @@
 class_name Snapshot
 extends RefCounted
 
+const POSITION_SCALE := 4.0
+const VELOCITY_SCALE := 4.0
+const AIM_SCALE := 127.0
+const SIGNED_16_BIAS := 32768
+const SIGNED_8_BIAS := 128
+
 var tick: int
 
 var players: Array[PlayerSnapshot]
 var bullets: Array[BulletSnapshot]
 
 
-func to_dict() -> Dictionary:
-	return {
-		"tick": tick,
-		"players": players.map(func(snapshot): return snapshot.to_dict()),
-		"bullets": bullets.map(func(snapshot): return snapshot.to_dict())
-	}
+func to_packet() -> PackedByteArray:
+	var peer := StreamPeerBuffer.new()
+	peer.big_endian = false
+	peer.put_u32(tick)
+	peer.put_u8(players.size())
+	peer.put_u8(bullets.size())
+	for snapshot in players:
+		_write_player(peer, snapshot)
+	for snapshot in bullets:
+		_write_bullet(peer, snapshot)
+	return peer.data_array
 
 
-static func from_dict(data: Dictionary) -> Snapshot:
+static func from_packet(packet: PackedByteArray) -> Snapshot:
+	var peer := StreamPeerBuffer.new()
+	peer.big_endian = false
+	peer.data_array = packet
 	var snapshot := Snapshot.new()
-	snapshot.tick = data["tick"]
+	snapshot.tick = int(peer.get_u32())
+	var player_count := int(peer.get_u8())
+	var bullet_count := int(peer.get_u8())
 	snapshot.players = []
-	for player_data in data["players"]:
-		snapshot.players.append(PlayerSnapshot.from_dict(player_data))
+	for i in player_count:
+		snapshot.players.append(_read_player(peer))
 	snapshot.bullets = []
-	for bullet_data in data["bullets"]:
-		snapshot.bullets.append(BulletSnapshot.from_dict(bullet_data))
+	for i in bullet_count:
+		snapshot.bullets.append(_read_bullet(peer))
 	return snapshot
+
+
+static func _write_player(peer: StreamPeerBuffer, snapshot: PlayerSnapshot) -> void:
+	peer.put_u32(posmod(snapshot.player_id.hash(), 4294967296))
+	_write_quantized_vector2(peer, snapshot.position, POSITION_SCALE)
+	_write_quantized_vector2(peer, snapshot.velocity, VELOCITY_SCALE)
+	peer.put_u16(clampi(snapshot.health, 0, 65535))
+	peer.put_u8(clampi(snapshot.hearts, 0, 255))
+	var flags := 0
+	if snapshot.facing < 0:
+		flags |= 1
+	if snapshot.is_on_floor:
+		flags |= 2
+	if snapshot.attacking:
+		flags |= 4
+	peer.put_u8(flags)
+	peer.put_u8(clampi(snapshot.current_weapon, 0, 255))
+	peer.put_u8(_encode_id(snapshot.armour_id, Data.ARMOUR_IDS))
+	peer.put_u8(snapshot.weapon_ids.size())
+	for weapon_id in snapshot.weapon_ids:
+		peer.put_u8(_encode_id(weapon_id, Data.WEAPON_IDS))
+	peer.put_u8(snapshot.weapon_aim_directions.size())
+	for aim_direction in snapshot.weapon_aim_directions:
+		_write_quantized_unit_vector2(peer, aim_direction)
+	peer.put_u8(snapshot.weapon_ammunitions.size())
+	for ammunition in snapshot.weapon_ammunitions:
+		peer.put_u16(clampi(ammunition, 0, 65535))
+	peer.put_u32(maxi(snapshot.last_hit, 0))
+
+
+static func _read_player(peer: StreamPeerBuffer) -> PlayerSnapshot:
+	var snapshot := PlayerSnapshot.new()
+	snapshot.player_id = str(peer.get_u32())
+	snapshot.position = _read_quantized_vector2(peer, POSITION_SCALE)
+	snapshot.velocity = _read_quantized_vector2(peer, VELOCITY_SCALE)
+	snapshot.health = int(peer.get_u16())
+	snapshot.hearts = int(peer.get_u8())
+	var flags := int(peer.get_u8())
+	snapshot.facing = -1 if (flags & 1) != 0 else 1
+	snapshot.is_on_floor = (flags & 2) != 0
+	snapshot.attacking = (flags & 4) != 0
+	snapshot.current_weapon = int(peer.get_u8())
+	snapshot.armour_id = _decode_id(int(peer.get_u8()), Data.ARMOUR_IDS)
+	snapshot.weapon_ids = []
+	var weapon_count := int(peer.get_u8())
+	for i in weapon_count:
+		snapshot.weapon_ids.append(_decode_id(int(peer.get_u8()), Data.WEAPON_IDS))
+	snapshot.weapon_aim_directions = []
+	var aim_count := int(peer.get_u8())
+	for i in aim_count:
+		snapshot.weapon_aim_directions.append(_read_quantized_unit_vector2(peer))
+	snapshot.weapon_ammunitions = []
+	var ammunition_count := int(peer.get_u8())
+	for i in ammunition_count:
+		snapshot.weapon_ammunitions.append(int(peer.get_u16()))
+	snapshot.last_hit = int(peer.get_u32())
+	return snapshot
+
+
+static func _write_bullet(peer: StreamPeerBuffer, snapshot: BulletSnapshot) -> void:
+	peer.put_u32(maxi(int(snapshot.bullet_id), 0))
+	_write_quantized_vector2(peer, snapshot.position, POSITION_SCALE)
+	peer.put_u16(clampi(snapshot.speed, 0, 65535))
+	_write_quantized_unit_vector2(peer, snapshot.direction)
+
+
+static func _read_bullet(peer: StreamPeerBuffer) -> BulletSnapshot:
+	var snapshot := BulletSnapshot.new()
+	snapshot.bullet_id = str(peer.get_u32())
+	snapshot.position = _read_quantized_vector2(peer, POSITION_SCALE)
+	snapshot.speed = int(peer.get_u16())
+	snapshot.direction = _read_quantized_unit_vector2(peer)
+	return snapshot
+
+
+static func _write_quantized_vector2(peer: StreamPeerBuffer, value: Vector2, scale: float) -> void:
+	peer.put_u16(_encode_signed_16(value.x, scale))
+	peer.put_u16(_encode_signed_16(value.y, scale))
+
+
+static func _read_quantized_vector2(peer: StreamPeerBuffer, scale: float) -> Vector2:
+	return Vector2(
+		_decode_signed_16(int(peer.get_u16()), scale),
+		_decode_signed_16(int(peer.get_u16()), scale)
+	)
+
+
+static func _write_quantized_unit_vector2(peer: StreamPeerBuffer, value: Vector2) -> void:
+	peer.put_u8(_encode_signed_8(value.x, AIM_SCALE))
+	peer.put_u8(_encode_signed_8(value.y, AIM_SCALE))
+
+
+static func _read_quantized_unit_vector2(peer: StreamPeerBuffer) -> Vector2:
+	return Vector2(
+		_decode_signed_8(int(peer.get_u8()), AIM_SCALE),
+		_decode_signed_8(int(peer.get_u8()), AIM_SCALE)
+	)
+
+
+static func _encode_signed_16(value: float, scale: float) -> int:
+	return clampi(int(round(value * scale)) + SIGNED_16_BIAS, 0, 65535)
+
+
+static func _decode_signed_16(value: int, scale: float) -> float:
+	return float(value - SIGNED_16_BIAS) / scale
+
+
+static func _encode_signed_8(value: float, scale: float) -> int:
+	return clampi(int(round(value * scale)) + SIGNED_8_BIAS, 0, 255)
+
+
+static func _decode_signed_8(value: int, scale: float) -> float:
+	return float(value - SIGNED_8_BIAS) / scale
+
+
+static func _encode_id(id: String, ids: Array[String]) -> int:
+	var index := ids.find(id)
+	if index < 0:
+		return 0
+	return clampi(index, 0, 255)
+
+
+static func _decode_id(index: int, ids: Array[String]) -> String:
+	if index < 0 or index >= ids.size():
+		return ids[0]
+	return ids[index]

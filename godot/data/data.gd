@@ -6,10 +6,22 @@ const MAPS: Dictionary[String, PackedScene] = {
 	"mountains": preload("res://data/maps/mountains/mountains.tscn"),
 }
 
+const ARMOUR_IDS: Array[String] = [
+	"light_armour",
+	"heavy_armour",
+]
+
 const ARMOUR: Dictionary[String, Armour] = {
 	"light_armour": preload("res://data/items/armours/light_armour/light_armour.tres"),
 	"heavy_armour": preload("res://data/items/armours/heavy_armour/heavy_armour.tres"),
 }
+
+const WEAPON_IDS: Array[String] = [
+	"gun",
+	"rifle",
+	"sword",
+	"spear",
+]
 
 const WEAPON: Dictionary[String, Weapon] = {
 	"gun": preload("res://data/items/weapons/ranged/gun/gun.tres"),

@@ -29,7 +29,7 @@ func is_connected_to_server() -> bool:
 func send_input(input: PlayerInput) -> bool:
 	if not is_connected_to_server():
 		return false
-	rpc_id(1, "receive_input", input.to_dict())
+	rpc_id(1, "receive_input", input.to_packet())
 	return true
 
 
@@ -48,8 +48,8 @@ func send_game_request(game_request: GameRequest) -> bool:
 
 
 @rpc("authority", "unreliable")
-func receive_snapshot(snapshot: Dictionary) -> void:
-	emit_signal("snapshot_received", Snapshot.from_dict(snapshot))
+func receive_snapshot(snapshot: PackedByteArray) -> void:
+	emit_signal("snapshot_received", Snapshot.from_packet(snapshot))
 
 
 @rpc("authority", "reliable")
@@ -63,7 +63,7 @@ func receive_state_sync(state_sync: Dictionary) -> void:
 
 
 @rpc("any_peer", "unreliable")
-func receive_input(input: Dictionary) -> void:
+func receive_input(input: PackedByteArray) -> void:
 	pass
 
 

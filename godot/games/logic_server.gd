@@ -17,6 +17,7 @@ var bullets: Dictionary[String, Node2D] = {}
 var player_ids: Array[String] = []
 
 var inputs: Dictionary[String, Array] = {}
+var last_inputs: Dictionary[String, PlayerInput] = {}
 
 var map: StaticBody2D
 
@@ -69,6 +70,7 @@ func spawn_player(player_id: String, weapon_ids: Array[String], armour_id: Strin
 	var input_buffer: Array[PlayerInput] = []
 	input_buffer.resize(INPUT_BUFFER_SIZE)
 	inputs[player_id] = input_buffer
+	last_inputs[player_id] = PlayerInput.new()
 
 
 func despawn_player(player_id: String) -> void:
@@ -120,7 +122,6 @@ func _tick_players(delta: float) -> void:
 
 func _get_latest_input(player_id: String) -> PlayerInput:
 	var player_inputs := inputs[player_id]
-	var latest_input := PlayerInput.new()
 	for i in MAX_INPUT_LOOKBACK:
 		var wanted_tick := tick - i
 		var buffered_input = player_inputs[wanted_tick % INPUT_BUFFER_SIZE]
@@ -128,9 +129,9 @@ func _get_latest_input(player_id: String) -> PlayerInput:
 			continue
 		if buffered_input.tick != wanted_tick:
 			continue
-		latest_input = buffered_input
-		break
-	return latest_input
+		last_inputs[player_id] = buffered_input
+		return buffered_input
+	return last_inputs.get(player_id, PlayerInput.new())
 
 
 func _tick_bullets(delta: float) -> void:
