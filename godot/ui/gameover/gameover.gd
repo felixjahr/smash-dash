@@ -6,4 +6,7 @@ var ranking: Array[String]
 
 
 func _ready() -> void:
+	if ranking.is_empty():
+		$CenterContainer/VBoxContainer/Label.text = "Match ended"
+		return
 	$CenterContainer/VBoxContainer/Label.text = "The winner is: " + ranking[0]

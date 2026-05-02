@@ -70,7 +70,7 @@ func spawn_local_player() -> void: # TODO: Get rid of this
 	players[local_player_id] = new_player
 
 
-func _on_net_snapshot_received(snapshot: Snapshot) -> void:
+func snapshot_received(snapshot: Snapshot) -> void:
 	snapshots[snapshot.tick % SNAPSHOT_BUFFER_SIZE] = snapshot
 	
 	if snapshot.tick < last_snapshot_tick:

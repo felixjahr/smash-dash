@@ -7,20 +7,44 @@ signal state_sync_received(state_sync: StateSync)
 
 func create_client(port: int, ip: String) -> void:
 	var peer := ENetMultiplayerPeer.new()
-	peer.create_client(ip, port)
+	var err := peer.create_client(ip, port)
+	if err != OK:
+		push_error("Failed to create game client: %s" % err)
+		return
 	multiplayer.multiplayer_peer = peer
 
 
-func send_input(input: PlayerInput) -> void:
+func disconnect_from_server() -> void:
+	if multiplayer.multiplayer_peer:
+		multiplayer.multiplayer_peer.close()
+		multiplayer.multiplayer_peer = null
+
+
+func is_connected_to_server() -> bool:
+	if not multiplayer.multiplayer_peer:
+		return false
+	return multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
+
+
+func send_input(input: PlayerInput) -> bool:
+	if not is_connected_to_server():
+		return false
 	rpc_id(1, "receive_input", input.to_dict())
+	return true
 
 
-func send_game_token(game_token: String) -> void:
+func send_game_token(game_token: String) -> bool:
+	if not is_connected_to_server():
+		return false
 	rpc_id(1, "receive_game_token", game_token)
+	return true
 
 
-func send_game_request(game_request: GameRequest) -> void:
+func send_game_request(game_request: GameRequest) -> bool:
+	if not is_connected_to_server():
+		return false
 	rpc_id(1, "receive_game_request", game_request.to_dict())
+	return true
 
 
 @rpc("authority", "unreliable")
@@ -48,6 +72,6 @@ func receive_game_token(game_token: String) -> void:
 	pass
 
 
-@rpc("any_peer", "unreliable")
+@rpc("any_peer", "reliable")
 func receive_game_request(game_request: Dictionary) -> void:
 	pass

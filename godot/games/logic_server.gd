@@ -72,6 +72,8 @@ func spawn_player(player_id: String, weapon_ids: Array[String], armour_id: Strin
 
 
 func despawn_player(player_id: String) -> void:
+	if not players.has(player_id):
+		return
 	players[player_id].queue_free()
 	players.erase(player_id)
 	gameover()

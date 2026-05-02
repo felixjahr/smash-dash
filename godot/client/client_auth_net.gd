@@ -1,6 +1,7 @@
 extends Node
 
 signal authed
+signal auth_failed
 
 const HTTP_BASE := "http://34.159.203.1:8000"
 const ACCESS_TOKEN_LIFETIME := 900
@@ -16,42 +17,54 @@ func _ready() -> void:
 	refresh_token = _load_refresh_token()
 	if refresh_token.is_empty():
 		await _create_account()
-		emit_signal("authed")
+		if not access_token.is_empty():
+			emit_signal("authed")
+		else:
+			emit_signal("auth_failed")
 		return
-	await _refresh_session()
-	emit_signal("authed")
+	if not (await _refresh_session()):
+		refresh_token = ""
+		await _create_account()
+	if not access_token.is_empty():
+		emit_signal("authed")
+	else:
+		emit_signal("auth_failed")
 
 
 func get_valid_access_token() -> String:
 	var now := Time.get_unix_time_from_system()
 	if now >= access_token_expires_at:
-		await _refresh_session()
+		if not (await _refresh_session()):
+			await _create_account()
 	return access_token
 
 
 func get_auth_header() -> Array[String]:
-	return ["Authorization: Bearer " + await get_valid_access_token()]
+	var token := await get_valid_access_token()
+	return ["Authorization: Bearer " + token]
 
 
-func _create_account() -> void:
-	var data = await HttpUtils.request(
+func _create_account() -> bool:
+	var response: Dictionary = await HttpUtils.request(
 		self,
 		HTTP_BASE + "/auth/guest",
 		HTTPClient.METHOD_POST
 	)
 	
-	if data == null:
+	if not response.get("ok", false) or response.get("data") == null:
 		push_error("Failed to create account")
-		return
-
+		return false
+	var data: Dictionary = response["data"]
 	player_id = str(data.get("player_id", ""))
 	access_token = str(data.get("access_token", ""))
 	refresh_token = str(data.get("refresh_token", ""))
+	access_token_expires_at = Time.get_unix_time_from_system() + ACCESS_TOKEN_LIFETIME - REFRESH_MARGIN
 	_save_refresh_token(refresh_token)
+	return not player_id.is_empty() and not access_token.is_empty() and not refresh_token.is_empty()
 
 
-func _refresh_session() -> void:
-	var data = await HttpUtils.request(
+func _refresh_session() -> bool:
+	var response: Dictionary = await HttpUtils.request(
 		self,
 		HTTP_BASE + "/auth/refresh",
 		HTTPClient.METHOD_POST,
@@ -59,10 +72,15 @@ func _refresh_session() -> void:
 			"refresh_token": refresh_token
 		}
 	)
+	if not response.get("ok", false) or response.get("data") == null:
+		push_error("Failed to refresh session")
+		return false
+	var data: Dictionary = response["data"]
 	player_id = str(data.get("player_id", ""))
 	access_token = str(data.get("access_token", ""))
 	refresh_token = str(data.get("refresh_token", ""))
 	access_token_expires_at = Time.get_unix_time_from_system() + ACCESS_TOKEN_LIFETIME - REFRESH_MARGIN
+	return not player_id.is_empty() and not access_token.is_empty() and not refresh_token.is_empty()
 
 
 func _save_refresh_token(token: String) -> void:

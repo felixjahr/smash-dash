@@ -1,6 +1,7 @@
 extends Node
 
 signal ended
+signal match_over
 
 const DraftScreen = preload("res://ui/draft_screen/draft_screen.tscn")
 const Overlay := preload("res://ui/overlay/overlay.tscn")
@@ -26,7 +27,7 @@ var draft_screen: Control
 
 func _ready() -> void:
 	logic.spawn_map(map_id)
-	game_net.connect("snapshot_received", logic._on_net_snapshot_received)
+	game_net.connect("snapshot_received", _on_net_snapshot_received)
 	game_net.connect("state_sync_received", _on_net_state_sync_received)
 
 
@@ -54,6 +55,7 @@ func _enter_state(data = null) -> void:
 		logic.start()
 	elif state == GameState.GAMEOVER:
 		logic.stop()
+		emit_signal("match_over")
 		var new_gameover = Gameover.instantiate()
 		new_gameover.ranking = data["ranking"]
 		ui.add_child(new_gameover)
@@ -68,6 +70,12 @@ func _exit_state(data = null) -> void:
 
 func _on_net_state_sync_received(state_sync: StateSync) -> void:
 	_change_state(state_sync.phase, state_sync.payload)
+
+
+func _on_net_snapshot_received(snapshot: Snapshot) -> void:
+	if state != GameState.FIGHT:
+		return
+	logic.snapshot_received(snapshot)
 
 
 func _on_draft_screen_draft_finished(draft_result: Array[int]) -> void:

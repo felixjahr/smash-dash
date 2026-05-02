@@ -6,10 +6,8 @@ enum ClientState {
 	OPTIONS,
 	CREATING,
 	CREATE,
-	
 	JOIN,
 	JOINING,
-	
 	CONNECTING,
 	GAME,
 }
@@ -24,9 +22,24 @@ const Options := preload("res://ui/options/options.tscn")
 const Create := preload("res://ui/create/create.tscn")
 const Join := preload("res://ui/join/join.tscn")
 
+const GAME_CONNECT_TIMEOUT := 2.0
+const GAME_CONNECT_ATTEMPTS := 4
+const GAME_INIT_TIMEOUT := 8.0
+const GAME_RECONNECT_TIMEOUT := 9.0
+const GAME_RECONNECT_RETRY_DELAY := 0.5
+
 var state: ClientState
 
 var game: Node
+var _game_connect_completed := false
+var _game_connect_succeeded := false
+var _game_init_received := false
+var _game_connection_data := {}
+var _suppress_next_game_disconnect := false
+var _connect_generation := 0
+var _reconnect_generation := 0
+var _state_sync_received := false
+var _game_reconnect_enabled := false
 
 @onready var auth_net := $Net/AuthNet
 @onready var backend_net := $Net/BackendNet
@@ -36,9 +49,13 @@ var game: Node
 
 func _ready() -> void:
 	auth_net.connect("authed", _on_net_authed)
+	auth_net.connect("auth_failed", _on_net_auth_failed)
 	backend_net.connect("room_code_received", _on_net_room_code_received)
 	backend_net.connect("room_start_received", _on_net_room_start_received)
+	backend_net.connect("room_failed_received", _on_net_room_failed_received)
 	game_net.connect("init_received", _on_net_init_received)
+	game_net.connect("state_sync_received", _on_net_state_sync_received)
+	multiplayer.server_disconnected.connect(_on_game_server_disconnected)
 	_enter_state(ClientState.LOADING)
 
 
@@ -82,14 +99,41 @@ func _enter_state(data = null) -> void:
 	elif state == ClientState.CONNECTING:
 		var new_loading := Loading.instantiate()
 		ui.add_child(new_loading)
-		game_net.create_client(data["port"], data["ip"])
-		await multiplayer.connected_to_server
-		game_net.send_game_token(data["game_token"])
+		_connect_generation += 1
+		var connect_generation := _connect_generation
+		var connected := await _connect_to_game_server(data)
+		if state != ClientState.CONNECTING or connect_generation != _connect_generation:
+			return
+		if not connected:
+			push_error("Failed to connect to game server")
+			_game_connection_data = {}
+			_game_reconnect_enabled = false
+			_change_state(ClientState.HOME)
+			return
+		if not game_net.send_game_token(data["game_token"]):
+			push_error("Failed to send game token")
+			_disconnect_game_server_silently()
+			_game_connection_data = {}
+			_game_reconnect_enabled = false
+			_change_state(ClientState.HOME)
+			return
+		_game_init_received = false
+		var init_timeout := get_tree().create_timer(GAME_INIT_TIMEOUT)
+		while state == ClientState.CONNECTING and connect_generation == _connect_generation and not _game_init_received and init_timeout.time_left > 0.0:
+			await get_tree().process_frame
+		if state == ClientState.CONNECTING and connect_generation == _connect_generation and not _game_init_received:
+			push_error("Game server did not initialize client")
+			_disconnect_game_server_silently()
+			_game_connection_data = {}
+			_game_reconnect_enabled = false
+			_change_state(ClientState.HOME)
 	elif state == ClientState.GAME:
 		var new_game := GAMES[data["game_id"]].instantiate()
 		new_game.map_id = data["map_id"]
 		add_child(new_game)
 		new_game.connect("ended", _on_game_ended)
+		if new_game.has_signal("match_over"):
+			new_game.connect("match_over", _on_game_match_over)
 		game = new_game
 
 
@@ -100,12 +144,11 @@ func _exit_state(data = null) -> void:
 		child.queue_free()
 
 
-func _on_account_create_pressed() -> void:
-	auth_net.create_account()
-	_change_state(ClientState.LOADING)
-
-
 func _on_net_authed() -> void:
+	_change_state(ClientState.HOME)
+
+
+func _on_net_auth_failed() -> void:
 	_change_state(ClientState.HOME)
 
 
@@ -134,17 +177,40 @@ func _on_join_submit_pressed() -> void:
 
 
 func _on_net_room_start_received(port: int, ip: String, game_token: String) -> void:
-	print(ip)
-	print(port)
-	print(game_token)
-	_change_state(ClientState.CONNECTING, {
+	if state != ClientState.CREATE and state != ClientState.JOINING:
+		return
+	if port <= 0 or ip.is_empty() or game_token.is_empty():
+		push_error("Received invalid game server endpoint")
+		_change_state(ClientState.HOME)
+		return
+	_game_connection_data = {
 		"port" : port,
 		"ip" : ip,
 		"game_token" : game_token
-	})
+	}
+	_game_reconnect_enabled = true
+	_change_state(ClientState.CONNECTING, _game_connection_data)
+
+
+func _on_net_room_failed_received() -> void:
+	if state == ClientState.CREATING or state == ClientState.CREATE or state == ClientState.JOINING or state == ClientState.CONNECTING:
+		_disconnect_game_server_silently()
+		_game_connection_data = {}
+		_game_reconnect_enabled = false
+		_change_state(ClientState.HOME)
 
 
 func _on_net_init_received(game_id: String, map_id: String) -> void:
+	_game_init_received = true
+	if state != ClientState.CONNECTING:
+		return
+	if not GAMES.has(game_id):
+		push_error("Received unknown game id")
+		_disconnect_game_server_silently()
+		_game_connection_data = {}
+		_game_reconnect_enabled = false
+		_change_state(ClientState.HOME)
+		return
 	_change_state(ClientState.GAME, {
 		"game_id" : game_id,
 		"map_id" : map_id,
@@ -152,4 +218,122 @@ func _on_net_init_received(game_id: String, map_id: String) -> void:
 
 
 func _on_game_ended() -> void:
+	_disconnect_game_server_silently()
+	_game_connection_data = {}
+	_game_reconnect_enabled = false
 	_change_state(ClientState.HOME)
+
+
+func _on_game_match_over() -> void:
+	_game_reconnect_enabled = false
+
+
+func _on_game_server_disconnected() -> void:
+	if _suppress_next_game_disconnect:
+		_suppress_next_game_disconnect = false
+		return
+	if state == ClientState.GAME and not _game_reconnect_enabled:
+		return
+	if state == ClientState.GAME and not _game_connection_data.is_empty():
+		_begin_game_reconnect()
+	elif state == ClientState.CONNECTING and not _game_connection_data.is_empty():
+		_game_connection_data["reconnect_until"] = Time.get_unix_time_from_system() + GAME_RECONNECT_TIMEOUT
+		_change_state(ClientState.CONNECTING, _game_connection_data)
+	elif state == ClientState.CONNECTING or state == ClientState.GAME:
+		_change_state(ClientState.HOME)
+
+
+func _begin_game_reconnect() -> void:
+	_reconnect_generation += 1
+	var reconnect_generation := _reconnect_generation
+	_state_sync_received = false
+	var loading := Loading.instantiate()
+	ui.add_child(loading)
+	var reconnect_data := _game_connection_data.duplicate()
+	reconnect_data["reconnect_until"] = Time.get_unix_time_from_system() + GAME_RECONNECT_TIMEOUT
+	var connected := await _connect_to_game_server(reconnect_data)
+	if state != ClientState.GAME or reconnect_generation != _reconnect_generation:
+		return
+	if not connected:
+		_game_connection_data = {}
+		_game_reconnect_enabled = false
+		_change_state(ClientState.HOME)
+		return
+	if not game_net.send_game_token(_game_connection_data["game_token"]):
+		_game_connection_data = {}
+		_game_reconnect_enabled = false
+		_change_state(ClientState.HOME)
+		return
+	var state_sync_timeout := get_tree().create_timer(GAME_INIT_TIMEOUT)
+	while state == ClientState.GAME and reconnect_generation == _reconnect_generation and not _state_sync_received and state_sync_timeout.time_left > 0.0:
+		await get_tree().process_frame
+	if state == ClientState.GAME and reconnect_generation == _reconnect_generation and not _state_sync_received:
+		_game_connection_data = {}
+		_game_reconnect_enabled = false
+		_change_state(ClientState.HOME)
+
+
+func _on_net_state_sync_received(_state_sync: StateSync) -> void:
+	_state_sync_received = true
+
+
+func _connect_to_game_server(data: Dictionary) -> bool:
+	var port := int(data["port"])
+	var ip := str(data["ip"])
+	if data.has("reconnect_until"):
+		while Time.get_unix_time_from_system() < float(data["reconnect_until"]):
+			if await _try_connect_to_game_server(port, ip):
+				data.erase("reconnect_until")
+				return true
+			_disconnect_game_server_silently()
+			await get_tree().create_timer(GAME_RECONNECT_RETRY_DELAY).timeout
+		data.erase("reconnect_until")
+		return false
+	for attempt in GAME_CONNECT_ATTEMPTS:
+		if await _try_connect_to_game_server(port, ip):
+			return true
+		_disconnect_game_server_silently()
+		if attempt < GAME_CONNECT_ATTEMPTS - 1:
+			await get_tree().create_timer(0.25).timeout
+	return false
+
+
+func _try_connect_to_game_server(port: int, ip: String) -> bool:
+	_game_connect_completed = false
+	_game_connect_succeeded = false
+	var timeout := get_tree().create_timer(GAME_CONNECT_TIMEOUT)
+	multiplayer.connected_to_server.connect(_on_game_connected, CONNECT_ONE_SHOT)
+	multiplayer.connection_failed.connect(_on_game_connection_failed, CONNECT_ONE_SHOT)
+	game_net.create_client(port, ip)
+	while not _game_connect_completed and timeout.time_left > 0.0:
+		await get_tree().process_frame
+	_disconnect_game_connect_signals()
+	return _game_connect_succeeded
+
+
+func _disconnect_game_server_silently() -> void:
+	if multiplayer.multiplayer_peer:
+		_suppress_next_game_disconnect = true
+		call_deferred("_clear_suppressed_game_disconnect")
+	game_net.disconnect_from_server()
+
+
+func _clear_suppressed_game_disconnect() -> void:
+	_suppress_next_game_disconnect = false
+
+
+func _on_game_connected() -> void:
+	_game_connect_completed = true
+	_game_connect_succeeded = true
+
+
+func _on_game_connection_failed() -> void:
+	_game_connect_completed = true
+	_game_connect_succeeded = false
+
+
+func _disconnect_game_connect_signals() -> void:
+	if multiplayer.connected_to_server.is_connected(_on_game_connected):
+		multiplayer.connected_to_server.disconnect(_on_game_connected)
+	if multiplayer.connection_failed.is_connected(_on_game_connection_failed):
+		multiplayer.connection_failed.disconnect(_on_game_connection_failed)

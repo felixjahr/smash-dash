@@ -42,6 +42,13 @@ func player_reconnected(player_id: String) -> void:
 
 
 func player_abandoned(player_id: String) -> void:
+	if state == GameState.DRAFT:
+		var ranking: Array[String] = []
+		for known_player_id in draft_options_by_player_id.keys():
+			if known_player_id != player_id:
+				ranking.append(known_player_id)
+		gameover(ranking)
+		return
 	logic.despawn_player(player_id)
 
 
@@ -169,7 +176,12 @@ func _build_state_sync_for(player_id: String) -> StateSync:
 
 
 func _on_net_game_request_received(player_id: String, game_request: GameRequest) -> void:
+	if state != GameState.DRAFT:
+		return
 	if game_request.type != GameRequest.Type.DRAFT_RESULT:
+		return
+	if draft_results.has(player_id):
+		game_net.send_state_sync(player_id, _build_state_sync_for(player_id))
 		return
 	
 	draft_results[player_id] = game_request.payload

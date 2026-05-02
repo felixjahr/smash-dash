@@ -7,4 +7,5 @@ export interface Room {
   port?: number;
   ip?: string;
   gameTokens?: Record<string, string>;
+  startupTimer?: ReturnType<typeof setTimeout>;
 }
