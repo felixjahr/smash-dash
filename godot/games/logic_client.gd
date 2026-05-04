@@ -44,8 +44,8 @@ func _physics_process(delta: float) -> void:
 	overlay.poll()
 	var input := PlayerInput.new()
 	input.tick = int(estimated_server_tick) + INPUT_LEAD
-	input.direction = Input.get_axis("move_left", "move_right")
-	input.jumping = Input.is_action_pressed("jump")
+	input.direction = overlay.direction
+	input.jumping = overlay.jumping
 	input.current_weapon = overlay.current_weapon
 	input.weapon_aim_directions = overlay.weapon_aim_directions
 	inputs[input.tick % INPUT_BUFFER_SIZE] = input
