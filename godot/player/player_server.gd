@@ -12,8 +12,9 @@ var hearts := 3
 var facing := 1
 var current_weapon := 0
 var attacking := false
-var armour_id := "light_armour"
-var weapon_ids: Array[String] = ["rifle", "gun"]
+var armour_id: String
+var weapon_ids: Array[String]
+var ability_id: String
 var weapon_aim_directions: Array[Vector2] = []
 var weapon_ammunitions: Array[int] = []
 var last_hit := -1
@@ -25,6 +26,8 @@ var burst_weapon: Weapon
 var burst_aim_direction: Vector2
 var burst_bullet_amount: int
 
+var ability_recharge_time: float
+
 @onready var logic := get_parent().get_parent()
 @onready var pivot := $Pivot
 @onready var hitbox_collision_shape := $Pivot/Hitbox/CollisionShape2D
@@ -35,21 +38,31 @@ func _ready() -> void:
 		weapon_ammunitions.append(Data.WEAPON[weapon_id].max_ammunition)
 		weapon_aim_directions.append(Vector2.ZERO)
 		reload_times_left.append(0.0)
+	ability_recharge_time = Data.ABILITY[ability_id].recharge_time
 	hitbox_collision_shape.set_deferred("disabled", true)
 
 
 func tick(delta: float, input: PlayerInput) -> void:
 	_update_reload_times(delta)
+	_update_ability_recharge_time(delta)
 	_update_attack_time(delta)
 	_update_burst_time(delta)
 	
 	_apply_horizontal_movement(delta, input.direction)
 	_apply_vertical_movement(delta, input.jumping)
 	
+	if input.ability and ability_recharge_time <= 0.0:
+		ability_recharge_time = Data.ABILITY[ability_id].recharge_time
+		match ability_id:
+			"double_jump":
+				_ability_double_jump()
+			"dash":
+				_ability_dash(input.direction)
+
 	if not attacking:
 		current_weapon = input.current_weapon
 		var weapon := Data.WEAPON[weapon_ids[current_weapon]]
-		
+
 		var previous_aim_direction := weapon_aim_directions[current_weapon]
 		var aim_direction := input.weapon_aim_directions[current_weapon]
 		weapon_aim_directions = input.weapon_aim_directions
@@ -80,7 +93,7 @@ func _die() -> void:
 	if hearts <= 0:
 		logic.gameover()
 		return
-	logic.call_deferred("spawn_player", player_id, weapon_ids, armour_id, hearts)
+	logic.call_deferred("spawn_player", player_id, weapon_ids, armour_id, ability_id, hearts)
 	queue_free()
 
 
@@ -96,6 +109,11 @@ func _update_reload_times(delta: float) -> void:
 				weapon_ammunitions[i] += 1
 				if weapon_ammunitions[i] < weapon.max_ammunition:
 					reload_times_left[i] = weapon.reload_time
+
+
+func _update_ability_recharge_time(delta: float) -> void:
+	if ability_recharge_time > 0.0:
+		ability_recharge_time -= delta
 
 
 func _update_attack_time(delta: float) -> void:
@@ -130,7 +148,7 @@ func _apply_vertical_movement(delta: float, jumping: bool) -> void:
 		velocity.y += GRAVITY * delta
 	elif jumping:
 		var jump_multiplier := Data.ARMOUR[armour_id].jump_multiplier
-		velocity.y = JUMP_FORCE
+		velocity.y = JUMP_FORCE * jump_multiplier
 
 
 func _should_start_attack(aim_direction: Vector2, previous_aim_direction: Vector2) -> bool:
@@ -198,6 +216,22 @@ func _update_facing(weapon: Weapon, aim_direction: Vector2) -> void:
 			facing = 1
 		elif velocity.x < 0:
 			facing = -1
+
+
+func _ability_double_jump() -> void:
+	var armour_jump_multiplier := Data.ARMOUR[armour_id].jump_multiplier
+	var dash_jump_multiplier: float = Data.ABILITY[ability_id].jump_multiplier
+	velocity.y = JUMP_FORCE * armour_jump_multiplier * dash_jump_multiplier
+
+
+func _ability_dash(direction: float) -> void:
+	var dash_direction: int
+	if direction != 0:
+		dash_direction = signf(direction)
+	else:
+		dash_direction = facing
+	var distance: int = Data.ABILITY[ability_id].distance
+	move_and_collide(Vector2(dash_direction, 0) * distance)
 
 
 func _on_hitbox_area_entered(area: Area2D) -> void:

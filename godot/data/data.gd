@@ -30,6 +30,11 @@ const WEAPON: Dictionary[String, Weapon] = {
 	"spear": preload("res://data/items/weapons/melee/spear/spear.tres"),
 }
 
+const ABILITY_IDS: Array[String] = [
+	"double_jump",
+	"dash",
+]
+
 const ABILITY: Dictionary[String, Ability] = {
 	"double_jump": preload("res://data/items/abilities/double_jump/double_jump.tres"),
 	"dash": preload("res://data/items/abilities/dash/dash.tres"),

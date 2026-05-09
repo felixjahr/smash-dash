@@ -214,6 +214,7 @@ export class RoomsService {
     const args = [
       'run',
       '-d',
+      '-t',
       '--rm',
       '--name',
       room.code,

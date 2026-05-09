@@ -55,11 +55,12 @@ func spawn_map(map_id: String) -> void:
 	map = new_map
 
 
-func spawn_player(player_id: String, weapon_ids: Array[String], armour_id: String, hearts = null) -> void:
+func spawn_player(player_id: String, weapon_ids: Array[String], armour_id: String, ability_id: String, hearts = null) -> void:
 	var new_player := PlayerServer.instantiate()
 	new_player.player_id = player_id
 	new_player.weapon_ids = weapon_ids
 	new_player.armour_id = armour_id
+	new_player.ability_id = ability_id
 	if hearts:
 		new_player.hearts = hearts
 	if not player_id in player_ids:
@@ -162,10 +163,12 @@ func _build_player_snapshot(player_id: String) -> PlayerSnapshot:
 	player_snapshot.current_weapon = player.current_weapon
 	player_snapshot.attacking = player.attacking
 	player_snapshot.armour_id = player.armour_id
+	player_snapshot.ability_id = player.ability_id
 	player_snapshot.weapon_ids = player.weapon_ids
 	player_snapshot.weapon_aim_directions = player.weapon_aim_directions
 	player_snapshot.weapon_ammunitions = player.weapon_ammunitions
 	player_snapshot.last_hit = player.last_hit
+	player_snapshot.ability_recharge_time = player.ability_recharge_time
 	return player_snapshot
 
 

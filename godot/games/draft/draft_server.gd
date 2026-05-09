@@ -142,12 +142,12 @@ func _resolve_draft_results() -> void:
 		player_id_a: {
 			"weapon_ids": [] as Array[String],
 			"armour_id": "",
-			"ability_ids": [] as Array[String],
+			"ability_id": "",
 		},
 		player_id_b: {
 			"weapon_ids": [] as Array[String],
 			"armour_id": "",
-			"ability_ids": [] as Array[String],
+			"ability_id": "",
 		},
 	}
 	
@@ -171,11 +171,11 @@ func _resolve_draft_results() -> void:
 					loadouts[player_id]["armour_id"] = option_ids[pick]
 					loadouts[other_player_id]["armour_id"] = option_ids[other_pick]
 				"ability":
-					loadouts[player_id]["ability_ids"].append(option_ids[pick])
-					loadouts[other_player_id]["ability_ids"].append(option_ids[other_pick])
+					loadouts[player_id]["ability_id"] = option_ids[pick]
+					loadouts[other_player_id]["ability_id"] = option_ids[other_pick]
 	
 	for player_id in player_ids:
-		logic.spawn_player(player_id, loadouts[player_id]["weapon_ids"], loadouts[player_id]["armour_id"])
+		logic.spawn_player(player_id, loadouts[player_id]["weapon_ids"], loadouts[player_id]["armour_id"], loadouts[player_id]["ability_id"])
 		logic.start()
 		game_net.send_state_sync(player_id, _build_state_sync_for(player_id))
 

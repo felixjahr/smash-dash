@@ -21,11 +21,14 @@ var bullets: Dictionary[String, Node2D] = {}
 var snapshots: Array[Snapshot]
 var inputs: Array[PlayerInput]
 
+var player_names: Dictionary = {}
+
+var local_player_snapshot_id := ""
+
 var overlay: Control
 var map: Node2D
 
-var player_names: Dictionary = {}
-
+@onready var auth_net := $"../../Net/AuthNet"
 @onready var game_net := $"../../Net/GameNet"
 @onready var map_container := $MapContainer
 @onready var player_container := $PlayerContainer
@@ -33,6 +36,7 @@ var player_names: Dictionary = {}
 
 
 func _ready() -> void:
+	local_player_snapshot_id = str(posmod(auth_net.player_id.hash(), 4294967296))
 	snapshots.resize(SNAPSHOT_BUFFER_SIZE)
 	inputs.resize(INPUT_BUFFER_SIZE)
 	stop()
@@ -44,10 +48,11 @@ func _physics_process(delta: float) -> void:
 	overlay.poll()
 	var input := PlayerInput.new()
 	input.tick = int(estimated_server_tick) + INPUT_LEAD
-	input.direction = overlay.direction
-	input.jumping = overlay.jumping
 	input.current_weapon = overlay.current_weapon
 	input.weapon_aim_directions = overlay.weapon_aim_directions
+	input.direction = overlay.direction
+	input.jumping = overlay.jumping
+	input.ability = overlay.ability
 	inputs[input.tick % INPUT_BUFFER_SIZE] = input
 	game_net.send_input(input)
 	
@@ -93,6 +98,10 @@ func _render_interpolated_snapshot() -> void:
 	var render_snapshot: Snapshot = _build_interpolated_snapshot(render_tick)
 	if render_snapshot == null:
 		return
+	for player_snapshot in render_snapshot.players:
+		if player_snapshot.player_id == local_player_snapshot_id:
+			overlay.apply_snapshot(player_snapshot)
+			break
 	_apply_entity_snapshots(
 		players,
 		render_snapshot.players,
@@ -100,6 +109,9 @@ func _render_interpolated_snapshot() -> void:
 		func(player_id):
 			var player = PlayerClient.instantiate()
 			player.player_name = str(player_names.get(player_id, player_id))
+			if player_id == local_player_snapshot_id:
+				player.local = true
+				player.camera = map.camera
 			player_container.add_child(player)
 			return player
 	)
@@ -187,10 +199,12 @@ func _interpolate_player_snapshot(older: PlayerSnapshot, newer: PlayerSnapshot, 
 	snapshot.current_weapon = newer.current_weapon
 	snapshot.attacking = newer.attacking
 	snapshot.armour_id = newer.armour_id
+	snapshot.ability_id = newer.ability_id
 	snapshot.weapon_ids = newer.weapon_ids
 	snapshot.weapon_aim_directions = newer.weapon_aim_directions
 	snapshot.weapon_ammunitions = newer.weapon_ammunitions
 	snapshot.last_hit = newer.last_hit
+	snapshot.ability_recharge_time = newer.ability_recharge_time
 	return snapshot
 
 

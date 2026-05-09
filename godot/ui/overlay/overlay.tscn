@@ -41,3 +41,29 @@ offset_left = 671.0
 offset_top = -169.0
 offset_right = 799.0
 offset_bottom = -41.0
+offset_left = 1500.0
+offset_top = -622.0
+offset_right = 1800.0
+offset_bottom = -322.0
+
+[node name="Ability" type="Control" parent="." unique_id=795205397]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Ability" type="Button" parent="Ability" unique_id=1332825976]
+layout_mode = 0
+offset_left = 1308.0
+offset_top = 684.0
+offset_right = 1411.0
+offset_bottom = 770.0
+focus_mode = 0
+text = "Ability"
+
+[node name="ProgressBar" type="ProgressBar" parent="Ability" unique_id=803648811]
+layout_mode = 0
+offset_left = 1308.0
+offset_top = 775.0
+offset_right = 1410.0
+offset_bottom = 802.0
+show_percentage = false

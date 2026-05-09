@@ -25,7 +25,7 @@ size = Vector2(777.5, 112)
 size = Vector2(608, 112)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e2uhk"]
-size = Vector2(3840, 2161)
+size = Vector2(3840, 3577)
 
 [node name="Mountains" type="StaticBody2D" unique_id=338891805]
 script = ExtResource("1_qvtbo")
@@ -116,5 +116,5 @@ collision_layer = 4
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Arena" unique_id=531275149]
-position = Vector2(0, 0.5)
+position = Vector2(0, -707.5)
 shape = SubResource("RectangleShape2D_e2uhk")
