@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1e5sdl4lcr8r"
-path="res://.godot/imported/slam_down_color.png-b20ef2a8eafc88f0624aa8e8d09309cb.ctex"
+path="res://.godot/imported/slam_down_color.png-a30cf6347ff2adc48d89fca32a3efff0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/ability_button/slam_down_color.png"
-dest_files=["res://.godot/imported/slam_down_color.png-b20ef2a8eafc88f0624aa8e8d09309cb.ctex"]
+source_file="res://ui/overlay/ability_button/slam_down_color.png"
+dest_files=["res://.godot/imported/slam_down_color.png-a30cf6347ff2adc48d89fca32a3efff0.ctex"]
 
 [params]
 
