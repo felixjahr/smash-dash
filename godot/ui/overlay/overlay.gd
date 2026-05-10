@@ -19,12 +19,12 @@ var current_ability_id = ""
 
 
 func poll() -> void:
-	if aim_joystick_0.output != weapon_aim_directions[0]:
+	if aim_joystick_0.is_active:
 		current_weapon = 0
-	elif aim_joystick_1.output != weapon_aim_directions[1]:
+	elif aim_joystick_1.is_active:
 		current_weapon = 1
 	weapon_aim_directions = [aim_joystick_0.output, aim_joystick_1.output]
-	if aim_joystick_0.output == Vector2.ZERO and aim_joystick_1.output == Vector2.ZERO and not dpad.is_active:
+	if not aim_joystick_0.is_active and not aim_joystick_1.is_active and not dpad.is_active:
 		var local_player: Node2D = logic.players.get(logic.local_player_id)
 		if local_player:
 			var pivot: Vector2 = local_player.right_shoulder.global_position
