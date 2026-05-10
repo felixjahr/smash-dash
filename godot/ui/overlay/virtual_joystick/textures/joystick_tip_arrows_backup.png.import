@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://buoeypai0s2va"
-path="res://.godot/imported/double_jump_grey.png-c16b934d93248fa955e289f47a80fb79.ctex"
+uid="uid://dt42ubbiyjmo0"
+path="res://.godot/imported/joystick_tip_arrows_backup.png-b73d2b7d1c862ad5b8214ea40300367a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/ability_button/double_jump_grey.png"
-dest_files=["res://.godot/imported/double_jump_grey.png-c16b934d93248fa955e289f47a80fb79.ctex"]
+source_file="res://ui/overlay/virtual_joystick/textures/joystick_tip_arrows_backup.png"
+dest_files=["res://.godot/imported/joystick_tip_arrows_backup.png-b73d2b7d1c862ad5b8214ea40300367a.ctex"]
 
 [params]
 

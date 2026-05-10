@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgyixhrmhfkms"
-path="res://.godot/imported/button_background.png-1d84e10faeb2a40684799ba01c2a20ca.ctex"
+uid="uid://bm30au8mjfc2f"
+path="res://.godot/imported/joystick_base_outline.png-c622d0dd4ff073fd2c67fc211009a49a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/ability_button/button_background.png"
-dest_files=["res://.godot/imported/button_background.png-1d84e10faeb2a40684799ba01c2a20ca.ctex"]
+source_file="res://ui/overlay/virtual_joystick/textures/joystick_base_outline.png"
+dest_files=["res://.godot/imported/joystick_base_outline.png-c622d0dd4ff073fd2c67fc211009a49a.ctex"]
 
 [params]
 

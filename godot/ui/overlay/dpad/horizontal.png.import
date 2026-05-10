@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://broyw0bkd27ux"
-path="res://.godot/imported/double_jump_color.png-0b0a769ac46deed17b26682164bd6aa2.ctex"
+uid="uid://v0lf2yjotd3b"
+path="res://.godot/imported/horizontal.png-0d24eb3040e7ac3c8226e4afa2538cb4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/ability_button/double_jump_color.png"
-dest_files=["res://.godot/imported/double_jump_color.png-0b0a769ac46deed17b26682164bd6aa2.ctex"]
+source_file="res://ui/overlay/dpad/horizontal.png"
+dest_files=["res://.godot/imported/horizontal.png-0d24eb3040e7ac3c8226e4afa2538cb4.ctex"]
 
 [params]
 

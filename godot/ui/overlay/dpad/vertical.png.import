@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://duyo0n7lw5g5k"
-path="res://.godot/imported/Vertical.png-232cbc9410690299615649a28ac650d9.ctex"
+path="res://.godot/imported/vertical.png-2a85fcd3088848db40ef33ba2534966e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/dpad/Vertical.png"
-dest_files=["res://.godot/imported/Vertical.png-232cbc9410690299615649a28ac650d9.ctex"]
+source_file="res://ui/overlay/dpad/vertical.png"
+dest_files=["res://.godot/imported/vertical.png-2a85fcd3088848db40ef33ba2534966e.ctex"]
 
 [params]
 

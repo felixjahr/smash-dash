@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bvbatgtjk5jkt"]
 
 [ext_resource type="Script" uid="uid://8dpsjq06au1" path="res://ui/overlay/overlay.gd" id="1_1xumj"]
-[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="1_yc8ku"]
-[ext_resource type="PackedScene" uid="uid://chc7meg2bqff6" path="res://ui/dpad/dpad.tscn" id="3_ai64t"]
-[ext_resource type="PackedScene" uid="uid://cu6128d5tdhyp" path="res://ui/ability_button/ability_button.tscn" id="4_nxmck"]
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://ui/overlay/virtual_joystick/virtual_joystick_scene.tscn" id="1_yc8ku"]
+[ext_resource type="PackedScene" uid="uid://chc7meg2bqff6" path="res://ui/overlay/dpad/dpad.tscn" id="3_ai64t"]
+[ext_resource type="PackedScene" uid="uid://cu6128d5tdhyp" path="res://ui/overlay/ability_button/ability_button.tscn" id="4_nxmck"]
 
 [node name="Overlay" type="Control" unique_id=849933501]
 layout_mode = 3
@@ -32,9 +32,8 @@ joystick_mode = 1
 
 [node name="Dpad" parent="." unique_id=489050156 instance=ExtResource("3_ai64t")]
 layout_mode = 1
-offset_left = -875.0
-offset_top = -59.0
-offset_right = -25.0
+offset_top = 100.0
+offset_right = -224.0
 offset_bottom = 541.0
 
 [node name="AbilityButton" parent="." unique_id=287344035 instance=ExtResource("4_nxmck")]

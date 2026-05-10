@@ -135,7 +135,7 @@ func _update_burst_time(delta: float) -> void:
 		_fire_shot()
 
 
-func _apply_horizontal_movement(delta: float, direction: float) -> void:
+func _apply_horizontal_movement(delta: float, direction: int) -> void:
 	if direction != 0:
 		var speed_multiplier := Data.ARMOUR[armour_id].speed_multiplier
 		velocity.x = move_toward(velocity.x, direction * SPEED * speed_multiplier, ACCELERATION * delta)
@@ -224,10 +224,10 @@ func _ability_double_jump() -> void:
 	velocity.y = JUMP_FORCE * armour_jump_multiplier * dash_jump_multiplier
 
 
-func _ability_dash(direction: float) -> void:
+func _ability_dash(direction: int) -> void:
 	var dash_direction: int
 	if direction != 0:
-		dash_direction = signf(direction)
+		dash_direction = direction
 	else:
 		dash_direction = facing
 	var distance: int = Data.ABILITY[ability_id].distance

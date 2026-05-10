@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://didedgndf5slu"
-path="res://.godot/imported/dash_grey.png-3c277653a474dc59cfe02327e006f75d.ctex"
+uid="uid://cb6ahppbp1bfv"
+path="res://.godot/imported/dash_color.png-8356d65c8d2245caff89abc23cc4cda3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/ability_button/dash_grey.png"
-dest_files=["res://.godot/imported/dash_grey.png-3c277653a474dc59cfe02327e006f75d.ctex"]
+source_file="res://ui/overlay/ability_button/dash_color.png"
+dest_files=["res://.godot/imported/dash_color.png-8356d65c8d2245caff89abc23cc4cda3.ctex"]
 
 [params]
 

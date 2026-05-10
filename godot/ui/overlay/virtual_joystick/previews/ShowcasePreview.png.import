@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cb6ahppbp1bfv"
-path="res://.godot/imported/dash_color.png-41203f5e62d7a647756f1fa51b76d773.ctex"
+uid="uid://b6bwqi7hgmu3c"
+path="res://.godot/imported/ShowcasePreview.png-4b07c1f36c527722a1d5af3cc2e35aa9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/ability_button/dash_color.png"
-dest_files=["res://.godot/imported/dash_color.png-41203f5e62d7a647756f1fa51b76d773.ctex"]
+source_file="res://ui/overlay/virtual_joystick/previews/ShowcasePreview.png"
+dest_files=["res://.godot/imported/ShowcasePreview.png-4b07c1f36c527722a1d5af3cc2e35aa9.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chr5sch058xn7"
-path="res://.godot/imported/CoverPreview.svg-7c17dc7ed6007b5f94a5e30c30227a42.ctex"
+uid="uid://moc5gbg1mll4"
+path="res://.godot/imported/joystick_icon.png-843b173df9c806f2b0fb4cc6f5c8de14.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/virtual_joystick/previews/CoverPreview.svg"
-dest_files=["res://.godot/imported/CoverPreview.svg-7c17dc7ed6007b5f94a5e30c30227a42.ctex"]
+source_file="res://ui/overlay/virtual_joystick/previews/joystick_icon.png"
+dest_files=["res://.godot/imported/joystick_icon.png-843b173df9c806f2b0fb4cc6f5c8de14.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

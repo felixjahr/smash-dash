@@ -44,7 +44,7 @@ static func from_packet(packet: PackedByteArray) -> Snapshot:
 
 
 static func _write_player(peer: StreamPeerBuffer, snapshot: PlayerSnapshot) -> void:
-	peer.put_u32(posmod(snapshot.player_id.hash(), 4294967296))
+	_write_string(peer, snapshot.player_id)
 	_write_quantized_vector2(peer, snapshot.position, POSITION_SCALE)
 	_write_quantized_vector2(peer, snapshot.velocity, VELOCITY_SCALE)
 	peer.put_u16(clampi(snapshot.health, 0, 65535))
@@ -75,7 +75,7 @@ static func _write_player(peer: StreamPeerBuffer, snapshot: PlayerSnapshot) -> v
 
 static func _read_player(peer: StreamPeerBuffer) -> PlayerSnapshot:
 	var snapshot := PlayerSnapshot.new()
-	snapshot.player_id = str(peer.get_u32())
+	snapshot.player_id = _read_string(peer)
 	snapshot.position = _read_quantized_vector2(peer, POSITION_SCALE)
 	snapshot.velocity = _read_quantized_vector2(peer, VELOCITY_SCALE)
 	snapshot.health = int(peer.get_u16())
@@ -118,6 +118,20 @@ static func _read_bullet(peer: StreamPeerBuffer) -> BulletSnapshot:
 	snapshot.speed = int(peer.get_u16())
 	snapshot.direction = _read_quantized_unit_vector2(peer)
 	return snapshot
+
+
+static func _write_string(peer: StreamPeerBuffer, value: String) -> void:
+	var bytes := value.to_utf8_buffer()
+	peer.put_u8(clampi(bytes.size(), 0, 255))
+	peer.put_data(bytes.slice(0, 255))
+
+
+static func _read_string(peer: StreamPeerBuffer) -> String:
+	var length := int(peer.get_u8())
+	var result := peer.get_data(length)
+	if result[0] != OK:
+		return ""
+	return result[1].get_string_from_utf8()
 
 
 static func _write_quantized_vector2(peer: StreamPeerBuffer, value: Vector2, scale: float) -> void:

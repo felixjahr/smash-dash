@@ -5,7 +5,7 @@ var output_1 := Vector2.ZERO
 
 var current_weapon := 0
 var weapon_aim_directions: Array[Vector2] = [Vector2.ZERO, Vector2.ZERO]
-var direction := 0.0
+var direction := 0
 var jumping := false
 var ability := false
 
@@ -15,6 +15,7 @@ var current_ability_id = ""
 @onready var aim_joystick_1 := $AimJoystick1
 @onready var dpad := $Dpad
 @onready var ability_button := $AbilityButton
+@onready var logic: Node = get_parent().get_parent().game.logic
 
 
 func poll() -> void:
@@ -23,9 +24,19 @@ func poll() -> void:
 	elif aim_joystick_1.output != weapon_aim_directions[1]:
 		current_weapon = 1
 	weapon_aim_directions = [aim_joystick_0.output, aim_joystick_1.output]
-	
-	direction = dpad.output.x
-	jumping = dpad.output.y < 0.0
+	if aim_joystick_0.output == Vector2.ZERO and aim_joystick_1.output == Vector2.ZERO and not dpad.is_active:
+		var local_player: Node2D = logic.players.get(logic.local_player_id)
+		if local_player:
+			var pivot: Vector2 = local_player.right_shoulder.global_position
+			var weapon_aim_direction := pivot.direction_to(local_player.get_global_mouse_position())
+			if Input.is_action_pressed("aim_primary"):
+				current_weapon = 0
+				weapon_aim_directions = [weapon_aim_direction, Vector2.ZERO]
+			elif Input.is_action_pressed("aim_secondary"):
+				current_weapon = 1
+				weapon_aim_directions = [Vector2.ZERO, weapon_aim_direction]
+	direction = int(signf(Input.get_axis("move_left", "move_right") + dpad.output.x))
+	jumping = Input.is_action_pressed("jump") or dpad.output.y < 0.0
 	ability = Input.is_action_just_pressed("ability") or ability_button.is_pressed()
 
 

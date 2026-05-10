@@ -23,7 +23,7 @@ var inputs: Array[PlayerInput]
 
 var player_names: Dictionary = {}
 
-var local_player_snapshot_id := ""
+var local_player_id := ""
 
 var overlay: Control
 var map: Node2D
@@ -36,7 +36,7 @@ var map: Node2D
 
 
 func _ready() -> void:
-	local_player_snapshot_id = str(posmod(auth_net.player_id.hash(), 4294967296))
+	local_player_id = auth_net.player_id
 	snapshots.resize(SNAPSHOT_BUFFER_SIZE)
 	inputs.resize(INPUT_BUFFER_SIZE)
 	stop()
@@ -99,7 +99,7 @@ func _render_interpolated_snapshot() -> void:
 	if render_snapshot == null:
 		return
 	for player_snapshot in render_snapshot.players:
-		if player_snapshot.player_id == local_player_snapshot_id:
+		if player_snapshot.player_id == local_player_id:
 			overlay.apply_snapshot(player_snapshot)
 			break
 	_apply_entity_snapshots(
@@ -109,7 +109,7 @@ func _render_interpolated_snapshot() -> void:
 		func(player_id):
 			var player = PlayerClient.instantiate()
 			player.player_name = str(player_names.get(player_id, player_id))
-			if player_id == local_player_snapshot_id:
+			if player_id == local_player_id:
 				player.local = true
 				player.camera = map.camera
 			player_container.add_child(player)
