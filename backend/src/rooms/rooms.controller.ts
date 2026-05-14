@@ -25,6 +25,13 @@ export class RoomsController {
     this.roomsService.joinRoom(code, req.playerId);
   }
 
+  @Post('leave/:code')
+  @HttpCode(204)
+  @UseGuards(AuthGuard)
+  leaveRoom(@Param('code') code: string, @Req() req: AuthenticatedRequest) {
+    this.roomsService.leaveRoom(code, req.playerId);
+  }
+
   @Post('start/:code')
   @HttpCode(204)
   @UseGuards(ServerCallbackGuard)

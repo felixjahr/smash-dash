@@ -84,6 +84,29 @@ export class RoomsService {
     return { ok: true };
   }
 
+  leaveRoom(code: string, playerId: string): { ok: true } {
+    const room = this.rooms.get(code);
+    if (!room) {
+      return { ok: true };
+    }
+
+    if (!room.members.includes(playerId)) {
+      throw new NotFoundException('Room not found');
+    }
+
+    if (room.status === 'waiting') {
+      this.failRoomForRemainingPlayers(room, playerId);
+      this.rooms.delete(room.code);
+      return { ok: true };
+    }
+
+    if (room.status === 'starting' || room.status === 'ready') {
+      this.failRoom(room, true);
+    }
+
+    return { ok: true };
+  }
+
   startRoom(code: string): { ok: true } {
     const room = this.rooms.get(code);
     if (!room) {
@@ -154,11 +177,7 @@ export class RoomsService {
     for (const room of this.rooms.values()) {
       if (!room.members.includes(playerId)) continue;
       if (room.status === 'waiting') {
-        for (const memberId of room.members) {
-          if (memberId !== playerId) {
-            this.roomsGateway.sendRoomFailed(memberId);
-          }
-        }
+        this.failRoomForRemainingPlayers(room, playerId);
         this.rooms.delete(room.code);
         continue;
       }
@@ -281,6 +300,14 @@ export class RoomsService {
       spawn('docker', ['stop', room.code], { stdio: 'ignore' });
     }
     this.rooms.delete(room.code);
+  }
+
+  private failRoomForRemainingPlayers(room: Room, leavingPlayerId: string): void {
+    for (const memberId of room.members) {
+      if (memberId !== leavingPlayerId) {
+        this.roomsGateway.sendRoomFailed(memberId);
+      }
+    }
   }
 
   private allocatePort(): number {

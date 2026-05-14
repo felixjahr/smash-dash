@@ -42,6 +42,7 @@ var _connect_generation := 0
 var _reconnect_generation := 0
 var _state_sync_received := false
 var _game_reconnect_enabled := false
+var _created_room_code := ""
 
 @onready var auth_net := $Net/AuthNet
 @onready var backend_net := $Net/BackendNet
@@ -53,6 +54,7 @@ func _ready() -> void:
 	auth_net.connect("authed", _on_net_authed)
 	auth_net.connect("auth_failed", _on_net_auth_failed)
 	auth_net.connect("account_required", _on_net_account_required)
+	auth_net.connect("server_unavailable", _on_net_server_unavailable)
 	backend_net.connect("room_code_received", _on_net_room_code_received)
 	backend_net.connect("room_start_received", _on_net_room_start_received)
 	backend_net.connect("room_failed_received", _on_net_room_failed_received)
@@ -96,10 +98,12 @@ func _enter_state(data = null) -> void:
 		var new_create := Create.instantiate()
 		ui.add_child(new_create)
 		new_create.code.text = data
+		new_create.back_button.connect("pressed", _on_create_back_pressed)
 	elif state == ClientState.JOIN:
 		var new_join := Join.instantiate()
 		ui.add_child(new_join)
 		new_join.submit_button.connect("pressed", _on_join_submit_pressed)
+		new_join.back_button.connect("pressed", _on_join_back_pressed)
 	elif state == ClientState.JOINING:
 		var new_loading := Loading.instantiate()
 		ui.add_child(new_loading)
@@ -165,6 +169,11 @@ func _on_net_account_required() -> void:
 	_change_state(ClientState.ACCOUNT_CREATION)
 
 
+func _on_net_server_unavailable() -> void:
+	if state != ClientState.LOADING:
+		_change_state(ClientState.LOADING)
+
+
 func _on_account_creation_confirm_pressed() -> void:
 	var account_creation = ui.get_child(0)
 	account_creation.confirm_button.disabled = true
@@ -182,11 +191,24 @@ func _on_options_back_pressed() -> void:
 	_change_state(ClientState.HOME)
 
 
+func _on_create_back_pressed() -> void:
+	var room_code := _created_room_code
+	_created_room_code = ""
+	backend_net.leave_room(room_code)
+	_change_state(ClientState.HOME)
+
+
+func _on_join_back_pressed() -> void:
+	_change_state(ClientState.HOME)
+
+
 func _on_home_create_pressed() -> void:
+	_created_room_code = ""
 	_change_state(ClientState.CREATING)
 
 
 func _on_net_room_code_received(code: String) -> void:
+	_created_room_code = code
 	_change_state(ClientState.CREATE, code)
 
 
@@ -201,6 +223,7 @@ func _on_join_submit_pressed() -> void:
 func _on_net_room_start_received(port: int, ip: String, game_token: String, player_names: Dictionary) -> void:
 	if state != ClientState.CREATE and state != ClientState.JOINING:
 		return
+	_created_room_code = ""
 	if port <= 0 or ip.is_empty() or game_token.is_empty():
 		push_error("Received invalid game server endpoint")
 		_change_state(ClientState.HOME)
@@ -217,6 +240,7 @@ func _on_net_room_start_received(port: int, ip: String, game_token: String, play
 
 func _on_net_room_failed_received() -> void:
 	if state == ClientState.CREATING or state == ClientState.CREATE or state == ClientState.JOINING or state == ClientState.CONNECTING:
+		_created_room_code = ""
 		_disconnect_game_server_silently()
 		_game_connection_data = {}
 		_game_reconnect_enabled = false

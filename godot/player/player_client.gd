@@ -147,7 +147,6 @@ func _setup_weapon_sprite(index: int, weapon: Weapon) -> void:
 	var new_weapon_sprite = Sprite2D.new()
 	new_weapon_sprite.texture = weapon.sprite_texture
 	new_weapon_sprite.offset = weapon.sprite_offset
-	new_weapon_sprite.use_parent_material = true
 	weapon_pivot.add_child(new_weapon_sprite)
 	weapon_sprites[index] = new_weapon_sprite
 

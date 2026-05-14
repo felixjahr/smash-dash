@@ -52,3 +52,16 @@ custom_minimum_size = Vector2(420, 120)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Submit"
+
+[node name="Back" type="Button" parent="." unique_id=476137233]
+custom_minimum_size = Vector2(300, 120)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+offset_top = -176.0
+offset_right = 364.0
+offset_bottom = -56.0
+grow_vertical = 0
+text = "BACK"

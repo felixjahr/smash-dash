@@ -35,40 +35,55 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_constants/separation = 64
 
-[node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1849532409]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer" unique_id=1613416190]
+layout_mode = 2
+theme_override_constants/separation = -16
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/VBoxContainer" unique_id=1849532409]
 layout_mode = 2
 theme_override_font_sizes/font_size = 128
-text = "TITEL"
+text = "SMASH DASH"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer" unique_id=1980992542]
+[node name="Name" type="Label" parent="CenterContainer/VBoxContainer/VBoxContainer" unique_id=279163655]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="CenterContainer/VBoxContainer" unique_id=96653097]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/CenterContainer" unique_id=1980992542]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="Create" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer" unique_id=993179411]
+[node name="Create" type="Button" parent="CenterContainer/VBoxContainer/CenterContainer/VBoxContainer" unique_id=993179411]
 custom_minimum_size = Vector2(420, 120)
 layout_mode = 2
 text = "CREATE"
 
-[node name="Join" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer" unique_id=692960819]
+[node name="Join" type="Button" parent="CenterContainer/VBoxContainer/CenterContainer/VBoxContainer" unique_id=692960819]
 custom_minimum_size = Vector2(420, 120)
 layout_mode = 2
 text = "JOIN"
 
-[node name="Options" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer" unique_id=1680886528]
+[node name="Options" type="Button" parent="CenterContainer/VBoxContainer/CenterContainer/VBoxContainer" unique_id=1680886528]
 visible = false
 custom_minimum_size = Vector2(420, 120)
 layout_mode = 2
 text = "OPTIONS"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=668373789]
-layout_mode = 0
-theme_override_constants/separation = 32
-
-[node name="Label" type="Label" parent="HBoxContainer" unique_id=1062867168]
-layout_mode = 2
-text = "NAME:"
-
-[node name="Name" type="Label" parent="HBoxContainer" unique_id=279163655]
-layout_mode = 2
-text = "Loadinf..."
+[node name="Version" type="Label" parent="." unique_id=1687998808]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_top = -90.0
+offset_right = -32.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 48
+horizontal_alignment = 2

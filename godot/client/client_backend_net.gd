@@ -85,6 +85,21 @@ func join_room(code: String) -> void:
 		emit_signal("room_failed_received")
 
 
+func leave_room(code: String) -> void:
+	if code.is_empty():
+		return
+	var headers = await auth_net.get_auth_header()
+	var response: Dictionary = await HttpUtils.request(
+		self,
+		HTTP_BASE + "/rooms/leave/" + code,
+		HTTPClient.METHOD_POST,
+		null,
+		headers,
+	)
+	if not response.get("ok", false):
+		push_error("Failed to leave room")
+
+
 func _connect_ws() -> bool:
 	if socket_authed and socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		return true

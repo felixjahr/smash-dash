@@ -6,7 +6,7 @@ set -e
 # =========================
 
 PROJECT_ID="stickman-draft-game-489210"
-VM_NAME="stickman-draft-game"
+VM_NAME="stickman-server"
 VM_ZONE="europe-west3-c"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"

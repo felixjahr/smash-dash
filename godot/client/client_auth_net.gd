@@ -3,6 +3,7 @@ extends Node
 signal authed
 signal auth_failed
 signal account_required
+signal server_unavailable
 
 const HTTP_BASE := "http://35.246.204.169:8000"
 const ACCESS_TOKEN_LIFETIME := 900
@@ -13,6 +14,7 @@ var player_name := ""
 var access_token := ""
 var refresh_token := ""
 var access_token_expires_at := 0.0
+var _last_refresh_transport_failed := false
 
 
 func authenticate() -> void:
@@ -21,6 +23,9 @@ func authenticate() -> void:
 		emit_signal("account_required")
 		return
 	if not (await _refresh_session()):
+		if _last_refresh_transport_failed:
+			emit_signal("server_unavailable")
+			return
 		refresh_token = ""
 		emit_signal("account_required")
 		return
@@ -34,6 +39,9 @@ func get_valid_access_token() -> String:
 	var now := Time.get_unix_time_from_system()
 	if now >= access_token_expires_at:
 		if not (await _refresh_session()):
+			if _last_refresh_transport_failed:
+				emit_signal("server_unavailable")
+				return ""
 			_clear_session()
 			emit_signal("account_required")
 	return access_token
@@ -71,6 +79,7 @@ func create_account(name: String) -> bool:
 
 
 func _refresh_session() -> bool:
+	_last_refresh_transport_failed = false
 	var response: Dictionary = await HttpUtils.request(
 		self,
 		HTTP_BASE + "/auth/refresh",
@@ -80,6 +89,7 @@ func _refresh_session() -> bool:
 		}
 	)
 	if not response.get("ok", false) or response.get("data") == null:
+		_last_refresh_transport_failed = int(response.get("result", HTTPRequest.RESULT_SUCCESS)) != HTTPRequest.RESULT_SUCCESS
 		push_error("Failed to refresh session")
 		return false
 	var data: Dictionary = response["data"]

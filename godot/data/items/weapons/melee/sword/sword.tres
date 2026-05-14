@@ -6,6 +6,7 @@
 
 [resource]
 script = ExtResource("2_fjm7s")
+damage = 10
 knockback = 1000
 hitbox_size = Vector2(200, 120)
 moonwalk = true

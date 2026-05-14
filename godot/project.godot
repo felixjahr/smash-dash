@@ -10,7 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Stickman Draft Game"
+config/name="Smash Dash"
+config/version="1.0.0"
 run/main_scene="uid://cnxwscj2y2tnj"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
