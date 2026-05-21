@@ -3,6 +3,7 @@ extends Item
 
 @export var self_hit: bool
 @export var moonwalk: bool
+@export var two_handed: bool
 @export var attack_duration: float
 @export var max_ammunition: int
 @export var reload_time: float

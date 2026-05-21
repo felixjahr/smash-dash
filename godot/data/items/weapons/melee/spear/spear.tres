@@ -2,7 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://c8c1j8qehqv13" path="res://data/items/weapons/melee/spear/spear_card.png" id="1_netgu"]
 [ext_resource type="Script" uid="uid://dma0ut8h4lfxi" path="res://data/items/weapons/melee/melee.gd" id="2_k0rn0"]
-[ext_resource type="Texture2D" uid="uid://efee1sm5v48p" path="res://data/items/weapons/melee/spear/spear.png" id="3_ha1y1"]
 
 [resource]
 script = ExtResource("2_k0rn0")
@@ -10,12 +9,9 @@ damage = 10
 knockback = 2000
 hitbox_size = Vector2(250, 120)
 moonwalk = true
+two_handed = true
 attack_duration = 0.3
-aim_animation = "aim_spear"
-attack_animation = "attack_spear"
 max_ammunition = 1
 reload_time = 1.0
-sprite_texture = ExtResource("3_ha1y1")
-sprite_offset = Vector2(0, -40)
 card_texture = ExtResource("1_netgu")
 metadata/_custom_type_script = "uid://dma0ut8h4lfxi"

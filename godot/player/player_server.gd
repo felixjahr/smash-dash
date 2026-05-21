@@ -5,12 +5,15 @@ const ACCELERATION := 1500.0
 const FRICTION := 1200.0
 const GRAVITY := 1500.0
 const JUMP_FORCE := -1200.0
+const JUMPING_GRACE := 0.3
 
 var player_id: String
 var health := 100
 var hearts := 3
 var facing := 1
 var last_hit := -1
+
+var jumping_grace_time_left := JUMPING_GRACE
 
 var current_weapon := 0
 var attacking := false
@@ -170,11 +173,15 @@ func _apply_horizontal_movement(delta: float, direction: int) -> void:
 
 
 func _apply_vertical_movement(delta: float, jumping: bool) -> void:
-	if not is_on_floor():
+	if is_on_floor():
+		jumping_grace_time_left = JUMPING_GRACE
+	else:
+		jumping_grace_time_left -= delta
 		velocity.y += GRAVITY * delta
-	elif jumping:
+	if jumping and (is_on_floor() or jumping_grace_time_left > 0.0):
 		var jump_multiplier := Data.ARMOUR[armour_id].jump_multiplier
 		velocity.y = JUMP_FORCE * jump_multiplier
+		jumping_grace_time_left = 0.0
 
 
 func _start_melee_attack() -> void:

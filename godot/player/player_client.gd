@@ -162,13 +162,18 @@ func _update_animation(snapshot: PlayerSnapshot) -> void:
 	else:
 		animation_name += "idle_"
 	
-	var aim_direction := snapshot.aim_direction
-	if not snapshot.attacking and aim_direction != Vector2.ZERO:
-		right_shoulder.rotation = 0
-		left_shoulder.rotation = 0
+	right_shoulder.rotation = 0
+	left_shoulder.rotation = 0
+	var weapon: Weapon
+	if snapshot.current_weapon == 0:
+		weapon = Data.MELEE[snapshot.melee_id]
 	else:
+		weapon = Data.RANGED[snapshot.ranged_id]
+	var aim_direction := snapshot.aim_direction
+	if snapshot.attacking or aim_direction != Vector2.ZERO:
 		right_shoulder.look_at(right_shoulder.global_position + aim_direction)
-		left_shoulder.look_at(left_shoulder.global_position + aim_direction)
+		if weapon.two_handed:
+			left_shoulder.look_at(left_shoulder.global_position + aim_direction)
 	
 	if snapshot.attacking:
 		animation_name += "attack_"
