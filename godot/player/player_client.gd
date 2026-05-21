@@ -22,20 +22,20 @@ var camera: Camera2D
 @onready var ranged_ammunition_bar := $Status/RangedAmmunitionBar
 @onready var sprite := $Sprite
 @onready var animation_player := $AnimationPlayer
-@onready var right_shoulder := $Sprite/RightShoulder
-@onready var weapon_pivot := $Sprite/RightShoulder/RightLowerArm/WeaponPivot
+@onready var right_shoulder := $Sprite/LowerTorso/UpperTorso/RightShoulder
+@onready var weapon_pivot := $Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/WeaponPivot
 @onready var armour_sprites := [
-	$Sprite/LeftShoulder/LeftUpperArm/ArmourLeftUpperArm,
-	$Sprite/LeftShoulder/LeftLowerArm/ArmourLeftLowerArm,
-	$Sprite/LeftLowerLeg/ArmourLeftLowerLeg,
-	$Sprite/LeftUpperLeg/ArmourLeftUpperLeg,
+	$Sprite/LowerTorso/UpperTorso/LeftShoulder/LeftUpperArm/ArmourLeftUpperArm,
+	$Sprite/LowerTorso/UpperTorso/LeftShoulder/LeftUpperArm/LeftLowerArm/ArmourLeftLowerArm,
+	$Sprite/LowerTorso/LeftUpperLeg/ArmourLeftUpperLeg,
+	$Sprite/LowerTorso/LeftUpperLeg/LeftLowerLeg/ArmourLeftLowerLeg,
+	$Sprite/LowerTorso/UpperTorso/ArmourUpperTorso,
 	$Sprite/LowerTorso/ArmourLowerTorso,
-	$Sprite/RightUpperLeg/ArmourRightUpperLeg,
-	$Sprite/RightLowerLeg/ArmourRightLowerLeg,
-	$Sprite/UpperTorso/ArmourUpperTorso,
-	$Sprite/Head/ArmourHead,
-	$Sprite/RightShoulder/RightUpperArm/ArmourRightUpperArm,
-	$Sprite/RightShoulder/RightLowerArm/ArmourRightLowerArm,
+	$Sprite/LowerTorso/RightUpperLeg/ArmourRightUpperLeg,
+	$Sprite/LowerTorso/RightUpperLeg/RightLowerLeg/ArmourRightLowerLeg,
+	$Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/ArmourRightUpperArm,
+	$Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/ArmourRightLowerArm,
+	$Sprite/LowerTorso/UpperTorso/Head/ArmourHead,
 ]
 
 
@@ -148,6 +148,12 @@ func _update_facing(snapshot: PlayerSnapshot) -> void:
 
 func _update_animation(snapshot: PlayerSnapshot) -> void:
 	var animation_name := ""
+	
+	if snapshot.current_weapon == 0:
+		animation_name += snapshot.melee_id
+	else:
+		animation_name += snapshot.ranged_id
+	animation_name += "/"
 	
 	if not snapshot.is_on_floor:
 		animation_name += "jump_"
