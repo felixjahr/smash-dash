@@ -35,8 +35,8 @@ var local_player_id := ""
 var overlay: Control
 var map: Node2D
 
-@onready var auth_net := $"../../Net/AuthNet"
-@onready var game_net := $"../../Net/GameNet"
+@onready var auth_net := get_node("/root/Controller/Net/AuthNet")
+@onready var game_net := get_node("/root/Controller/Net/GameNet")
 @onready var map_container := $MapContainer
 @onready var player_container := $PlayerContainer
 @onready var bullet_container := $BulletContainer

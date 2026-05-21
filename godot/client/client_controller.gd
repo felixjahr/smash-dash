@@ -143,7 +143,7 @@ func _enter_state(data = null) -> void:
 		var new_game := GAMES[data["game_id"]].instantiate()
 		new_game.map_id = data["map_id"]
 		new_game.player_names = data["player_names"]
-		add_child(new_game)
+		$AspectRatioContainer/SubViewportContainer/Game.add_child(new_game)
 		new_game.connect("ended", _on_game_ended)
 		if new_game.has_signal("match_over"):
 			new_game.connect("match_over", _on_game_match_over)

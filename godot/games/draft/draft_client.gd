@@ -21,8 +21,8 @@ var player_names: Dictionary = {}
 
 var draft_screen: Control
 
-@onready var ui := $"../UI"
-@onready var game_net := $"../Net/GameNet"
+@onready var ui := get_node("/root/Controller/UI")
+@onready var game_net := get_node("/root/Controller/Net/GameNet")
 @onready var logic := $Logic
 
 
