@@ -1,7 +1,6 @@
 extends Node2D
 
 const HEART := preload("res://player/heart.tscn")
-const WEAPON_AMMUNITION_BAR := preload("res://player/weapon_ammunition_bar.tscn")
 const WEAPON_AMMUNITION_BAR_SEGMENT := preload("res://player/weapon_ammunition_bar_segment.tscn")
 
 var player_name: String
@@ -10,17 +9,17 @@ var local := false
 var last_hit := -1
 var last_ability := -1
 var armour_id: String
-var weapon_ids: Array[String] = []
+var melee_id: String
+var ranged_id: String
 
 var camera: Camera2D
-var weapon_sprites: Array[Sprite2D] = []
-var weapon_ammunition_bars: Array[HBoxContainer] = []
 
 @onready var status := $Status
 @onready var name_label := $Status/NameLabel
 @onready var heart_container := $Status/HeartContainer
 @onready var health_bar := $Status/HealthBar
-@onready var weapon_ammunition_bar_container := $Status/WeaponAmmunitionBarContainer
+@onready var melee_ammunition_bar := $Status/MeleeAmmunitionBar
+@onready var ranged_ammunition_bar := $Status/RangedAmmunitionBar
 @onready var sprite := $Sprite
 @onready var animation_player := $AnimationPlayer
 @onready var right_shoulder := $Sprite/RightShoulder
@@ -54,7 +53,6 @@ func apply_snapshot(snapshot: PlayerSnapshot) -> void:
 	_update_ability_state(snapshot)
 	_update_armour(snapshot)
 	_update_weapons(snapshot)
-	_update_weapon_visiblity(snapshot)
 	_update_ammunition_bars(snapshot)
 	_update_facing(snapshot)
 	_update_animation(snapshot)
@@ -115,53 +113,33 @@ func _update_armour(snapshot: PlayerSnapshot) -> void:
 
 
 func _update_weapons(snapshot: PlayerSnapshot) -> void:
-	if snapshot.weapon_ids == weapon_ids:
-		return
-	
-	var target_count := snapshot.weapon_ids.size()
-	while weapon_ids.size() > target_count:
-		weapon_sprites.pop_back().queue_free()
-		weapon_ammunition_bars.pop_back().queue_free()
-		weapon_ids.pop_back()
-	if weapon_ids.size() < target_count:
-		weapon_sprites.resize(target_count)
-		weapon_ammunition_bars.resize(target_count)
-		weapon_ids.resize(target_count)
-	
-	for i in snapshot.weapon_ids.size():
-		var snapshot_weapon_id = snapshot.weapon_ids[i]
-		if snapshot_weapon_id == weapon_ids[i]:
-			continue
-		weapon_ids[i] = snapshot_weapon_id
-		
-		var weapon := Data.WEAPON[snapshot_weapon_id]
-		_setup_ammunition_bar(i, weapon)
+	if snapshot.melee_id != melee_id:
+		melee_id = snapshot.melee_id
+		_setup_ammunition_bar(melee_ammunition_bar, Data.MELEE[melee_id].max_ammunition)
+	if snapshot.ranged_id != ranged_id:
+		ranged_id = snapshot.ranged_id
+		_setup_ammunition_bar(ranged_ammunition_bar, Data.RANGED[ranged_id].max_ammunition)
 
 
-func _setup_ammunition_bar(index: int, weapon: Weapon) -> void:
-	if weapon_ammunition_bars[index]:
-		weapon_ammunition_bars[index].queue_free()
-	var new_weapon_ammunition_bar = WEAPON_AMMUNITION_BAR.instantiate()
-	weapon_ammunition_bar_container.add_child(new_weapon_ammunition_bar)
-	weapon_ammunition_bar_container.move_child(new_weapon_ammunition_bar, index)
-	weapon_ammunition_bars[index] = new_weapon_ammunition_bar
-	for j in weapon.max_ammunition:
+func _setup_ammunition_bar(ammunition_bar: HBoxContainer, max_ammunition: int) -> void:
+	for child in ammunition_bar.get_children():
+		ammunition_bar.remove_child(child)
+		child.queue_free()
+	for j in max_ammunition:
 		var new_weapon_ammunition_bar_segment = WEAPON_AMMUNITION_BAR_SEGMENT.instantiate()
-		weapon_ammunition_bars[index].add_child(new_weapon_ammunition_bar_segment)
-
-
-func _update_weapon_visiblity(snapshot: PlayerSnapshot) -> void:
-	for weapon_sprite in weapon_sprites:
-		weapon_sprite.hide()
-	weapon_sprites[snapshot.current_weapon].show()
+		ammunition_bar.add_child(new_weapon_ammunition_bar_segment)
 
 
 func _update_ammunition_bars(snapshot: PlayerSnapshot) -> void:
-	for i in snapshot.weapon_ammunitions.size():
-		for segment in weapon_ammunition_bars[i].get_children():
-			segment.value = 0
-		for j in snapshot.weapon_ammunitions[i]:
-			weapon_ammunition_bars[i].get_child(j).value = 100
+	_update_ammunition_bar(melee_ammunition_bar, snapshot.melee_ammunition)
+	_update_ammunition_bar(ranged_ammunition_bar, snapshot.ranged_ammunition)
+
+
+func _update_ammunition_bar(ammunition_bar: HBoxContainer, ammunition: int) -> void:
+	for segment in ammunition_bar.get_children():
+		segment.value = 0
+	for j in mini(ammunition, ammunition_bar.get_child_count()):
+		ammunition_bar.get_child(j).value = 100
 
 
 func _update_facing(snapshot: PlayerSnapshot) -> void:
@@ -172,18 +150,23 @@ func _update_animation(snapshot: PlayerSnapshot) -> void:
 	var animation_name := ""
 	
 	if not snapshot.is_on_floor:
-		animation_name += "jump"
+		animation_name += "jump_"
 	elif snapshot.velocity.x != 0:
-		animation_name += "run"
+		animation_name += "run_"
 	else:
-		animation_name += "idle"
+		animation_name += "idle_"
 	
-	var aim_direction := snapshot.weapon_aim_directions[snapshot.current_weapon]
+	var aim_direction := snapshot.aim_direction
 	right_shoulder.rotation = 0
 	if snapshot.attacking:
-		animation_name += "attack"
+		animation_name += "attack_"
 	elif aim_direction != Vector2.ZERO:
-		animation_name += "aim"
+		animation_name += "aim_"
 		right_shoulder.look_at(right_shoulder.global_position + aim_direction)
 	
-	animation_name += snapshot.weapon_ids[snapshot.current_weapon]
+	if snapshot.current_weapon == 0:
+		animation_name += snapshot.melee_id
+	else:
+		animation_name += snapshot.ranged_id
+	
+	animation_player.play(animation_name)

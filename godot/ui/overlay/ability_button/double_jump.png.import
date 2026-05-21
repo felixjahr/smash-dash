@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://didedgndf5slu"
-path="res://.godot/imported/dash_grey.png-24908b9458b4f72043657ab489a39e9c.ctex"
+uid="uid://broyw0bkd27ux"
+path="res://.godot/imported/double_jump.png-22e509ee32933ff20d418dd2db4ea019.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/overlay/ability_button/dash_grey.png"
-dest_files=["res://.godot/imported/dash_grey.png-24908b9458b4f72043657ab489a39e9c.ctex"]
+source_file="res://ui/overlay/ability_button/double_jump.png"
+dest_files=["res://.godot/imported/double_jump.png-22e509ee32933ff20d418dd2db4ea019.ctex"]
 
 [params]
 

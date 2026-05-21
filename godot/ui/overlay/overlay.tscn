@@ -83,6 +83,7 @@ offset_bottom = 620.0
 [node name="Tip" parent="RangedJoystick/Base" index="0" unique_id=1441699964]
 texture = ExtResource("3_d84jb")
 
+[connection signal="pressed" from="AbilityButton" to="." method="_on_ability_button_pressed"]
 [connection signal="pressed" from="JumpButton" to="." method="_on_jump_button_pressed"]
 [connection signal="released" from="MeleeJoystick" to="." method="_on_melee_joystick_released"]
 [connection signal="released" from="RangedJoystick" to="." method="_on_ranged_joystick_released"]

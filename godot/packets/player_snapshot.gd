@@ -5,18 +5,26 @@ var player_id: String
 
 var position: Vector2
 var velocity: Vector2
+var is_on_floor: bool
+
 var health: int
 var hearts: int
 var facing: int
-var is_on_floor: bool
+var last_hit: int
+
 var current_weapon: int
 var attacking: bool
-var ability_active: bool
-var armour_id: String
+var aim_direction: Vector2
+
+var melee_id: String
+var melee_ammunition: int
+
+var ranged_id: String
+var ranged_ammunition: int
+
 var ability_id: String
-var weapon_ids: Array[String]
-var weapon_aim_directions: Array[Vector2]
-var weapon_ammunitions: Array[int]
-var last_hit: int
+var ability_active: bool
 var last_ability: int
 var ability_recharge_time: float
+
+var armour_id: String

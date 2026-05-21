@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bl8gs6rcba5w4"
-path="res://.godot/imported/invisibility_grey.png-cab4cb10013bbaee7a1699324e489562.ctex"
+uid="uid://buoeypai0s2va"
+path="res://.godot/imported/double_jump_disabled.png-5cabd6ad166403af1b878b1962cf66d0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/overlay/ability_button/invisibility_grey.png"
-dest_files=["res://.godot/imported/invisibility_grey.png-cab4cb10013bbaee7a1699324e489562.ctex"]
+source_file="res://ui/overlay/ability_button/double_jump_disabled.png"
+dest_files=["res://.godot/imported/double_jump_disabled.png-5cabd6ad166403af1b878b1962cf66d0.ctex"]
 
 [params]
 

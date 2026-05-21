@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://i6iqgx33rppk"
-path="res://.godot/imported/invisibility_color.png-c2cc6b2c912f634114c35fe2e4fd3bd3.ctex"
+uid="uid://sjt3x7pwstdb"
+path="res://.godot/imported/slam_down_disabled.png-819b3e32306104873ec79173ca174111.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/overlay/ability_button/invisibility_color.png"
-dest_files=["res://.godot/imported/invisibility_color.png-c2cc6b2c912f634114c35fe2e4fd3bd3.ctex"]
+source_file="res://ui/overlay/ability_button/slam_down_disabled.png"
+dest_files=["res://.godot/imported/slam_down_disabled.png-819b3e32306104873ec79173ca174111.ctex"]
 
 [params]
 

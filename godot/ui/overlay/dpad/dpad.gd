@@ -10,11 +10,10 @@ var active_touch_index := -1
 @onready var base := $Base
 @onready var tip := $Base/Tip
 @onready var tip_normal: Texture = tip.texture
-@onready var default_base_position: Vector2 = base.position
 @onready var default_tip_position: Vector2 = tip.position
 
 
-func _input(event: InputEvent) -> void:
+func handle_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			_activate_touch(event.index, event.position)
@@ -28,7 +27,6 @@ func _input(event: InputEvent) -> void:
 func _activate_touch(touch_index: int, touch_position: Vector2) -> void:
 	if active_touch_index != -1 or not get_global_rect().has_point(touch_position):
 		return
-	base.global_position = touch_position - base.size / 2
 	active_touch_index = touch_index
 	tip.texture = tip_pressed
 	_update_output(touch_position)
@@ -55,5 +53,4 @@ func _reset_touch():
 	output = 0.0
 	active_touch_index = -1
 	tip.texture = tip_normal
-	base.position = default_base_position
 	tip.position = default_tip_position

@@ -7,9 +7,11 @@ var ability := false
 var attack_direction := Vector2.ZERO
 var attack_weapon := 0
 
+@onready var jump_button := $JumpButton
+@onready var ability_button := $AbilityButton
+@onready var dpad := $Dpad
 @onready var melee_joystick := $MeleeJoystick
 @onready var ranged_joystick := $RangedJoystick
-@onready var dpad := $Dpad
 @onready var logic: Node = get_parent().get_parent().game.logic
 
 
@@ -21,12 +23,6 @@ func poll() -> PlayerInput:
 			input.current_weapon = 0
 		elif ranged_joystick.is_active:
 			input.aim_direction = ranged_joystick.output
-			input.current_weapon = 1
-		elif Input.is_action_pressed("aim_melee"):
-			input.aim_direction = _get_mouse_aim_direction()
-			input.current_weapon = 0
-		elif Input.is_action_pressed("aim_ranged"):
-			input.aim_direction = _get_mouse_aim_direction()
 			input.current_weapon = 1
 	else:
 		input.aim_direction = attack_direction
@@ -45,31 +41,41 @@ func poll() -> PlayerInput:
 
 
 func apply_snapshot(snapshot: PlayerSnapshot) -> void:
-	pass
-	#if current_ability_id != snapshot.ability_id:
-		#current_ability_id = snapshot.ability_id
-		#ability_button.setup_ability(current_ability_id)
-#
-	#var total_recharge_time = Data.ABILITY[snapshot.ability_id].recharge_time
-	#var recharge_progress := clampf(snapshot.ability_recharge_time / total_recharge_time, 0.0, 1.0)
-	#var percent = (1.0 - recharge_progress) * 100.0
-	#
-	#ability_button.update_cooldown_visuals(percent)
+	if ability_button.ability_id != snapshot.ability_id:
+		ability_button.set_ability(snapshot.ability_id)
+	var total_recharge_time = Data.ABILITY[snapshot.ability_id].recharge_time
+	var recharge_progress := clampf(snapshot.ability_recharge_time / total_recharge_time, 0.0, 1.0)
+	ability_button.set_texture_value((1.0 - recharge_progress) * 100.0)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	jump_button.handle_input(event)
+	if get_viewport().is_input_handled():
+		return
+	ability_button.handle_input(event)
+	if get_viewport().is_input_handled():
+		return
+	dpad.handle_input(event)
+	if get_viewport().is_input_handled():
+		return
+	melee_joystick.handle_input(event)
+	if get_viewport().is_input_handled():
+		return
+	ranged_joystick.handle_input(event)
+	if get_viewport().is_input_handled():
+		return
 	if event.is_action_pressed("jump"):
 		jumping = true
 	elif event.is_action_pressed("ability"):
 		ability = true
-	elif event.is_action_released("aim_melee"):
-		attacking = true
-		attack_direction = _get_mouse_aim_direction()
-		attack_weapon = 0
-	elif event.is_action_released("aim_ranged"):
-		attacking = true
-		attack_direction = _get_mouse_aim_direction()
-		attack_weapon = 1
+
+
+func _on_jump_button_pressed() -> void:
+	jumping = true
+
+
+func _on_ability_button_pressed() -> void:
+	ability = true
 
 
 func _on_melee_joystick_released(direction: Vector2) -> void:
@@ -82,10 +88,6 @@ func _on_ranged_joystick_released(direction: Vector2) -> void:
 	attacking = true
 	attack_direction = direction
 	attack_weapon = 1
-
-
-func _on_jump_button_pressed() -> void:
-	jumping = true
 
 
 func _get_mouse_aim_direction() -> Vector2:

@@ -10,27 +10,31 @@ var player_id: String
 var health := 100
 var hearts := 3
 var facing := 1
-var current_weapon := 0
 var last_hit := -1
 
-var armour_id: String
-var weapon_ids: Array[String]
-var ability_id: String
-
+var current_weapon := 0
 var attacking := false
-var weapon_aim_directions: Array[Vector2] = []
-var weapon_ammunitions: Array[int] = []
-var reload_times_left: Array[float] = []
+var aim_direction := Vector2.ZERO
+
+var melee_id: String
+var melee_ammunition: int
+var melee_reload_time_left := 0.0
+
+var ranged_id: String
+var ranged_ammunition: int
+var ranged_reload_time_left := 0.0
+
 var attack_time_left := 0.0
 var burst_time_left := 0.0
-var burst_weapon: Weapon
-var burst_aim_direction: Vector2
 var burst_bullet_amount: int
 
+var ability_id: String
 var ability_active := false
 var last_ability := -1
 var ability_recharge_time: float
 var ability_time_left := 0.0
+
+var armour_id: String
 
 @onready var logic := get_parent().get_parent()
 @onready var pivot := $Pivot
@@ -40,10 +44,8 @@ var ability_time_left := 0.0
 
 
 func _ready() -> void:
-	for weapon_id in weapon_ids:
-		weapon_ammunitions.append(Data.WEAPON[weapon_id].max_ammunition)
-		weapon_aim_directions.append(Vector2.ZERO)
-		reload_times_left.append(0.0)
+	melee_ammunition = Data.MELEE[melee_id].max_ammunition
+	ranged_ammunition = Data.RANGED[ranged_id].max_ammunition
 	ability_recharge_time = Data.ABILITY[ability_id].recharge_time
 	hitbox_collision_shape.set_deferred("disabled", true)
 
@@ -75,19 +77,21 @@ func tick(delta: float, input: PlayerInput) -> void:
 				_ability_update_invisibility(delta)
 			"slam_down":
 				_ability_update_slam_down(delta)
-
+	
 	if not attacking:
+		aim_direction = input.aim_direction
 		current_weapon = input.current_weapon
-		var weapon := Data.WEAPON[weapon_ids[current_weapon]]
-
-		var previous_aim_direction := weapon_aim_directions[current_weapon]
-		weapon_aim_directions[current_weapon] = input.aim_direction
-		var aim_direction := input.aim_direction
-		
-		if _should_start_attack(aim_direction, previous_aim_direction):
-			_start_attack(weapon, previous_aim_direction)
+		if input.attacking:
+			if aim_direction == Vector2.ZERO:
+				aim_direction = _get_auto_aim_direction()
+			if current_weapon == 0 and melee_ammunition > 0:
+				attacking = true
+				_start_melee_attack()
+			elif current_weapon == 1 and ranged_ammunition > 0:
+				attacking = true
+				_start_ranged_attack()
 		else:
-			_update_facing(weapon, aim_direction)
+			_update_facing()
 	
 	move_and_slide()
 
@@ -110,22 +114,27 @@ func _die() -> void:
 	if hearts <= 0:
 		logic.gameover()
 		return
-	logic.call_deferred("spawn_player", player_id, weapon_ids, armour_id, ability_id, hearts)
+	logic.call_deferred("spawn_player", player_id, melee_id, ranged_id, armour_id, ability_id, hearts)
 	queue_free()
 
 
 func _update_reload_times(delta: float) -> void:
-	for i in reload_times_left.size():
-		if reload_times_left[i] <= 0.0:
-			continue
-		reload_times_left[i] -= delta
-		if reload_times_left[i] <= 0.0:
-			reload_times_left[i] = 0.0
-			var weapon := Data.WEAPON[weapon_ids[i]]
-			if weapon_ammunitions[i] < weapon.max_ammunition:
-				weapon_ammunitions[i] += 1
-				if weapon_ammunitions[i] < weapon.max_ammunition:
-					reload_times_left[i] = weapon.reload_time
+	if melee_reload_time_left > 0.0:
+		melee_reload_time_left -= delta
+		var melee = Data.MELEE[melee_id]
+		if melee_reload_time_left <= 0.0:
+			if melee.max_ammunition > melee_ammunition:
+				melee_ammunition += 1
+				if melee.max_ammunition > melee_ammunition:
+					melee_reload_time_left = melee.reload_time
+	if ranged_reload_time_left > 0.0:
+		ranged_reload_time_left -= delta
+		var ranged = Data.RANGED[ranged_id]
+		if ranged_reload_time_left <= 0.0:
+			if ranged.max_ammunition > ranged_ammunition:
+				ranged_ammunition += 1
+				if ranged.max_ammunition > ranged_ammunition:
+					ranged_reload_time_left = ranged.reload_time
 
 
 func _update_ability_recharge_time(delta: float) -> void:
@@ -168,61 +177,54 @@ func _apply_vertical_movement(delta: float, jumping: bool) -> void:
 		velocity.y = JUMP_FORCE * jump_multiplier
 
 
-func _should_start_attack(aim_direction: Vector2, previous_aim_direction: Vector2) -> bool:
-	return (
-		aim_direction == Vector2.ZERO 
-		and previous_aim_direction.length_squared() > 0.04 
-		and weapon_ammunitions[current_weapon] > 0
-	)
-
-
-func _start_attack(weapon: Weapon, aim_direction: Vector2) -> void:
-	weapon_ammunitions[current_weapon] -= 1
-	if reload_times_left[current_weapon] <= 0.0:
-		reload_times_left[current_weapon] = weapon.reload_time
+func _start_melee_attack() -> void:
+	var melee: Melee = Data.MELEE[melee_id]
+	melee_ammunition -= 1
+	if melee_reload_time_left <= 0.0:
+		melee_reload_time_left = melee.reload_time
 	
-	attacking = true
+	attack_time_left = melee.attack_duration
+	pivot.rotation = aim_direction.angle()
+	hitbox_collision_shape.shape.size = melee.hitbox_size
+	hitbox_collision_shape.position.x = melee.hitbox_size.x / 2
+	hitbox_collision_shape.set_deferred("disabled", false)
+
+
+func _start_ranged_attack() -> void:
+	var ranged: Ranged = Data.RANGED[ranged_id]
+	ranged_ammunition -= 1
+	if ranged_reload_time_left <= 0.0:
+		ranged_reload_time_left = ranged.reload_time
 	
-	if weapon is Ranged:
-		_start_ranged_attack(weapon, aim_direction, weapon.bullet_amount)
-	elif weapon is Melee:
-		_start_melee_attack(weapon, aim_direction)
-
-
-func _start_ranged_attack(weapon: Weapon, aim_direction: Vector2, bullet_amount: int) -> void:
-	attack_time_left = weapon.attack_duration * bullet_amount
-	burst_weapon = weapon
-	burst_aim_direction = aim_direction
-	burst_bullet_amount = bullet_amount
+	attack_time_left = ranged.attack_duration
+	burst_bullet_amount = ranged.bullet_amount
 	_fire_shot()
 
 
 func _fire_shot() -> void:
-	var offset: Vector2 = burst_weapon.bullet_offset
+	var ranged: Ranged = Data.RANGED[ranged_id]
+	var offset: Vector2 = ranged.bullet_offset
 	offset.y *= facing
-	var bullet_position: Vector2 = pivot.global_position + offset.rotated(burst_aim_direction.angle())
+	var bullet_position: Vector2 = pivot.global_position + offset.rotated(aim_direction.angle())
 	logic.spawn_bullet(
 		bullet_position,
-		burst_weapon.bullet_speed,
-		burst_weapon.bullet_damage,
-		burst_weapon.self_hit,
-		burst_aim_direction.normalized(),
+		ranged.bullet_speed,
+		ranged.bullet_damage,
+		ranged.self_hit,
+		aim_direction,
 		player_id,
 	)
 	burst_bullet_amount -= 1
 	if burst_bullet_amount > 0:
-		burst_time_left = burst_weapon.attack_duration
+		burst_time_left = ranged.attack_duration / ranged.bullet_amount
 
 
-func _start_melee_attack(weapon: Weapon, aim_direction: Vector2) -> void:
-	attack_time_left = weapon.attack_duration
-	pivot.rotation = aim_direction.angle()
-	hitbox_collision_shape.shape.size = weapon.hitbox_size
-	hitbox_collision_shape.position.x = weapon.hitbox_size.x / 2
-	hitbox_collision_shape.set_deferred("disabled", false)
-
-
-func _update_facing(weapon: Weapon, aim_direction: Vector2) -> void:
+func _update_facing() -> void:
+	var weapon: Weapon
+	if current_weapon == 0:
+		weapon = Data.MELEE[melee_id]
+	else:
+		weapon = Data.RANGED[ranged_id]
 	if weapon.moonwalk and aim_direction != Vector2.ZERO:
 		if aim_direction.x > 0:
 			facing = 1
@@ -286,7 +288,11 @@ func _ability_update_slam_down(delta) -> void:
 func _on_hitbox_area_entered(area: Area2D) -> void:
 	if not attacking:
 		return
-	var weapon := Data.WEAPON[weapon_ids[current_weapon]]
+	var weapon: Weapon
+	if current_weapon == 0:
+		weapon = Data.MELEE[melee_id]
+	else:
+		weapon = Data.RANGED[ranged_id]
 	if not weapon.self_hit and area.get_parent() == self:
 		return
 	area.get_parent().apply_hit(weapon.damage)
@@ -295,3 +301,17 @@ func _on_hitbox_area_entered(area: Area2D) -> void:
 
 func _on_arena_area_exited(area: Area2D) -> void:
 	_die()
+
+
+func _get_auto_aim_direction() -> Vector2:
+	var auto_aim_direction := Vector2.RIGHT
+	var shortest_distance_squared := INF
+	for player in logic.players.values():
+		if player == self:
+			continue
+		var player_position: Vector2 = player.pivot.global_position
+		var distance: float = player_position.distance_squared_to(pivot.global_position)
+		if distance < shortest_distance_squared:
+			auto_aim_direction = pivot.global_position.direction_to(player_position)
+			shortest_distance_squared = distance
+	return auto_aim_direction

@@ -2,8 +2,10 @@ extends Node
 
 const SIMULATION_TICK_RATE := 30
 const RENDER_TICK_RATE := 60
+const INPUT_BATCH_FREQUENCY := 2
 
 const INPUT_LEAD := 3
+const MAX_RESEND_INPUTS := 3
 const INTERPOLATION_DELAY_TICKS := 3
 
 const CLOCK_SNAP_THRESHOLD_TICKS := 15.0
@@ -16,10 +18,10 @@ const PlayerClient := preload("res://player/player_client.tscn")
 const BulletClient := preload("res://bullet/bullet_client.tscn")
 
 var estimated_server_tick: float
+var tick := 0
+
 var last_snapshot_tick := -1
 var received_first_snapshot := false
-var last_acknowledged_input_tick := -1
-var last_sampled_input_tick := -1
 
 var players: Dictionary[String, Node2D] = {}
 var bullets: Dictionary[String, Node2D] = {}
@@ -51,15 +53,14 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	estimated_server_tick += delta * SIMULATION_TICK_RATE
+	tick += 1
 	
-	var input_tick := int(estimated_server_tick) + INPUT_LEAD
-	if input_tick > last_sampled_input_tick:
+	if tick % INPUT_BATCH_FREQUENCY == 0:
 		var input: PlayerInput = overlay.poll()
-		input.tick = input_tick
-		last_sampled_input_tick = input_tick
+		input.tick = int(estimated_server_tick) + INPUT_LEAD
 
 		inputs[input.tick % INPUT_BUFFER_SIZE] = input
-		game_net.send_inputs(_build_unacknowledged_inputs(input.tick))
+		game_net.send_input_batch(_build_input_batch(input.tick))
 	
 	_render_interpolated_snapshot()
 
@@ -70,12 +71,11 @@ func spawn_map(map_id: String) -> void:
 	map = new_map
 
 
-func _on_net_snapshot_received(snapshot: Snapshot, last_acknowledged_tick: int) -> void:
+func _on_net_snapshot_received(snapshot: Snapshot) -> void:
 	if snapshot.tick < last_snapshot_tick:
 		return
 	last_snapshot_tick = snapshot.tick
 	snapshots[snapshot.tick % SNAPSHOT_BUFFER_SIZE] = snapshot
-	last_acknowledged_input_tick = maxi(last_acknowledged_input_tick, last_acknowledged_tick)
 	
 	if not received_first_snapshot:
 		received_first_snapshot = true
@@ -89,13 +89,15 @@ func _on_net_snapshot_received(snapshot: Snapshot, last_acknowledged_tick: int) 
 		estimated_server_tick += clock_error * CLOCK_CORRECTION_FACTOR
 
 
-func _build_unacknowledged_inputs(newest_input_tick: int) -> Array[PlayerInput]:
-	var unacknowledged_inputs: Array[PlayerInput] = []
-	for tick in range(last_acknowledged_input_tick + 1, newest_input_tick + 1):
+func _build_input_batch(input_tick: int) -> PlayerInputBatch:
+	var player_input_batch := PlayerInputBatch.new()
+
+	for tick in range(input_tick - MAX_RESEND_INPUTS + 1, input_tick + 1):
 		var input := inputs[tick % INPUT_BUFFER_SIZE]
 		if input != null and input.tick == tick:
-			unacknowledged_inputs.append(input)
-	return unacknowledged_inputs
+			player_input_batch.inputs.append(input)
+
+	return player_input_batch
 
 
 func _render_interpolated_snapshot() -> void:
@@ -195,12 +197,14 @@ func _interpolate_player_snapshot(older: PlayerSnapshot, newer: PlayerSnapshot, 
 	snapshot.is_on_floor = newer.is_on_floor
 	snapshot.current_weapon = newer.current_weapon
 	snapshot.attacking = newer.attacking
+	snapshot.aim_direction = newer.aim_direction
 	snapshot.ability_active = newer.ability_active
 	snapshot.armour_id = newer.armour_id
 	snapshot.ability_id = newer.ability_id
-	snapshot.weapon_ids = newer.weapon_ids
-	snapshot.weapon_aim_directions = newer.weapon_aim_directions
-	snapshot.weapon_ammunitions = newer.weapon_ammunitions
+	snapshot.melee_id = newer.melee_id
+	snapshot.melee_ammunition = newer.melee_ammunition
+	snapshot.ranged_id = newer.ranged_id
+	snapshot.ranged_ammunition = newer.ranged_ammunition
 	snapshot.last_hit = newer.last_hit
 	snapshot.last_ability = newer.last_ability
 	snapshot.ability_recharge_time = newer.ability_recharge_time

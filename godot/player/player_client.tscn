@@ -4478,12 +4478,25 @@ step = 1.0
 value = 100.0
 show_percentage = false
 
-[node name="WeaponAmmunitionBarContainer" type="VBoxContainer" parent="Status" unique_id=1039700294]
+[node name="RangedAmmunitionBar" type="HBoxContainer" parent="Status" unique_id=1868968135]
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 0
 offset_left = -64.0
 offset_top = -156.0
 offset_right = 64.0
-offset_bottom = -116.0
+offset_bottom = -140.0
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="MeleeAmmunitionBar" type="HBoxContainer" parent="Status" unique_id=628645159]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 0
+offset_left = -64.0
+offset_top = -136.0
+offset_right = 64.0
+offset_bottom = -120.0
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
 
 [node name="Sprite" type="CanvasGroup" parent="." unique_id=672538185]
 material = SubResource("ShaderMaterial_7iiga")

@@ -20,7 +20,7 @@ var is_active := false
 @onready var default_tip_position: Vector2 = tip.position
 
 
-func _input(event: InputEvent) -> void:
+func handle_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			_activate_touch(event.index, event.position)
@@ -60,7 +60,7 @@ func _update_output(touch_position: Vector2) -> void:
 	tip.global_position = center + vector - tip.size / 2
 	if vector.length_squared() > DEADZONE_SIZE * DEADZONE_SIZE:
 		deadzone_exited = true
-		output = vector.normalized()
+		output = vector
 	else:
 		output = Vector2.ZERO
 

@@ -10,7 +10,7 @@ var active_touch_index := -1
 @onready var texture_normal: Texture = texture.texture
 
 
-func _input(event: InputEvent) -> void:
+func handle_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			_activate_touch(event.index, event.position)

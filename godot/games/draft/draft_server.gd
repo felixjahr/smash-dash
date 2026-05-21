@@ -101,8 +101,8 @@ func _exit_state(data = null) -> void:
 
 func _generate_draft_pool() -> Array[Dictionary]:
 	var category_ids := [
-		"weapon",
-		"weapon",
+		"melee",
+		"ranged",
 		"armour",
 		"ability",
 	]
@@ -139,12 +139,14 @@ func _resolve_draft_results() -> void:
 	
 	var loadouts: Dictionary[String, Dictionary] = {
 		player_id_a: {
-			"weapon_ids": [] as Array[String],
+			"melee_id": "",
+			"ranged_id": "",
 			"armour_id": "",
 			"ability_id": "",
 		},
 		player_id_b: {
-			"weapon_ids": [] as Array[String],
+			"melee_id": "",
+			"ranged_id": "",
 			"armour_id": "",
 			"ability_id": "",
 		},
@@ -162,19 +164,11 @@ func _resolve_draft_results() -> void:
 			var draft_option = draft_options.pop_front()
 			var category_id = draft_option["category_id"]
 			var option_ids = draft_option["option_ids"]
-			match category_id:
-				"weapon":
-					loadouts[player_id]["weapon_ids"].append(option_ids[pick])
-					loadouts[other_player_id]["weapon_ids"].append(option_ids[other_pick])
-				"armour":
-					loadouts[player_id]["armour_id"] = option_ids[pick]
-					loadouts[other_player_id]["armour_id"] = option_ids[other_pick]
-				"ability":
-					loadouts[player_id]["ability_id"] = option_ids[pick]
-					loadouts[other_player_id]["ability_id"] = option_ids[other_pick]
+			loadouts[player_id][category_id + "_id"] = option_ids[pick]
+			loadouts[other_player_id][category_id + "_id"] = option_ids[other_pick]
 	
 	for player_id in player_ids:
-		logic.spawn_player(player_id, loadouts[player_id]["weapon_ids"], loadouts[player_id]["armour_id"], loadouts[player_id]["ability_id"])
+		logic.spawn_player(player_id, loadouts[player_id]["melee_id"], loadouts[player_id]["ranged_id"], loadouts[player_id]["armour_id"], loadouts[player_id]["ability_id"])
 		logic.set_physics_process(true)
 		game_net.send_state_sync(player_id, _build_state_sync_for(player_id))
 

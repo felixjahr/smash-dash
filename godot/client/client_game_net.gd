@@ -1,6 +1,6 @@
 extends Node
 
-signal snapshot_received(snapshot: Snapshot, last_acknowledged_input_tick: int)
+signal snapshot_received(snapshot: Snapshot)
 signal init_received(game_id: String, map_id: String)
 signal state_sync_received(state_sync: StateSync)
 
@@ -26,14 +26,12 @@ func is_connected_to_server() -> bool:
 	return multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
 
 
-func send_inputs(inputs: Array[PlayerInput]) -> bool:
+func send_input_batch(input_batch: PlayerInputBatch) -> bool:
 	if not is_connected_to_server():
 		return false
-	if inputs.is_empty():
+	if input_batch.inputs.is_empty():
 		return false
-	var batch := PlayerInputBatch.new()
-	batch.inputs = inputs
-	rpc_id(1, "receive_input", batch.to_packet())
+	rpc_id(1, "receive_input_batch", input_batch.to_packet())
 	return true
 
 
@@ -52,8 +50,8 @@ func send_game_request(game_request: GameRequest) -> bool:
 
 
 @rpc("authority", "unreliable")
-func receive_snapshot(snapshot: PackedByteArray, last_acknowledged_input_tick: int) -> void:
-	emit_signal("snapshot_received", Snapshot.from_packet(snapshot), last_acknowledged_input_tick)
+func receive_snapshot(snapshot: PackedByteArray) -> void:
+	emit_signal("snapshot_received", Snapshot.from_packet(snapshot))
 
 
 @rpc("authority", "reliable")
@@ -67,7 +65,7 @@ func receive_state_sync(state_sync: Dictionary) -> void:
 
 
 @rpc("any_peer", "unreliable")
-func receive_input(input: PackedByteArray) -> void:
+func receive_input_batch(input_batch: PackedByteArray) -> void:
 	pass
 
 

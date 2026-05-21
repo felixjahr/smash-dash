@@ -60,17 +60,13 @@ static func _write_player(peer: StreamPeerBuffer, snapshot: PlayerSnapshot) -> v
 		flags |= 8
 	peer.put_u8(flags)
 	peer.put_u8(clampi(snapshot.current_weapon, 0, 255))
+	_write_quantized_unit_vector2(peer, snapshot.aim_direction)
+	peer.put_u8(_encode_id(snapshot.melee_id, Data.WEAPON_IDS))
+	peer.put_u16(clampi(snapshot.melee_ammunition, 0, 65535))
+	peer.put_u8(_encode_id(snapshot.ranged_id, Data.WEAPON_IDS))
+	peer.put_u16(clampi(snapshot.ranged_ammunition, 0, 65535))
 	peer.put_u8(_encode_id(snapshot.armour_id, Data.ARMOUR_IDS))
 	peer.put_u8(_encode_id(snapshot.ability_id, Data.ABILITY_IDS))
-	peer.put_u8(snapshot.weapon_ids.size())
-	for weapon_id in snapshot.weapon_ids:
-		peer.put_u8(_encode_id(weapon_id, Data.WEAPON_IDS))
-	peer.put_u8(snapshot.weapon_aim_directions.size())
-	for aim_direction in snapshot.weapon_aim_directions:
-		_write_quantized_unit_vector2(peer, aim_direction)
-	peer.put_u8(snapshot.weapon_ammunitions.size())
-	for ammunition in snapshot.weapon_ammunitions:
-		peer.put_u16(clampi(ammunition, 0, 65535))
 	peer.put_u32(maxi(snapshot.last_hit + 1, 0))
 	peer.put_u32(maxi(snapshot.last_ability + 1, 0))
 	peer.put_float(snapshot.ability_recharge_time)
@@ -89,20 +85,13 @@ static func _read_player(peer: StreamPeerBuffer) -> PlayerSnapshot:
 	snapshot.attacking = (flags & 4) != 0
 	snapshot.ability_active = (flags & 8) != 0
 	snapshot.current_weapon = int(peer.get_u8())
+	snapshot.aim_direction = _read_quantized_unit_vector2(peer)
+	snapshot.melee_id = _decode_id(int(peer.get_u8()), Data.WEAPON_IDS)
+	snapshot.melee_ammunition = int(peer.get_u16())
+	snapshot.ranged_id = _decode_id(int(peer.get_u8()), Data.WEAPON_IDS)
+	snapshot.ranged_ammunition = int(peer.get_u16())
 	snapshot.armour_id = _decode_id(int(peer.get_u8()), Data.ARMOUR_IDS)
 	snapshot.ability_id = _decode_id(int(peer.get_u8()), Data.ABILITY_IDS)
-	snapshot.weapon_ids = []
-	var weapon_count := int(peer.get_u8())
-	for i in weapon_count:
-		snapshot.weapon_ids.append(_decode_id(int(peer.get_u8()), Data.WEAPON_IDS))
-	snapshot.weapon_aim_directions = []
-	var aim_count := int(peer.get_u8())
-	for i in aim_count:
-		snapshot.weapon_aim_directions.append(_read_quantized_unit_vector2(peer))
-	snapshot.weapon_ammunitions = []
-	var ammunition_count := int(peer.get_u8())
-	for i in ammunition_count:
-		snapshot.weapon_ammunitions.append(int(peer.get_u16()))
 	snapshot.last_hit = int(peer.get_u32()) - 1
 	snapshot.last_ability = int(peer.get_u32()) - 1
 	snapshot.ability_recharge_time = peer.get_float()
