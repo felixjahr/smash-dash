@@ -10,6 +10,7 @@ const CLAMPZONE_SIZE: float = 120
 
 var output := Vector2.ZERO
 var deadzone_exited := false
+var is_outside_deadzone := false
 var active_touch_index := -1
 var is_active := false
 
@@ -25,7 +26,7 @@ func handle_input(event: InputEvent) -> void:
 		if event.pressed:
 			_activate_touch(event.index, event.position)
 		else:
-			_release_touch(event.index)
+			_release_touch(event.index, event.position)
 	elif event is InputEventScreenDrag and event.index == active_touch_index:
 		_update_output(event.position)
 		get_viewport().set_input_as_handled()
@@ -42,12 +43,13 @@ func _activate_touch(touch_index: int, touch_position: Vector2) -> void:
 	get_viewport().set_input_as_handled()
 
 
-func _release_touch(touch_index: int) -> void:
+func _release_touch(touch_index: int, touch_position: Vector2) -> void:
 	if touch_index != active_touch_index:
 		return
+	_update_output(touch_position)
 	if not deadzone_exited:
 		released.emit(Vector2.ZERO)
-	elif output.length_squared() > DEADZONE_SIZE * DEADZONE_SIZE:
+	elif is_outside_deadzone:
 		released.emit(output)
 	_reset_touch()
 	get_viewport().set_input_as_handled()
@@ -60,13 +62,16 @@ func _update_output(touch_position: Vector2) -> void:
 	tip.global_position = center + vector - tip.size / 2
 	if vector.length_squared() > DEADZONE_SIZE * DEADZONE_SIZE:
 		deadzone_exited = true
-		output = vector
+		is_outside_deadzone = true
+		output = vector.normalized()
 	else:
+		is_outside_deadzone = false
 		output = Vector2.ZERO
 
 
 func _reset_touch():
 	deadzone_exited = false
+	is_outside_deadzone = false
 	output = Vector2.ZERO
 	active_touch_index = -1
 	tip.texture = tip_normal

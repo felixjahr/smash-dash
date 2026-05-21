@@ -23,7 +23,7 @@ var camera: Camera2D
 @onready var sprite := $Sprite
 @onready var animation_player := $AnimationPlayer
 @onready var right_shoulder := $Sprite/LowerTorso/UpperTorso/RightShoulder
-@onready var weapon_pivot := $Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/WeaponPivot
+@onready var left_shoulder := $Sprite/LowerTorso/UpperTorso/LeftShoulder
 @onready var armour_sprites := [
 	$Sprite/LowerTorso/UpperTorso/LeftShoulder/LeftUpperArm/ArmourLeftUpperArm,
 	$Sprite/LowerTorso/UpperTorso/LeftShoulder/LeftUpperArm/LeftLowerArm/ArmourLeftLowerArm,
@@ -163,12 +163,17 @@ func _update_animation(snapshot: PlayerSnapshot) -> void:
 		animation_name += "idle_"
 	
 	var aim_direction := snapshot.aim_direction
-	right_shoulder.rotation = 0
+	if not snapshot.attacking and aim_direction != Vector2.ZERO:
+		right_shoulder.rotation = 0
+		left_shoulder.rotation = 0
+	else:
+		right_shoulder.look_at(right_shoulder.global_position + aim_direction)
+		left_shoulder.look_at(left_shoulder.global_position + aim_direction)
+	
 	if snapshot.attacking:
 		animation_name += "attack_"
 	elif aim_direction != Vector2.ZERO:
 		animation_name += "aim_"
-		right_shoulder.look_at(right_shoulder.global_position + aim_direction)
 	
 	if snapshot.current_weapon == 0:
 		animation_name += snapshot.melee_id
