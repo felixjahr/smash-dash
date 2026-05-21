@@ -6,7 +6,7 @@ signal pressed
 
 var active_touch_index := -1
 
-@onready var texture := $Texture
+@onready var texture := $CanvasGroup/Texture
 @onready var texture_normal: Texture = texture.texture
 
 

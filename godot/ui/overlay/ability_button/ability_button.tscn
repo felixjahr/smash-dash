@@ -11,8 +11,9 @@ offset_right = 128.0
 offset_bottom = 128.0
 script = ExtResource("2_keaip")
 
-[node name="Texture" type="TextureProgressBar" parent="." unique_id=1182676986]
-layout_mode = 0
+[node name="CanvasGroup" type="CanvasGroup" parent="." unique_id=274177786]
+
+[node name="Texture" type="TextureProgressBar" parent="CanvasGroup" unique_id=1182676986]
 offset_right = 128.0
 offset_bottom = 128.0
 fill_mode = 4

@@ -27,7 +27,7 @@ var active_touch_index := -1
 var disabled := false
 var ability_id := ""
 
-@onready var texture := $Texture
+@onready var texture := $CanvasGroup/Texture
 
 
 func handle_input(event: InputEvent) -> void:

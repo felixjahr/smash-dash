@@ -11,13 +11,15 @@ anchors_preset = 0
 script = ExtResource("1_gwufy")
 tip_pressed = ExtResource("3_2tnq5")
 
-[node name="Base" type="TextureRect" parent="." unique_id=551360948]
-layout_mode = 0
+[node name="CanvasGroup" type="CanvasGroup" parent="." unique_id=117024496]
+self_modulate = Color(1, 1, 1, 0.78431374)
+
+[node name="Base" type="TextureRect" parent="CanvasGroup" unique_id=551360948]
 offset_right = 450.0
 offset_bottom = 192.0
 texture = ExtResource("2_2tnq5")
 
-[node name="Tip" type="TextureRect" parent="Base" unique_id=1711795483]
+[node name="Tip" type="TextureRect" parent="CanvasGroup/Base" unique_id=1711795483]
 layout_mode = 0
 offset_right = 450.0
 offset_bottom = 192.0

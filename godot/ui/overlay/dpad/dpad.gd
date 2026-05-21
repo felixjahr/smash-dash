@@ -7,8 +7,8 @@ const CLAMPZONE_SIZE: float = 195
 var output := 0.0
 var active_touch_index := -1
 
-@onready var base := $Base
-@onready var tip := $Base/Tip
+@onready var base := $CanvasGroup/Base
+@onready var tip := $CanvasGroup/Base/Tip
 @onready var tip_normal: Texture = tip.texture
 @onready var default_base_position: Vector2 = base.position
 @onready var default_tip_position: Vector2 = tip.position

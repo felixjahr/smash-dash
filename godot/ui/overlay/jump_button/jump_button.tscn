@@ -7,13 +7,13 @@
 [node name="JumpButton" type="Control" unique_id=673379120]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 150.0
-offset_bottom = 150.0
 script = ExtResource("1_k61u5")
 texture_pressed = ExtResource("2_fnr6x")
 
-[node name="Texture" type="TextureRect" parent="." unique_id=957942666]
-layout_mode = 0
-offset_right = 150.0
-offset_bottom = 150.0
+[node name="CanvasGroup" type="CanvasGroup" parent="." unique_id=674795414]
+self_modulate = Color(1, 1, 1, 0.78431374)
+
+[node name="Texture" type="TextureRect" parent="CanvasGroup" unique_id=957942666]
+offset_right = 200.0
+offset_bottom = 200.0
 texture = ExtResource("1_wsgvn")

@@ -34,14 +34,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 48
+theme_override_constants/margin_left = 256
 theme_override_constants/margin_top = 48
-theme_override_constants/margin_right = 48
+theme_override_constants/margin_right = 256
 theme_override_constants/margin_bottom = 48
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=576562583]
 layout_mode = 2
-theme_override_constants/separation = 250
 
 [node name="LeftSlotsContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=1125128481]
 layout_mode = 2
@@ -351,10 +350,17 @@ grow_vertical = 2
 texture = ExtResource("4_xh00t")
 
 [node name="TimerProgressBar" type="ProgressBar" parent="." unique_id=185461453]
-layout_mode = 0
-offset_left = 512.0
-offset_top = 928.0
-offset_right = 1408.0
-offset_bottom = 992.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -448.0
+offset_top = -120.0
+offset_right = 448.0
+offset_bottom = -56.0
+grow_horizontal = 2
+grow_vertical = 0
 value = 20.0
 show_percentage = false

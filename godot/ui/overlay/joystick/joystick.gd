@@ -14,8 +14,8 @@ var is_outside_deadzone := false
 var active_touch_index := -1
 var is_active := false
 
-@onready var base := $Base
-@onready var tip := $Base/Tip
+@onready var base := $CanvasGroup/Base
+@onready var tip := $CanvasGroup/Base/Tip
 @onready var tip_normal: Texture = tip.texture
 @onready var default_base_position: Vector2 = base.position
 @onready var default_tip_position: Vector2 = tip.position

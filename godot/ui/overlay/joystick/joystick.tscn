@@ -9,17 +9,18 @@
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_yxsdh")
-tip_normal = ExtResource("3_yxsdh")
 tip_pressed = ExtResource("3_dcocm")
 
-[node name="Base" type="TextureRect" parent="." unique_id=287405360]
-layout_mode = 0
+[node name="CanvasGroup" type="CanvasGroup" parent="." unique_id=1740765945]
+self_modulate = Color(1, 1, 1, 0.78431374)
+
+[node name="Base" type="TextureRect" parent="CanvasGroup" unique_id=287405360]
 offset_right = 300.0
 offset_bottom = 300.0
 mouse_force_pass_scroll_events = false
 texture = ExtResource("2_yxsdh")
 
-[node name="Tip" type="TextureRect" parent="Base" unique_id=1441699964]
+[node name="Tip" type="TextureRect" parent="CanvasGroup/Base" unique_id=1441699964]
 layout_mode = 0
 offset_right = 300.0
 offset_bottom = 300.0
