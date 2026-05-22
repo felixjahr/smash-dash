@@ -339,10 +339,10 @@ tracks/27/path = NodePath("Sprite/LowerTorso/UpperTorso/LeftShoulder:rotation")
 tracks/27/interp = 1
 tracks/27/loop_wrap = true
 tracks/27/keys = {
-"times": PackedFloat32Array(0.0009999999),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.0009999999),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [-1.5707964]
+"values": [0.0, -1.5707964]
 }
 tracks/28/type = "value"
 tracks/28/imported = false
@@ -363,10 +363,10 @@ tracks/29/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder:rotation")
 tracks/29/interp = 1
 tracks/29/loop_wrap = true
 tracks/29/keys = {
-"times": PackedFloat32Array(0.0009999999),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.0009999999),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [1.5707964]
+"values": [0.0, 1.5707964]
 }
 tracks/30/type = "value"
 tracks/30/imported = false
@@ -1929,7 +1929,7 @@ tracks/11/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [-0.5867115, -0.57011366]
+"values": [0.9843657, 1.0000737]
 }
 tracks/12/type = "value"
 tracks/12/imported = false
@@ -1941,7 +1941,31 @@ tracks/12/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.69914234, 0.71872145]
+"values": [-0.8709193, -0.8517207]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/WeaponPivot:rotation")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.7548902]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/WeaponPivot:position")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(61.95761, -26.257566)]
 }
 
 [sub_resource type="Animation" id="Animation_6b75u"]
@@ -2086,10 +2110,10 @@ tracks/11/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpper
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [-0.5867115, -0.5386208, -2.3105805]
+"values": [0.9843657, 1.0314896, 0.9320058, -0.7400196]
 }
 tracks/12/type = "value"
 tracks/12/imported = false
@@ -2101,7 +2125,7 @@ tracks/12/keys = {
 "times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.69914234, 1.0917637, 0.54576194, -0.18855168]
+"values": [-0.8709193, -0.47822022, -1.0245082, -1.7592919]
 }
 tracks/13/type = "value"
 tracks/13/imported = false
@@ -2110,10 +2134,10 @@ tracks/13/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpper
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.7625331, -0.018168986, 1.342963]
+"values": [0.7625331, -0.018168986, -0.11360276, 1.342963]
 }
 tracks/14/type = "value"
 tracks/14/imported = false
@@ -2297,7 +2321,7 @@ tracks/11/keys = {
 "times": PackedFloat32Array(0, 0.5, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [-1.0172983, -1.472908, -1.0172983]
+"values": [0.5532694, 0.09773844, 0.5532694]
 }
 tracks/12/type = "value"
 tracks/12/imported = false
@@ -2309,7 +2333,7 @@ tracks/12/keys = {
 "times": PackedFloat32Array(0, 0.5, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [1.4233515, 1.2679553, 1.4233515]
+"values": [-0.14660765, -0.3036873, -0.14660765]
 }
 tracks/13/type = "value"
 tracks/13/imported = false
@@ -2421,7 +2445,7 @@ tracks/6/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [-0.5867115, -0.5867115]
+"values": [0.9843657, 0.9843657]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
@@ -2445,7 +2469,7 @@ tracks/8/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.484784, 0.47276205]
+"values": [-1.0855948, -1.097812]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
@@ -2486,6 +2510,7 @@ tracks/11/keys = {
 
 [sub_resource type="Animation" id="Animation_du422"]
 resource_name = "idle_spear"
+length = 0.45
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -2625,10 +2650,10 @@ tracks/11/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpper
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [-0.5867115, -0.5386208, -2.3105805]
+"values": [0.9843657, 1.0314896, 0.9320058, -0.7400196]
 }
 tracks/12/type = "value"
 tracks/12/imported = false
@@ -2640,7 +2665,7 @@ tracks/12/keys = {
 "times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.69914234, 1.0917637, 0.54576194, -0.18855168]
+"values": [-0.8709193, -0.47822022, -1.0245082, -1.7592919]
 }
 tracks/13/type = "value"
 tracks/13/imported = false
@@ -2649,10 +2674,10 @@ tracks/13/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpper
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.7625331, -0.018168986, 1.342963]
+"values": [0.7625331, -0.018168986, -0.11360276, 1.342963]
 }
 tracks/14/type = "value"
 tracks/14/imported = false
@@ -2677,6 +2702,18 @@ tracks/15/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/WeaponPivot/WeaponEffect:texture")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_57ekq")]
 }
 
 [sub_resource type="Animation" id="Animation_wguvc"]
@@ -2764,7 +2801,7 @@ tracks/6/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [-1.1677835, -0.085834265]
+"values": [0.40317106, 1.4852751]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
@@ -2788,7 +2825,7 @@ tracks/8/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.7683651, -1.0861831]
+"values": [-0.80285144, -2.6563911]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
@@ -2877,7 +2914,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [-0.9110619, -1.2409291, -0.79063416, -0.0363167, 0.2370232, 0.31118667, 0.2202242, -0.1970166, -0.7677247, -1.3383918, -1.6290526, -1.4964337]
+"values": [-0.9110619, -1.1301625, -0.79063416, -0.0363167, 0.2370232, 0.31118667, 0.2202242, -0.1970166, -0.7677247, -1.3383918, -1.6290526, -1.4964337]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -2889,7 +2926,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 1.2190914, 0.98262036, 0.43863842, 0.2639401, 0.7090293, 1.61564, 1.874601, 1.6485022, 1.7042661, 1.6258354, 1.0405532]
+"values": [0.0, 1.0287224, 0.98262036, 0.43863842, 0.2639401, 0.7090293, 1.61564, 1.874601, 1.6485022, 1.7042661, 1.6258354, 1.0405532]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -2901,7 +2938,7 @@ tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.69914234]
+"values": [-0.85346603]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -2925,7 +2962,7 @@ tracks/6/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [-0.5867115]
+"values": [0.9843657]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
@@ -3002,6 +3039,7 @@ tracks/12/keys = {
 
 [sub_resource type="Animation" id="Animation_bqis1"]
 resource_name = "idle_spear"
+length = 0.45
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -3141,10 +3179,10 @@ tracks/11/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpper
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [-0.5867115, -0.5386208, -2.3105805]
+"values": [0.9843657, 1.0314896, 0.9320058, -0.7400196]
 }
 tracks/12/type = "value"
 tracks/12/imported = false
@@ -3156,7 +3194,7 @@ tracks/12/keys = {
 "times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.69914234, 1.0917637, 0.54576194, -0.18855168]
+"values": [-0.8709193, -0.47822022, -1.0245082, -1.7592919]
 }
 tracks/13/type = "value"
 tracks/13/imported = false
@@ -3165,10 +3203,10 @@ tracks/13/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpper
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.7625331, -0.018168986, 1.342963]
+"values": [0.7625331, -0.018168986, -0.11360276, 1.342963]
 }
 tracks/14/type = "value"
 tracks/14/imported = false
@@ -3193,6 +3231,18 @@ tracks/15/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/WeaponPivot/WeaponEffect:texture")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_57ekq")]
 }
 
 [sub_resource type="Animation" id="Animation_om86j"]
@@ -3233,7 +3283,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [-0.9110619, -1.2409291, -0.79063416, -0.0363167, 0.2370232, 0.31118667, 0.2202242, -0.1970166, -0.7677247, -1.3383918, -1.6290526, -1.4964337]
+"values": [-0.9110619, -1.1301625, -0.79063416, -0.0363167, 0.2370232, 0.31118667, 0.2202242, -0.1970166, -0.7677247, -1.3383918, -1.6290526, -1.4964337]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -3245,7 +3295,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 1.2190914, 0.98262036, 0.43863842, 0.2639401, 0.7090293, 1.61564, 1.874601, 1.6485022, 1.7042661, 1.6258354, 1.0405532]
+"values": [0.0, 1.0287224, 0.98262036, 0.43863842, 0.2639401, 0.7090293, 1.61564, 1.874601, 1.6485022, 1.7042661, 1.6258354, 1.0405532]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -3257,7 +3307,7 @@ tracks/4/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.9831495, 0.94182783, 1.271715, 1.7570579, 1.9846888, 2.243722, 2.619773, 2.2343967, 1.7111974, 1.3574877, 1.1583751, 1.071898]
+"values": [-0.79126877, -0.62831855, -0.2984513, 0.18675023, 0.41364303, 0.6736971, 1.0489429, 0.6632251, 0.13962634, -0.21293017, -0.4118977, -0.61885893]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -3269,7 +3319,7 @@ tracks/5/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [-1.7984113, -1.51118, -0.8660639, -0.9048346, -0.9048346, -1.0195652, -0.78370583, -0.39511597, -1.3878303, -1.3507708, -1.5045358]
+"values": [-2.0022762, -1.51118, -0.8660639, -0.9048346, -0.9048346, -1.0195652, -0.78370583, -0.39511597, -1.3878303, -1.5813534, -1.8091042]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
@@ -3278,10 +3328,10 @@ tracks/6/path = NodePath("Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperA
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.40000004, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [-0.3379753, -0.76369274, -1.4340199, -1.6965557, -1.9675449, -2.1982317, -2.2396712, -2.0021217, -1.7645719, -1.4006246, -1.0959382, -0.79125166]
+"values": [1.2322024, 0.8063421, 0.13613568, -0.12566371, -0.39618975, -0.6265732, -0.83301276, -0.43109632, -0.19373155, 0.17104226, 0.7553358, 0.9013964]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
@@ -3293,7 +3343,7 @@ tracks/7/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [-0.809506, -0.6153012, -0.4134845, -1.2704675, -1.4561104, -1.5464513, -1.8876013, -1.7304776, -0.9764691, -0.9630809, -1.1110477, -0.90859747]
+"values": [-0.809506, -0.6153012, -0.4134845, -1.2704675, -1.4561104, -1.7538695, -1.8876013, -1.7304776, -0.9764691, -0.9630809, -0.9633212, -0.6951163]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
@@ -3302,10 +3352,10 @@ tracks/8/path = NodePath("Sprite/LowerTorso:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(-0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 19), Vector2(0, 0), Vector2(0, 7.9999995), Vector2(0, 5.999999), Vector2(0, -0.9999995), Vector2(0, -1.000001), Vector2(0, -8), Vector2(0, 2), Vector2(0, 4), Vector2(0, 0), Vector2(0, 1.9999998), Vector2(0, 5), Vector2(0, -5.9999995)]
+"values": [Vector2(0, 0), Vector2(0, 7.9999995), Vector2(0, 5.999999), Vector2(0, -0.9999995), Vector2(0, -1.000001), Vector2(0, -8), Vector2(0, 2), Vector2(0, 4), Vector2(0, 0), Vector2(0, 1.9999998), Vector2(0, 5), Vector2(0, -5.9999995)]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
@@ -3329,7 +3379,7 @@ tracks/10/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.111440875, 0.20073402, 0.20073402, 0.05235988, 0.14900498, 0.2456502, 0.289932, 0.16666307, 0.04339412]
+"values": [0.0, 0.111440875, 0.20073402, 0.20073402, 0.05235988, 0.14900498, 0.15707964, 0.15707964, 0.12217305, 0.04339412]
 }
 tracks/11/type = "value"
 tracks/11/imported = false
@@ -3549,7 +3599,6 @@ region_rect = Rect2(88, 192, 80, 80)
 
 [node name="LeftShoulder" type="Node2D" parent="Sprite/LowerTorso/UpperTorso" unique_id=961770386]
 position = Vector2(-32, 0)
-rotation = -1.5707964
 
 [node name="LeftUpperArm" type="Sprite2D" parent="Sprite/LowerTorso/UpperTorso/LeftShoulder" unique_id=1043739163]
 scale = Vector2(0.9999999, 0.9999999)
@@ -3577,7 +3626,6 @@ region_rect = Rect2(0, 144, 88, 48)
 
 [node name="RightShoulder" type="Node2D" parent="Sprite/LowerTorso/UpperTorso" unique_id=76610903]
 position = Vector2(-32, 0)
-rotation = 1.5707964
 scale = Vector2(0.99999994, 0.99999994)
 
 [node name="RightUpperArm" type="Sprite2D" parent="Sprite/LowerTorso/UpperTorso/RightShoulder" unique_id=602846584]
@@ -3602,6 +3650,7 @@ region_enabled = true
 region_rect = Rect2(0, 48, 88, 48)
 
 [node name="WeaponPivot" type="Marker2D" parent="Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm" unique_id=2138582504]
+visible = false
 position = Vector2(40, 0)
 
 [node name="WeaponSprite" type="Sprite2D" parent="Sprite/LowerTorso/UpperTorso/RightShoulder/RightUpperArm/RightLowerArm/WeaponPivot" unique_id=1595704138]
