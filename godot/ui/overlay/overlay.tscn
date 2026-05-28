@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://8dpsjq06au1" path="res://ui/overlay/overlay.gd" id="1_1xumj"]
 [ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://ui/overlay/joystick/joystick.tscn" id="1_yc8ku"]
 [ext_resource type="PackedScene" uid="uid://chc7meg2bqff6" path="res://ui/overlay/dpad/dpad.tscn" id="3_ai64t"]
+[ext_resource type="Texture2D" uid="uid://qcdiblib5shu" path="res://ui/overlay/joystick/joystick_tip_ranged.png" id="3_d84jb"]
 [ext_resource type="PackedScene" uid="uid://byesepmn17h43" path="res://ui/overlay/jump_button/jump_button.tscn" id="4_2mrie"]
 [ext_resource type="PackedScene" uid="uid://cu6128d5tdhyp" path="res://ui/overlay/ability_button/ability_button.tscn" id="4_nxmck"]
 [ext_resource type="Texture2D" uid="uid://7eqbpor2e70x" path="res://ui/overlay/joystick/joystick_tip_ranged_pressed.png" id="5_bbjur"]
@@ -91,6 +92,9 @@ offset_left = 384.0
 offset_top = 336.0
 offset_right = 684.0
 offset_bottom = 636.0
+
+[node name="Tip" parent="RangedJoystick/CanvasGroup/Base" index="0" unique_id=1441699964]
+texture = ExtResource("3_d84jb")
 
 [connection signal="pressed" from="AbilityButton" to="." method="_on_ability_button_pressed"]
 [connection signal="pressed" from="JumpButton" to="." method="_on_jump_button_pressed"]

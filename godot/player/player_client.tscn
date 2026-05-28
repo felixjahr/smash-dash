@@ -3382,6 +3382,7 @@ _data = {
 }
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xaw5s"]
+resource_local_to_scene = true
 bg_color = Color(0.11050001, 0.65, 0.2184, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
@@ -3459,6 +3460,18 @@ offset_right = 64.0
 offset_bottom = -120.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
+
+[node name="AimLine" type="Line2D" parent="." unique_id=1149895737]
+visible = false
+points = PackedVector2Array(143, -172, 328, -208)
+default_color = Color(0.6, 0.6, 0.6, 0.5019608)
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=851448237]
+visible = false
+polygon = PackedVector2Array(134, -133, 273, -233, 311, 31, 165, -42)
+
+[node name="Pivot" type="Marker2D" parent="." unique_id=2089369313]
+position = Vector2(0, -52)
 
 [node name="Sprite" type="CanvasGroup" parent="." unique_id=672538185]
 material = SubResource("ShaderMaterial_7iiga")

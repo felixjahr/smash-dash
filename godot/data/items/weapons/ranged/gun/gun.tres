@@ -2,20 +2,17 @@
 
 [ext_resource type="Script" uid="uid://dc58rhvdfubb2" path="res://data/items/weapons/ranged/ranged.gd" id="1_hsrvr"]
 [ext_resource type="Texture2D" uid="uid://dnupbrolr1pnx" path="res://data/items/weapons/ranged/gun/gun_card.png" id="2_vrq2n"]
-[ext_resource type="Texture2D" uid="uid://cv3v8wjcl15vt" path="res://data/items/weapons/ranged/gun/gun.png" id="3_vrq2n"]
 
 [resource]
 script = ExtResource("1_hsrvr")
+range = 1500
+aim_hint_width = 40
 bullet_speed = 1000
 bullet_damage = 10
 bullet_offset = Vector2(147, -26)
 bullet_amount = 1
 attack_duration = 0.5
-aim_animation = "aim_ranged"
-attack_animation = "attack_ranged"
 max_ammunition = 3
 reload_time = 2.0
-sprite_texture = ExtResource("3_vrq2n")
-sprite_offset = Vector2(28, -12)
 card_texture = ExtResource("2_vrq2n")
 metadata/_custom_type_script = "uid://dc58rhvdfubb2"

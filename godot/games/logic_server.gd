@@ -4,6 +4,7 @@ const SIMULATION_TICK_RATE := 30
 const SNAPSHOT_FREQUENCY := 2
 
 const MAX_INPUT_LOOKBACK := 5
+const MAX_RESEND_EVENTS := 3
 
 const INPUT_BUFFER_SIZE := 128
 
@@ -13,9 +14,13 @@ const BulletServer := preload("res://bullet/bullet_server.tscn")
 var tick := 0
 
 var bullet_counter := 0
+var event_counter := 0
 
 var players: Dictionary[String, CharacterBody2D] = {}
 var bullets: Dictionary[String, Node2D] = {}
+var events: Array[EventSnapshot] = []
+
+var event_send_count: Dictionary[String, int] = {}
 
 var player_ids: Array[String] = []
 
@@ -100,6 +105,13 @@ func despawn_bullet(bullet_id: String) -> void:
 	bullets.erase(bullet_id)
 
 
+func spawn_event(event: EventSnapshot) -> void:
+	event.event_id = str(event_counter)
+	event_send_count[event.event_id] = 0
+	event_counter += 1
+	events.append(event)
+
+
 func gameover() -> void:
 	var ranking: Array[String] = players.keys()
 	ranking.sort_custom(func(a, b): 
@@ -148,6 +160,12 @@ func _build_snapshot() -> Snapshot:
 		snapshot.players.append(_build_player_snapshot(player_id))
 	for bullet_id in bullets.keys():
 		snapshot.bullets.append(_build_bullet_snapshot(bullet_id))
+	snapshot.events = events.duplicate()
+	for event in snapshot.events:
+		event_send_count[event.event_id] += 1
+		if event_send_count[event.event_id] >= MAX_RESEND_EVENTS:
+			events.erase(event)
+			event_send_count.erase(event.event_id)
 	return snapshot
 
 
@@ -171,7 +189,6 @@ func _build_player_snapshot(player_id: String) -> PlayerSnapshot:
 	player_snapshot.melee_ammunition = player.melee_ammunition
 	player_snapshot.ranged_id = player.ranged_id
 	player_snapshot.ranged_ammunition = player.ranged_ammunition
-	player_snapshot.last_hit = player.last_hit
 	player_snapshot.last_ability = player.last_ability
 	player_snapshot.ability_recharge_time = player.ability_recharge_time
 	return player_snapshot

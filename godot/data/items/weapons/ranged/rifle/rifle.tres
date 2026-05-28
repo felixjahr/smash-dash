@@ -5,12 +5,14 @@
 
 [resource]
 script = ExtResource("1_bddi5")
+range = 1000
+aim_hint_width = 30
 bullet_speed = 3000
-bullet_damage = 5
+bullet_damage = 3
 bullet_offset = Vector2(232, -21)
 bullet_amount = 5
 attack_duration = 1.0
 max_ammunition = 3
-reload_time = 2.0
+reload_time = 4.0
 card_texture = ExtResource("2_d6fuu")
 metadata/_custom_type_script = "uid://dc58rhvdfubb2"

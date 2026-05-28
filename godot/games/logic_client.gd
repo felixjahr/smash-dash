@@ -13,6 +13,7 @@ const CLOCK_CORRECTION_FACTOR := 0.2
 
 const SNAPSHOT_BUFFER_SIZE := 128
 const INPUT_BUFFER_SIZE := 128
+const SEEN_EVENT_BUFFER_SIZE := 32
 
 const PlayerClient := preload("res://player/player_client.tscn")
 const BulletClient := preload("res://bullet/bullet_client.tscn")
@@ -28,6 +29,8 @@ var bullets: Dictionary[String, Node2D] = {}
 
 var snapshots: Array[Snapshot]
 var inputs: Array[PlayerInput]
+var seen_events: Array[String]
+var seen_event_index := 0
 
 var player_names: Dictionary = {}
 var local_player_id := ""
@@ -47,6 +50,7 @@ func _ready() -> void:
 	local_player_id = auth_net.player_id
 	snapshots.resize(SNAPSHOT_BUFFER_SIZE)
 	inputs.resize(INPUT_BUFFER_SIZE)
+	seen_events.resize(SEEN_EVENT_BUFFER_SIZE)
 	game_net.connect("snapshot_received", _on_net_snapshot_received)
 	set_physics_process(false)
 
@@ -133,6 +137,13 @@ func _render_interpolated_snapshot() -> void:
 			bullet_container.add_child(bullet)
 			return bullet
 	)
+	
+	for event in render_snapshot.events:
+		if event.event_id in seen_events:
+			continue
+		seen_events[seen_event_index] = event.event_id
+		seen_event_index = (seen_event_index + 1) % SEEN_EVENT_BUFFER_SIZE
+		_apply_event(event)
 
 
 func _build_interpolated_snapshot(render_tick: float) -> Snapshot:
@@ -165,6 +176,7 @@ func _interpolate_snapshots(older: Snapshot, newer: Snapshot, alpha: float) -> S
 	var snapshot := Snapshot.new()
 	snapshot.players = []
 	snapshot.bullets = []
+	snapshot.events = older.events
 	
 	var older_players: Dictionary[String, PlayerSnapshot] = {}
 	for player_snapshot in older.players:
@@ -205,7 +217,6 @@ func _interpolate_player_snapshot(older: PlayerSnapshot, newer: PlayerSnapshot, 
 	snapshot.melee_ammunition = newer.melee_ammunition
 	snapshot.ranged_id = newer.ranged_id
 	snapshot.ranged_ammunition = newer.ranged_ammunition
-	snapshot.last_hit = newer.last_hit
 	snapshot.last_ability = newer.last_ability
 	snapshot.ability_recharge_time = newer.ability_recharge_time
 	return snapshot
@@ -234,3 +245,13 @@ func _apply_entity_snapshots(entities: Dictionary, entity_snapshots: Array, get_
 	for entity_snapshot in entity_snapshots:
 		var id: String = get_id.call(entity_snapshot)
 		entities[id].apply_snapshot(entity_snapshot)
+
+
+func _apply_event(event: EventSnapshot) -> void:
+	if event is HitEventSnapshot:
+		if not players.has(event.victim_player_id):
+			return
+		players[event.victim_player_id].apply_hit()
+		match event.effect_id:
+			"bullet":
+				pass

@@ -16,5 +16,3 @@ extends Node2D
 func _ready() -> void:
 	if not OS.has_feature("server"):
 		arena.queue_free()
-		for collision_shape in collision_shapes:
-			collision_shape.queue_free()

@@ -11,7 +11,6 @@ var player_id: String
 var health := 100
 var hearts := 3
 var facing := 1
-var last_hit := -1
 
 var jumping_grace_time_left := JUMPING_GRACE
 
@@ -104,10 +103,14 @@ func apply_knockback(position: Vector2, knockback: float) -> void:
 	velocity = position.direction_to(global_position) * knockback * knockback_multiplier
 
 
-func apply_hit(damage: int) -> void:
+func apply_hit(damage: int, effect_id := "", effect_position := Vector2.ZERO) -> void:
 	var damage_multiplier := Data.ARMOUR[armour_id].damage_multiplier
 	health -= damage * damage_multiplier
-	last_hit = logic.tick
+	var event := HitEventSnapshot.new()
+	event.victim_player_id = player_id
+	event.effect_id = effect_id
+	event.effect_position = effect_position
+	logic.spawn_event(event)
 	if health <= 0:
 		_die()
 
@@ -302,7 +305,9 @@ func _on_hitbox_area_entered(area: Area2D) -> void:
 		weapon = Data.RANGED[ranged_id]
 	if not weapon.self_hit and area.get_parent() == self:
 		return
-	area.get_parent().apply_hit(weapon.damage)
+	var effect_id := weapon.effect_id
+	var effect_position: Vector2 = pivot.global_position.lerp(area.get_parent().pivot.global_position, 0.5)
+	area.get_parent().apply_hit(weapon.damage, effect_id, effect_position)
 	area.get_parent().apply_knockback(pivot.global_position, weapon.knockback)
 
 

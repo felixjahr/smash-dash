@@ -20,4 +20,3 @@ func _ready() -> void:
 	if not OS.has_feature("server"):
 		for collision_shape in collision_shapes:
 			arena.queue_free()
-			collision_shape.queue_free()

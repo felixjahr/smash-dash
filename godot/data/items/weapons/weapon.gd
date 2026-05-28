@@ -7,3 +7,4 @@ extends Item
 @export var attack_duration: float
 @export var max_ammunition: int
 @export var reload_time: float
+@export var effect_id: String

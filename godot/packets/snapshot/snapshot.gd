@@ -9,8 +9,9 @@ const SIGNED_8_BIAS := 128
 
 var tick: int
 
-var players: Array[PlayerSnapshot]
-var bullets: Array[BulletSnapshot]
+var players: Array[PlayerSnapshot] = []
+var bullets: Array[BulletSnapshot] = []
+var events: Array[EventSnapshot] = []
 
 
 func to_packet() -> PackedByteArray:
@@ -19,10 +20,13 @@ func to_packet() -> PackedByteArray:
 	peer.put_u32(tick)
 	peer.put_u8(players.size())
 	peer.put_u8(bullets.size())
+	peer.put_u8(events.size())
 	for snapshot in players:
 		_write_player(peer, snapshot)
 	for snapshot in bullets:
 		_write_bullet(peer, snapshot)
+	for snapshot in events:
+		_write_event(peer, snapshot)
 	return peer.data_array
 
 
@@ -34,12 +38,16 @@ static func from_packet(packet: PackedByteArray) -> Snapshot:
 	snapshot.tick = int(peer.get_u32())
 	var player_count := int(peer.get_u8())
 	var bullet_count := int(peer.get_u8())
+	var event_count := int(peer.get_u8())
 	snapshot.players = []
 	for i in player_count:
 		snapshot.players.append(_read_player(peer))
 	snapshot.bullets = []
 	for i in bullet_count:
 		snapshot.bullets.append(_read_bullet(peer))
+	snapshot.events = []
+	for i in event_count:
+		snapshot.events.append(_read_event(peer))
 	return snapshot
 
 
@@ -67,7 +75,6 @@ static func _write_player(peer: StreamPeerBuffer, snapshot: PlayerSnapshot) -> v
 	peer.put_u16(clampi(snapshot.ranged_ammunition, 0, 65535))
 	peer.put_u8(_encode_id(snapshot.armour_id, Data.ARMOUR_IDS))
 	peer.put_u8(_encode_id(snapshot.ability_id, Data.ABILITY_IDS))
-	peer.put_u32(maxi(snapshot.last_hit + 1, 0))
 	peer.put_u32(maxi(snapshot.last_ability + 1, 0))
 	peer.put_float(snapshot.ability_recharge_time)
 
@@ -92,7 +99,6 @@ static func _read_player(peer: StreamPeerBuffer) -> PlayerSnapshot:
 	snapshot.ranged_ammunition = int(peer.get_u16())
 	snapshot.armour_id = _decode_id(int(peer.get_u8()), Data.ARMOUR_IDS)
 	snapshot.ability_id = _decode_id(int(peer.get_u8()), Data.ABILITY_IDS)
-	snapshot.last_hit = int(peer.get_u32()) - 1
 	snapshot.last_ability = int(peer.get_u32()) - 1
 	snapshot.ability_recharge_time = peer.get_float()
 	return snapshot
@@ -111,6 +117,40 @@ static func _read_bullet(peer: StreamPeerBuffer) -> BulletSnapshot:
 	snapshot.position = _read_quantized_vector2(peer, POSITION_SCALE)
 	snapshot.speed = int(peer.get_u16())
 	snapshot.direction = _read_quantized_unit_vector2(peer)
+	return snapshot
+
+
+static func _write_event(peer: StreamPeerBuffer, snapshot: EventSnapshot) -> void:
+	if snapshot is HitEventSnapshot:
+		peer.put_u8(EventSnapshot.TYPE_HIT)
+		_write_hit_event(peer, snapshot as HitEventSnapshot)
+		return
+	push_error("Unsupported event snapshot type: %s" % snapshot.get_class())
+
+
+static func _read_event(peer: StreamPeerBuffer) -> EventSnapshot:
+	var event_type := int(peer.get_u8())
+	match event_type:
+		EventSnapshot.TYPE_HIT:
+			return _read_hit_event(peer)
+		_:
+			push_error("Unsupported event snapshot type id: %s" % event_type)
+			return EventSnapshot.new()
+
+
+static func _write_hit_event(peer: StreamPeerBuffer, snapshot: HitEventSnapshot) -> void:
+	_write_string(peer, snapshot.event_id)
+	_write_string(peer, snapshot.victim_player_id)
+	_write_string(peer, snapshot.effect_id)
+	_write_quantized_vector2(peer, snapshot.effect_position, POSITION_SCALE)
+
+
+static func _read_hit_event(peer: StreamPeerBuffer) -> HitEventSnapshot:
+	var snapshot := HitEventSnapshot.new()
+	snapshot.event_id = _read_string(peer)
+	snapshot.victim_player_id = _read_string(peer)
+	snapshot.effect_id = _read_string(peer)
+	snapshot.effect_position = _read_quantized_vector2(peer, POSITION_SCALE)
 	return snapshot
 
 

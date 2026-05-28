@@ -10,7 +10,6 @@ var is_on_floor: bool
 var health: int
 var hearts: int
 var facing: int
-var last_hit: int
 
 var current_weapon: int
 var attacking: bool
