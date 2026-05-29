@@ -27,17 +27,6 @@ mkdir -p "$TEMP_DIR/backend"
 mkdir -p "$TEMP_DIR/godot-server"
 
 # =========================
-# BUILD BACKEND
-# =========================
-
-echo "Building backend locally..."
-
-cd "$BACKEND_DIR"
-npm install
-npm run build
-cd "$REPO_ROOT"
-
-# =========================
 # COPY BACKEND SOURCE
 # =========================
 
@@ -46,8 +35,8 @@ rsync -a \
   --progress \
   --exclude node_modules \
   --exclude .git \
+  --exclude dist \
   "$BACKEND_DIR/" "$TEMP_DIR/backend/"
-#--exclude dist \
 
 # =========================
 # EXPORT GODOT SERVER
@@ -83,11 +72,11 @@ rsync -a \
   --progress \
   --delete \
   --exclude node_modules \
+  --exclude dist \
   --exclude .git \
   -e "ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
   "$TEMP_DIR/" \
   "$SERVER_HOST:$REMOTE_DIR/"
-#--exclude dist \
 
 # =========================
 # DEPLOY ON VM
