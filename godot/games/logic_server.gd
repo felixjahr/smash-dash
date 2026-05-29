@@ -84,13 +84,14 @@ func despawn_player(player_id: String) -> void:
 	gameover()
 
 
-func spawn_bullet(position: Vector2, speed: int, damage: int, self_hit: bool, direction: Vector2, player_id: String) -> void:
+func spawn_bullet(position: Vector2, speed: int, damage: int, self_hit: bool, range: int, direction: Vector2, player_id: String) -> void:
 	var new_bullet := BulletServer.instantiate()
 	new_bullet.bullet_id = str(bullet_counter)
 	new_bullet.global_position = position
 	new_bullet.speed = speed
 	new_bullet.damage = damage
 	new_bullet.self_hit = self_hit
+	new_bullet.range = range
 	new_bullet.direction = direction
 	new_bullet.player_id = player_id
 	bullet_container.add_child(new_bullet)

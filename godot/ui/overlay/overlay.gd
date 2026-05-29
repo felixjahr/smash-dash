@@ -3,6 +3,7 @@ extends Control
 var jumping := false
 var attacking := false
 var ability := false
+var current_weapon := 0
 
 var attack_direction := Vector2.ZERO
 var attack_weapon := 0
@@ -19,11 +20,12 @@ func poll() -> PlayerInput:
 	var input := PlayerInput.new()
 	if not attacking:
 		if melee_joystick.is_active:
+			current_weapon = 0
 			input.aim_direction = melee_joystick.output
-			input.current_weapon = 0
 		elif ranged_joystick.is_active:
+			current_weapon = 1
 			input.aim_direction = ranged_joystick.output
-			input.current_weapon = 1
+		input.current_weapon = current_weapon
 	else:
 		input.aim_direction = attack_direction
 		input.current_weapon = attack_weapon
@@ -49,21 +51,17 @@ func apply_snapshot(snapshot: PlayerSnapshot) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	jump_button.handle_input(event)
-	if get_viewport().is_input_handled():
-		return
-	ability_button.handle_input(event)
-	if get_viewport().is_input_handled():
-		return
-	dpad.handle_input(event)
-	if get_viewport().is_input_handled():
-		return
-	melee_joystick.handle_input(event)
-	if get_viewport().is_input_handled():
-		return
-	ranged_joystick.handle_input(event)
-	if get_viewport().is_input_handled():
-		return
+	var input_controls := [
+		jump_button,
+		ability_button,
+		dpad,
+		melee_joystick,
+		ranged_joystick
+	]
+	for control in input_controls:
+		control.handle_input(event)
+		if get_viewport().is_input_handled():
+			return
 	if event.is_action_pressed("jump"):
 		jumping = true
 	elif event.is_action_pressed("ability"):
@@ -82,12 +80,14 @@ func _on_melee_joystick_released(direction: Vector2) -> void:
 	attacking = true
 	attack_direction = direction
 	attack_weapon = 0
+	current_weapon = 0
 
 
 func _on_ranged_joystick_released(direction: Vector2) -> void:
 	attacking = true
 	attack_direction = direction
 	attack_weapon = 1
+	current_weapon = 1
 
 
 func _get_mouse_aim_direction() -> Vector2:

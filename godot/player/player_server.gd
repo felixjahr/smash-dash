@@ -221,6 +221,7 @@ func _fire_shot() -> void:
 		ranged.bullet_speed,
 		ranged.bullet_damage,
 		ranged.self_hit,
+		ranged.bullet_range,
 		aim_direction,
 		player_id,
 	)

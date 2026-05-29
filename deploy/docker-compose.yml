@@ -27,7 +27,7 @@ services:
   godot-server:
     build:
       context: ./godot-server
-    image: stickman-godot-server:latest
+    image: godot-server:latest
     platform: linux/amd64
 
 volumes:

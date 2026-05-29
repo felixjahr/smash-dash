@@ -5,20 +5,17 @@ set -e
 # CONFIG
 # =========================
 
-PROJECT_ID="stickman-draft-game-489210"
-VM_NAME="stickman-draft-game"
-VM_ZONE="europe-west3-c"
+SERVER_HOST="root@46.224.63.244"
+REMOTE_DIR="~/smash-dash"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TEMP_DIR="/tmp/stickman-deploy"
+TEMP_DIR="/tmp/smash-dash"
 
 BACKEND_DIR="$REPO_ROOT/backend"
 GODOT_PROJECT_DIR="$REPO_ROOT/godot"
 
 GODOT_BIN="/Applications/Godot.app/Contents/MacOS/Godot"
 GODOT_EXPORT_PRESET="Server"
-
-REMOTE_DIR="~/stickman-server"
 
 # =========================
 # CLEAN TEMP FOLDER
@@ -89,7 +86,7 @@ rsync -a \
   --exclude .git \
   -e "ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
   "$TEMP_DIR/" \
-  "$VM_NAME.$VM_ZONE.$PROJECT_ID:~/stickman-server/"
+  "$SERVER_HOST:$REMOTE_DIR/"
 #--exclude dist \
 
 # =========================
@@ -98,14 +95,11 @@ rsync -a \
 
 echo "Deploying on VM..."
 
-gcloud compute ssh "$VM_NAME" \
-  --project="$PROJECT_ID" \
-  --zone="$VM_ZONE" \
-  --command="
-    cd ~/stickman-server &&
-    docker compose down &&
-    docker compose build
-    docker compose up backend postgres
-  "
+ssh "$SERVER_HOST" "
+  cd $REMOTE_DIR &&
+  docker compose down &&
+  docker compose build &&
+  docker compose up backend postgres
+"
 
 echo "Deployment complete."

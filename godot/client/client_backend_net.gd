@@ -4,9 +4,9 @@ signal room_code_received(code: String)
 signal room_start_received(port: int, ip: String, game_token: String, player_names: Dictionary)
 signal room_failed_received
 
-const HTTP_BASE := "http://35.246.204.169:8000"
+const HTTP_BASE := "http://46.224.63.244:8000"
 
-const WS_URL := "ws://35.246.204.169:8000/ws"
+const WS_URL := "ws://46.224.63.244:8000/ws"
 const WS_CONNECT_TIMEOUT := 8.0
 const WS_AUTH_TIMEOUT := 8.0
 var socket := WebSocketPeer.new()

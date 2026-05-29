@@ -5,7 +5,7 @@ signal auth_failed
 signal account_required
 signal server_unavailable
 
-const HTTP_BASE := "http://35.246.204.169:8000"
+const HTTP_BASE := "http://46.224.63.244:8000"
 const ACCESS_TOKEN_LIFETIME := 900
 const REFRESH_MARGIN := 30
 

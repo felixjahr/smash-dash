@@ -2,10 +2,11 @@ extends Node2D
 
 const HEART := preload("res://player/heart.tscn")
 const WEAPON_AMMUNITION_BAR_SEGMENT := preload("res://player/weapon_ammunition_bar_segment.tscn")
-const AIM_LINE_COLOR := Color("#99999980")
-const AIM_LINE_NO_AMMUNITION_COLOR := Color("#ff000080")
 const HEALTH_BAR_COLOR := Color("#a61c1c")
 const HEALTH_BAR_LOCAL_COLOR := Color("#1ca638")
+const AIM_COLOR := Color("#99999980")
+const AIM_NO_AMMUNITION_COLOR := Color("#ff000080")
+const AIM_POLYGON_SEGMENTS := 16
 
 var player_name: String
 
@@ -23,7 +24,8 @@ var camera: Camera2D
 @onready var health_bar := $Status/HealthBar
 @onready var melee_ammunition_bar := $Status/MeleeAmmunitionBar
 @onready var ranged_ammunition_bar := $Status/RangedAmmunitionBar
-@onready var aim_line := $AimLine
+@onready var aim_line := $Pivot/AimLine
+@onready var aim_polygon := $Pivot/AimPolygon
 @onready var pivot := $Pivot
 @onready var sprite := $Sprite
 @onready var animation_player := $AnimationPlayer
@@ -162,7 +164,10 @@ func _update_animation_player(snapshot: PlayerSnapshot) -> void:
 	animation_name += "/"
 	
 	if not snapshot.is_on_floor:
-		animation_name += "jump_"
+		if snapshot.velocity.y < 0:
+			animation_name += "jump_"
+		else:
+			animation_name += "fall_"
 	elif snapshot.velocity.x != 0:
 		animation_name += "run_"
 	else:
@@ -178,13 +183,20 @@ func _update_animation_player(snapshot: PlayerSnapshot) -> void:
 	else:
 		animation_name += snapshot.ranged_id
 	
-	animation_player.play(animation_name)
+	var current_animation: String = animation_player.current_animation
+	if snapshot.attacking and animation_name != current_animation and current_animation.contains("attack"):
+		var animation_position: float = animation_player.current_animation_position
+		animation_player.play(animation_name)
+		animation_player.seek(animation_position, true)
+	else:
+		animation_player.play(animation_name)
 
 
 func _update_aiming(snapshot: PlayerSnapshot) -> void:
 	right_shoulder.rotation = 0
 	left_shoulder.rotation = 0
 	aim_line.hide()
+	aim_polygon.hide()
 	var weapon: Weapon
 	if snapshot.current_weapon == 0:
 		weapon = Data.MELEE[snapshot.melee_id]
@@ -192,40 +204,75 @@ func _update_aiming(snapshot: PlayerSnapshot) -> void:
 		weapon = Data.RANGED[snapshot.ranged_id]
 	
 	if snapshot.attacking or snapshot.aim_direction != Vector2.ZERO:
-		right_shoulder.look_at(right_shoulder.global_position + snapshot.aim_direction)
+		var aim_direction := snapshot.aim_direction
+		aim_direction.x *= snapshot.facing
+		right_shoulder.rotation = aim_direction.angle()
 		if weapon.two_handed:
-			left_shoulder.look_at(left_shoulder.global_position + snapshot.aim_direction)
+			left_shoulder.rotation = aim_direction.angle()
 		if local and not snapshot.attacking:
-			if weapon is Melee:
-				_update_melee_aim_hint(snapshot, weapon)
+			if weapon.aim_hint is AimHintCone:
+				_update_aim_hint_cone(snapshot, weapon.aim_hint)
+			elif weapon.aim_hint is AimHintLine:
+				_update_aim_hint_line(snapshot, weapon.aim_hint)
+			if (
+					snapshot.current_weapon == 0 and snapshot.melee_ammunition > 0
+					or snapshot.current_weapon == 1 and snapshot.ranged_ammunition > 0
+			):
+				aim_polygon.color = AIM_COLOR
+				aim_line.default_color = AIM_COLOR
 			else:
-				_update_ranged_aim_hint(snapshot, weapon)
+				aim_polygon.color = AIM_NO_AMMUNITION_COLOR
+				aim_line.default_color = AIM_NO_AMMUNITION_COLOR
 
 
-func _update_melee_aim_hint(snapshot: PlayerSnapshot, melee: Melee) -> void:
-	pass
-
-
-func _update_ranged_aim_hint(snapshot: PlayerSnapshot, ranged: Ranged) -> void:
-	var offset: Vector2 = ranged.bullet_offset
-	offset.y *= snapshot.facing
-	var aim_start: Vector2 = pivot.global_position + offset.rotated(snapshot.aim_direction.angle())
-	var aim_target: Vector2 = aim_start + snapshot.aim_direction * ranged.range
+func _update_aim_hint_cone(snapshot: PlayerSnapshot, aim_hint: AimHintCone) -> void:
+	var points := PackedVector2Array()
+	var half := deg_to_rad(aim_hint.angle_degrees) / 2.0
+	var aim_angle := snapshot.aim_direction.angle()
 	
-	var query := PhysicsRayQueryParameters2D.create(aim_start, aim_target)
+	for i in range(AIM_POLYGON_SEGMENTS + 1):
+		var local_angle := -half + deg_to_rad(aim_hint.angle_degrees) * float(i) / AIM_POLYGON_SEGMENTS
+		var local_dir := Vector2(cos(local_angle), sin(local_angle))
+
+		var local_start := local_dir * aim_hint.inner_radius
+		var local_end := local_dir * aim_hint.outer_radius
+
+		var global_start = pivot.to_global(local_start.rotated(aim_angle))
+		var global_end = pivot.to_global(local_end.rotated(aim_angle))
+
+		var query := PhysicsRayQueryParameters2D.create(global_start, global_end)
+		var collision := get_world_2d().direct_space_state.intersect_ray(query)
+
+		if collision:
+			points.append(pivot.to_local(collision.position))
+		else:
+			points.append(local_end.rotated(aim_angle))
+	
+	for i in range(AIM_POLYGON_SEGMENTS, -1, -1):
+		var local_angle := -half + deg_to_rad(aim_hint.angle_degrees) * float(i) / AIM_POLYGON_SEGMENTS
+		var local_dir := Vector2(cos(local_angle), sin(local_angle))
+		points.append((local_dir * aim_hint.inner_radius).rotated(aim_angle))
+
+	aim_polygon.polygon = points
+	aim_polygon.show()
+
+
+func _update_aim_hint_line(snapshot: PlayerSnapshot, aim_hint: AimHintLine) -> void:
+	var offset: Vector2 = aim_hint.offset
+	offset.y *= snapshot.facing
+	var aim_start: Vector2 = offset.rotated(snapshot.aim_direction.angle())
+	var aim_target: Vector2 = aim_start + snapshot.aim_direction * aim_hint.length
+	
+	var query := PhysicsRayQueryParameters2D.create(pivot.to_global(aim_start), pivot.to_global(aim_target))
 	var collision := get_world_2d().direct_space_state.intersect_ray(query)
 	var aim_end: Vector2
 	if collision:
-		aim_end = collision.position
+		aim_end = pivot.to_local(collision.position)
 	else:
 		aim_end = aim_target
 	
-	aim_line.show()
-	aim_line.width = ranged.aim_hint_width
+	aim_line.width = aim_hint.width
 	aim_line.clear_points()
-	aim_line.add_point(aim_line.to_local(aim_start))
-	aim_line.add_point(aim_line.to_local(aim_end))
-	if snapshot.ranged_ammunition > 0:
-		aim_line.default_color = AIM_LINE_COLOR
-	else:
-		aim_line.default_color = AIM_LINE_NO_AMMUNITION_COLOR
+	aim_line.add_point(aim_start)
+	aim_line.add_point(aim_end)
+	aim_line.show()

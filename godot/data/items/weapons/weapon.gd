@@ -8,3 +8,5 @@ extends Item
 @export var max_ammunition: int
 @export var reload_time: float
 @export var effect_id: String
+
+@export var aim_hint: AimHint

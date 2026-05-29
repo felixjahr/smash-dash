@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma.service';
 
 const ROOM_SIZE = 2;
-const GAME_IP = '35.246.204.169';
+const GAME_IP = '46.224.63.244';
 const GAME_BASE_PORT = 9000;
 const GAME_PORT_RANGE_SIZE = 1000;
 const GAME_START_TIMEOUT_MS = 45_000;
@@ -242,12 +242,12 @@ export class RoomsService {
       'linux/amd64',
 
       '--network',
-      'stickman-server_default',
+      'smash-dash_default',
 
       '-p',
       `${room.port}:${room.port}/udp`,
 
-      'stickman-godot-server:latest',
+      'godot-server:latest',
 
       '--headless',
       `port=${room.port}`,
