@@ -20,11 +20,11 @@ var aim_direction := Vector2.ZERO
 
 var melee_id: String
 var melee_ammunition: int
-var melee_reload_time_left := 0.0
+var melee_recharge_time := 0.0
 
 var ranged_id: String
 var ranged_ammunition: int
-var ranged_reload_time_left := 0.0
+var ranged_recharge_time := 0.0
 
 var attack_time_left := 0.0
 var burst_time_left := 0.0
@@ -125,22 +125,22 @@ func _die() -> void:
 
 
 func _update_reload_times(delta: float) -> void:
-	if melee_reload_time_left > 0.0:
-		melee_reload_time_left -= delta
+	if melee_recharge_time > 0.0:
+		melee_recharge_time -= delta
 		var melee = Data.MELEE[melee_id]
-		if melee_reload_time_left <= 0.0:
+		if melee_recharge_time <= 0.0:
 			if melee.max_ammunition > melee_ammunition:
 				melee_ammunition += 1
 				if melee.max_ammunition > melee_ammunition:
-					melee_reload_time_left = melee.reload_time
-	if ranged_reload_time_left > 0.0:
-		ranged_reload_time_left -= delta
+					melee_recharge_time = melee.reload_time
+	if ranged_recharge_time > 0.0:
+		ranged_recharge_time -= delta
 		var ranged = Data.RANGED[ranged_id]
-		if ranged_reload_time_left <= 0.0:
+		if ranged_recharge_time <= 0.0:
 			if ranged.max_ammunition > ranged_ammunition:
 				ranged_ammunition += 1
 				if ranged.max_ammunition > ranged_ammunition:
-					ranged_reload_time_left = ranged.reload_time
+					ranged_recharge_time = ranged.reload_time
 
 
 func _update_ability_recharge_time(delta: float) -> void:
@@ -190,8 +190,8 @@ func _apply_vertical_movement(delta: float, jumping: bool) -> void:
 func _start_melee_attack() -> void:
 	var melee: Melee = Data.MELEE[melee_id]
 	melee_ammunition -= 1
-	if melee_reload_time_left <= 0.0:
-		melee_reload_time_left = melee.reload_time
+	if melee_recharge_time <= 0.0:
+		melee_recharge_time = melee.reload_time
 	
 	attack_time_left = melee.attack_duration
 	pivot.rotation = aim_direction.angle()
@@ -203,8 +203,8 @@ func _start_melee_attack() -> void:
 func _start_ranged_attack() -> void:
 	var ranged: Ranged = Data.RANGED[ranged_id]
 	ranged_ammunition -= 1
-	if ranged_reload_time_left <= 0.0:
-		ranged_reload_time_left = ranged.reload_time
+	if ranged_recharge_time <= 0.0:
+		ranged_recharge_time = ranged.reload_time
 	
 	attack_time_left = ranged.attack_duration
 	burst_bullet_amount = ranged.bullet_amount

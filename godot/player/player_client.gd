@@ -7,6 +7,8 @@ const HEALTH_BAR_LOCAL_COLOR := Color("#1ca638")
 const AIM_COLOR := Color("#99999980")
 const AIM_NO_AMMUNITION_COLOR := Color("#ff000080")
 const AIM_POLYGON_SEGMENTS := 16
+const AMMUNITION_BAR_COLOR := Color("6E93B6")
+const AMMUNITION_BAR_FULL_COLOR := Color("#d8611e")
 
 var player_name: String
 
@@ -20,10 +22,10 @@ var camera: Camera2D
 
 @onready var status := $Status
 @onready var name_label := $Status/NameLabel
-@onready var heart_container := $Status/HeartContainer
-@onready var health_bar := $Status/HealthBar
-@onready var melee_ammunition_bar := $Status/MeleeAmmunitionBar
-@onready var ranged_ammunition_bar := $Status/RangedAmmunitionBar
+@onready var heart_container := $Status/VBoxContainer/HeartContainer
+@onready var health_bar := $Status/VBoxContainer/HealthBar
+@onready var melee_ammunition_bar := $Status/VBoxContainer/MarginContainer/VBoxContainer/MeleeAmmunitionBar
+@onready var ranged_ammunition_bar := $Status/VBoxContainer/MarginContainer/VBoxContainer/RangedAmmunitionBar
 @onready var aim_line := $Pivot/AimLine
 @onready var aim_polygon := $Pivot/AimPolygon
 @onready var pivot := $Pivot
@@ -53,6 +55,8 @@ func _ready() -> void:
 		fill_style.bg_color = HEALTH_BAR_LOCAL_COLOR
 	else:
 		fill_style.bg_color = HEALTH_BAR_COLOR
+		ranged_ammunition_bar.hide()
+		melee_ammunition_bar.hide()
 
 
 func apply_snapshot(snapshot: PlayerSnapshot) -> void:	
@@ -139,15 +143,20 @@ func _setup_ammunition_bar(ammunition_bar: HBoxContainer, max_ammunition: int) -
 
 
 func _update_ammunition_bars(snapshot: PlayerSnapshot) -> void:
-	_update_ammunition_bar(melee_ammunition_bar, snapshot.melee_ammunition)
-	_update_ammunition_bar(ranged_ammunition_bar, snapshot.ranged_ammunition)
+	_update_ammunition_bar(melee_ammunition_bar, snapshot.melee_ammunition, snapshot.melee_recharge_time, Data.MELEE[melee_id].reload_time)
+	_update_ammunition_bar(ranged_ammunition_bar, snapshot.ranged_ammunition, snapshot.ranged_recharge_time, Data.RANGED[ranged_id].reload_time)
 
 
-func _update_ammunition_bar(ammunition_bar: HBoxContainer, ammunition: int) -> void:
+func _update_ammunition_bar(ammunition_bar: HBoxContainer, ammunition: int, recharge_time: float, total_recharge_time: float) -> void:
 	for segment in ammunition_bar.get_children():
 		segment.value = 0
 	for j in mini(ammunition, ammunition_bar.get_child_count()):
 		ammunition_bar.get_child(j).value = 100
+		ammunition_bar.get_child(j).get_theme_stylebox("fill").bg_color = AMMUNITION_BAR_FULL_COLOR
+	if ammunition < ammunition_bar.get_child_count():
+		var recharge_progress := clampf(recharge_time / total_recharge_time, 0.0, 1.0)
+		ammunition_bar.get_child(ammunition).value = (1.0 - recharge_progress) * 100.0
+		ammunition_bar.get_child(ammunition).get_theme_stylebox("fill").bg_color = AMMUNITION_BAR_COLOR
 
 
 func _update_facing(snapshot: PlayerSnapshot) -> void:

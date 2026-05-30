@@ -188,8 +188,10 @@ func _build_player_snapshot(player_id: String) -> PlayerSnapshot:
 	player_snapshot.ability_id = player.ability_id
 	player_snapshot.melee_id = player.melee_id
 	player_snapshot.melee_ammunition = player.melee_ammunition
+	player_snapshot.melee_recharge_time = player.melee_recharge_time
 	player_snapshot.ranged_id = player.ranged_id
 	player_snapshot.ranged_ammunition = player.ranged_ammunition
+	player_snapshot.ranged_recharge_time = player.ranged_recharge_time
 	player_snapshot.last_ability = player.last_ability
 	player_snapshot.ability_recharge_time = player.ability_recharge_time
 	return player_snapshot

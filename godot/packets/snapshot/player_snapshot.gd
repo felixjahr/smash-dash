@@ -17,9 +17,11 @@ var aim_direction: Vector2
 
 var melee_id: String
 var melee_ammunition: int
+var melee_recharge_time: float
 
 var ranged_id: String
 var ranged_ammunition: int
+var ranged_recharge_time: float
 
 var ability_id: String
 var ability_active: bool

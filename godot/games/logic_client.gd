@@ -215,10 +215,12 @@ func _interpolate_player_snapshot(older: PlayerSnapshot, newer: PlayerSnapshot, 
 	snapshot.ability_id = newer.ability_id
 	snapshot.melee_id = newer.melee_id
 	snapshot.melee_ammunition = newer.melee_ammunition
+	snapshot.melee_recharge_time = lerpf(older.melee_recharge_time, newer.melee_recharge_time, alpha)
 	snapshot.ranged_id = newer.ranged_id
 	snapshot.ranged_ammunition = newer.ranged_ammunition
+	snapshot.ranged_recharge_time = lerpf(older.ranged_recharge_time, newer.ranged_recharge_time, alpha)
 	snapshot.last_ability = newer.last_ability
-	snapshot.ability_recharge_time = newer.ability_recharge_time
+	snapshot.ability_recharge_time = lerpf(older.ability_recharge_time, newer.ability_recharge_time, alpha)
 	return snapshot
 
 
