@@ -14,13 +14,13 @@ metadata/_custom_type_script = "uid://duuv22b7jqrgp"
 [resource]
 script = ExtResource("1_hsrvr")
 bullet_range = 1500
-bullet_speed = 1000
+bullet_speed = 2000
 bullet_damage = 10
 bullet_offset = Vector2(147, -26)
 bullet_amount = 1
 attack_duration = 0.2
 max_ammunition = 3
-reload_time = 2.0
+reload_time = 1.0
 aim_hint = SubResource("Resource_2j8k2")
 card_texture = ExtResource("2_vrq2n")
 metadata/_custom_type_script = "uid://dc58rhvdfubb2"

@@ -13,14 +13,14 @@ metadata/_custom_type_script = "uid://kljamft6oa55"
 
 [resource]
 script = ExtResource("2_fjm7s")
-damage = 10
+damage = 20
 knockback = 1000
 hitbox_size = Vector2(200, 120)
 moonwalk = true
 two_handed = true
 attack_duration = 0.6
-max_ammunition = 2
-reload_time = 3.0
+max_ammunition = 1
+reload_time = 2.0
 aim_hint = SubResource("Resource_om5wh")
 card_texture = ExtResource("1_sfh4g")
 metadata/_custom_type_script = "uid://dma0ut8h4lfxi"
