@@ -84,14 +84,19 @@ func tick(delta: float, input: PlayerInput) -> void:
 		aim_direction = input.aim_direction
 		current_weapon = input.current_weapon
 		if input.attacking:
-			if aim_direction == Vector2.ZERO:
-				aim_direction = _get_auto_aim_direction()
-			if current_weapon == 0 and melee_ammunition > 0:
-				attacking = true
-				_start_melee_attack()
-			elif current_weapon == 1 and ranged_ammunition > 0:
-				attacking = true
-				_start_ranged_attack()
+			var has_ammunition := (
+					current_weapon == 0 and melee_ammunition > 0
+					or current_weapon == 1 and ranged_ammunition > 0
+			)
+			if has_ammunition:
+				if aim_direction == Vector2.ZERO:
+					aim_direction = _get_auto_aim_direction()
+				if current_weapon == 0:
+					attacking = true
+					_start_melee_attack()
+				elif current_weapon == 1:
+					attacking = true
+					_start_ranged_attack()
 		else:
 			_update_facing()
 	

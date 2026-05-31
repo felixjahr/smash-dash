@@ -88,7 +88,7 @@ ssh "$SERVER_HOST" "
   cd $REMOTE_DIR &&
   docker compose down &&
   docker compose build &&
-  docker compose up backend postgres
+  docker compose up -d backend postgres
 "
 
 echo "Deployment complete."

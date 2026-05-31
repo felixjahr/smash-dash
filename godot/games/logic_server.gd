@@ -3,10 +3,10 @@ extends Node
 const SIMULATION_TICK_RATE := 30
 const SNAPSHOT_FREQUENCY := 2
 
-const MAX_INPUT_LOOKBACK := 5
 const MAX_RESEND_EVENTS := 3
 
 const INPUT_BUFFER_SIZE := 128
+const MAX_INPUT_LOOKBACK := 5
 
 const PlayerServer := preload("res://player/player_server.tscn")
 const BulletServer := preload("res://bullet/bullet_server.tscn")
@@ -25,6 +25,9 @@ var event_send_count: Dictionary[String, int] = {}
 var player_ids: Array[String] = []
 
 var inputs: Dictionary[String, Array] = {}
+var last_jump_by_player: Dictionary[String, int]
+var last_ability_by_player: Dictionary[String, int]
+var last_attack_by_player: Dictionary[String, int]
 
 var map: StaticBody2D
 
@@ -73,6 +76,9 @@ func spawn_player(player_id: String, melee_id: String, ranged_id: String, armour
 	var input_buffer: Array[PlayerInput] = []
 	input_buffer.resize(INPUT_BUFFER_SIZE)
 	inputs[player_id] = input_buffer
+	last_jump_by_player[player_id] = -1
+	last_attack_by_player[player_id] = -1
+	last_ability_by_player[player_id] = -1
 
 
 func despawn_player(player_id: String) -> void:
@@ -81,7 +87,31 @@ func despawn_player(player_id: String) -> void:
 	players[player_id].queue_free()
 	players.erase(player_id)
 	inputs.erase(player_id)
-	gameover()
+	last_jump_by_player.erase(player_id)
+	last_attack_by_player.erase(player_id)
+	last_ability_by_player.erase(player_id)
+	if players.size() == 1:
+		_gameover()
+
+
+func respawn_player(player_id: String) -> void:
+	if not players.has(player_id):
+		return
+	var player = players[player_id]
+	var hearts: int = player.hearts - 1
+	if hearts <= 0:
+		despawn_player(player_id)
+		return
+	
+	var melee_id: String = player.melee_id
+	var ranged_id: String = player.ranged_id
+	var armour_id: String = player.armour_id
+	var ability_id: String = player.ability_id
+	
+	players.erase(player_id)
+	player.queue_free()
+	
+	spawn_player(player_id, melee_id, ranged_id, armour_id, ability_id, hearts)
 
 
 func spawn_bullet(position: Vector2, speed: int, damage: int, self_hit: bool, range: int, direction: Vector2, player_id: String) -> void:
@@ -113,7 +143,7 @@ func spawn_event(event: EventSnapshot) -> void:
 	events.append(event)
 
 
-func gameover() -> void:
+func _gameover() -> void:
 	var ranking: Array[String] = players.keys()
 	ranking.sort_custom(func(a, b): 
 		if players[a].hearts == players[b].hearts:
@@ -132,21 +162,36 @@ func _tick_players(delta: float) -> void:
 
 
 func _get_latest_input(player_id: String) -> PlayerInput:
+	var result := PlayerInput.new()
+	result.tick = tick
+	
 	for offset in MAX_INPUT_LOOKBACK:
 		var wanted_tick := tick - offset
-		var input: PlayerInput = inputs[player_id][wanted_tick % INPUT_BUFFER_SIZE]
-		if input != null and input.tick == wanted_tick:
-			if offset == 0:
-				return input
-			var lockback_input := PlayerInput.new()
-			lockback_input.tick = tick
-			lockback_input.aim_direction = input.aim_direction
-			lockback_input.current_weapon = input.current_weapon
-			lockback_input.direction = input.direction
-			return lockback_input
-	var fallback_input := PlayerInput.new()
-	fallback_input.tick = tick
-	return fallback_input
+		var stored_input: PlayerInput = inputs[player_id][wanted_tick % INPUT_BUFFER_SIZE]
+		if stored_input != null and stored_input.tick == wanted_tick:
+			result.direction = stored_input.direction
+			result.aim_direction = stored_input.aim_direction
+			result.current_weapon = stored_input.current_weapon
+			break
+	
+	for offset in MAX_INPUT_LOOKBACK:
+		var wanted_tick := tick - offset
+		var stored_input: PlayerInput = inputs[player_id][wanted_tick % INPUT_BUFFER_SIZE]
+		if stored_input != null and stored_input.tick == wanted_tick:
+			if stored_input.jumping and wanted_tick > last_jump_by_player[player_id]:
+				result.jumping = true
+				last_jump_by_player[player_id] = wanted_tick
+			if stored_input.ability and wanted_tick > last_ability_by_player[player_id]:
+				result.ability = true
+				result.direction = stored_input.direction
+				last_ability_by_player[player_id] = wanted_tick
+			if stored_input.attacking and wanted_tick > last_attack_by_player[player_id]:
+				result.attacking = true
+				result.aim_direction = stored_input.aim_direction
+				result.current_weapon = stored_input.current_weapon
+				last_attack_by_player[player_id] = wanted_tick
+	
+	return result
 
 
 func _tick_bullets(delta: float) -> void:
@@ -211,8 +256,6 @@ func _on_net_input_batch_received(player_id: String, input_batch: PlayerInputBat
 	if not inputs.has(player_id):
 		return
 	for input in input_batch.inputs:
-		if input.tick <= tick:
-			continue
 		var existing_input: PlayerInput = inputs[player_id][input.tick % INPUT_BUFFER_SIZE]
 		if existing_input != null and existing_input.tick == input.tick:
 			continue
