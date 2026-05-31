@@ -26,6 +26,6 @@ var ranged_recharge_time: float
 var ability_id: String
 var ability_active: bool
 var last_ability: int
-var ability_recharge_time: float
+var ability_charge: int
 
 var armour_id: String

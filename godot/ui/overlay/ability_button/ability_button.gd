@@ -4,12 +4,12 @@ signal pressed
 
 const TEXTURE_ABILITY := {
 	"dash" : preload("res://ui/overlay/ability_button/ability_dash.png"),
-	"slam_down" : preload("res://ui/overlay/ability_button/ability_slam_down.png"),
+	"invisibility" : preload("res://ui/overlay/ability_button/ability_invisibility.png"),
 }
 
 const TEXTURE_ABILITY_READY := {
 	"dash" : preload("res://ui/overlay/ability_button/ability_dash_ready.png"),
-	"slam_down" : preload("res://ui/overlay/ability_button/ability_slam_down_ready.png"),
+	"invisibility" : preload("res://ui/overlay/ability_button/ability_invisibility_ready.png"),
 }
 
 const TEXTURE := preload("res://ui/overlay/ability_button/ability_button.png")

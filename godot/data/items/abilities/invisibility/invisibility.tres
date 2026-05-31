@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_3q2fe")
-duration = 5.0
-recharge_time = 1.0
+duration = 2.0
+charge = 30
 card_texture = ExtResource("1_7hqwf")
 metadata/_custom_type_script = "uid://bmke3ijuka00p"

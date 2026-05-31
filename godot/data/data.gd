@@ -55,16 +55,16 @@ const RANGED: Dictionary[String, Ranged] = {
 
 const ABILITY_IDS: Array[String] = [
 	"dash",
-	"slam_down",
+	"invisibility",
 	#"double_jump",
-	#"invisibility",
+	#"slam_down",
 ]
 
 const ABILITY: Dictionary[String, Ability] = {
 	"dash": preload("res://data/items/abilities/dash/dash.tres"),
-	"slam_down": preload("res://data/items/abilities/slam_down/slam_down.tres"),
+	"invisibility": preload("res://data/items/abilities/invisibility/invisibility.tres"),
 	#"double_jump": preload("res://data/items/abilities/double_jump/double_jump.tres"),
-	#"invisibility": preload("res://data/items/abilities/invisibility/invisibility.tres"),
+	#"slam_down": preload("res://data/items/abilities/slam_down/slam_down.tres"),
  }
 
 const CATEGORIES: Dictionary[String, Dictionary] = {

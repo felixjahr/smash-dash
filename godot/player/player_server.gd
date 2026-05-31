@@ -13,6 +13,7 @@ var hearts := 3
 var facing := 1
 
 var jumping_grace_time_left := JUMPING_GRACE
+var dead := false
 
 var current_weapon := 0
 var attacking := false
@@ -33,7 +34,7 @@ var burst_bullet_amount: int
 var ability_id: String
 var ability_active := false
 var last_ability := -1
-var ability_recharge_time: float
+var ability_charge: int
 var ability_time_left := 0.0
 
 var armour_id: String
@@ -48,21 +49,22 @@ var armour_id: String
 func _ready() -> void:
 	melee_ammunition = Data.MELEE[melee_id].max_ammunition
 	ranged_ammunition = Data.RANGED[ranged_id].max_ammunition
-	ability_recharge_time = Data.ABILITY[ability_id].recharge_time
 	hitbox_collision_shape.set_deferred("disabled", true)
 
 
 func tick(delta: float, input: PlayerInput) -> void:
+	if dead:
+		return
+	
 	_update_reload_times(delta)
-	_update_ability_recharge_time(delta)
 	_update_attack_time(delta)
 	_update_burst_time(delta)
 	
 	_apply_horizontal_movement(delta, input.direction)
 	_apply_vertical_movement(delta, input.jumping)
 	
-	if input.ability and ability_recharge_time <= 0.0:
-		ability_recharge_time = Data.ABILITY[ability_id].recharge_time
+	if input.ability and ability_charge >= Data.ABILITY[ability_id].charge:
+		ability_charge = 0
 		match ability_id:
 			"double_jump":
 				_ability_double_jump()
@@ -108,7 +110,9 @@ func apply_knockback(position: Vector2, knockback: float) -> void:
 	velocity = position.direction_to(global_position) * knockback * knockback_multiplier
 
 
-func apply_hit(damage: int, effect_id := "", effect_position := Vector2.ZERO) -> void:
+func apply_hit(damage: int, attacker_player_id := "", effect_id := "", effect_position := Vector2.ZERO) -> void:
+	if dead:
+		return
 	var damage_multiplier := Data.ARMOUR[armour_id].damage_multiplier
 	health -= damage * damage_multiplier
 	var event := HitEventSnapshot.new()
@@ -116,17 +120,17 @@ func apply_hit(damage: int, effect_id := "", effect_position := Vector2.ZERO) ->
 	event.effect_id = effect_id
 	event.effect_position = effect_position
 	logic.spawn_event(event)
+	if attacker_player_id != "":
+		logic.record_damage(attacker_player_id, damage * damage_multiplier)
 	if health <= 0:
 		_die()
 
 
 func _die() -> void:
-	hearts -= 1
-	if hearts <= 0:
-		logic.gameover()
+	if dead:
 		return
-	logic.call_deferred("spawn_player", player_id, melee_id, ranged_id, armour_id, ability_id, hearts)
-	queue_free()
+	dead = true
+	logic.call_deferred("respawn_player", player_id)
 
 
 func _update_reload_times(delta: float) -> void:
@@ -146,11 +150,6 @@ func _update_reload_times(delta: float) -> void:
 				ranged_ammunition += 1
 				if ranged.max_ammunition > ranged_ammunition:
 					ranged_recharge_time = ranged.reload_time
-
-
-func _update_ability_recharge_time(delta: float) -> void:
-	if ability_recharge_time > 0.0:
-		ability_recharge_time -= delta
 
 
 func _update_attack_time(delta: float) -> void:
@@ -296,7 +295,7 @@ func _ability_update_slam_down(delta) -> void:
 				continue
 			var damage: int = Data.ABILITY[ability_id].damage
 			var knockback: int = Data.ABILITY[ability_id].knockback
-			area.get_parent().apply_hit(damage)
+			area.get_parent().apply_hit(damage, player_id)
 			area.get_parent().apply_knockback(slam_down_marker.global_position, knockback)
 		ability_active = false
 
@@ -313,7 +312,7 @@ func _on_hitbox_area_entered(area: Area2D) -> void:
 		return
 	var effect_id := weapon.effect_id
 	var effect_position: Vector2 = pivot.global_position.lerp(area.get_parent().pivot.global_position, 0.5)
-	area.get_parent().apply_hit(weapon.damage, effect_id, effect_position)
+	area.get_parent().apply_hit(weapon.damage, player_id, effect_id, effect_position)
 	area.get_parent().apply_knockback(pivot.global_position, weapon.knockback)
 
 

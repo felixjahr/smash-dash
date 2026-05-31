@@ -6,6 +6,6 @@
 [resource]
 script = ExtResource("1_2xgbs")
 distance = 500
-recharge_time = 3.0
+charge = 30
 card_texture = ExtResource("1_iglbj")
 metadata/_custom_type_script = "uid://bhb1fejffv0dv"

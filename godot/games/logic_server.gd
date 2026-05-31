@@ -59,13 +59,14 @@ func spawn_map(map_id: String) -> void:
 	map = new_map
 
 
-func spawn_player(player_id: String, melee_id: String, ranged_id: String, armour_id: String, ability_id: String, hearts = null) -> void:
+func spawn_player(player_id: String, melee_id: String, ranged_id: String, armour_id: String, ability_id: String, hearts = null, ability_charge := 0) -> void:
 	var new_player := PlayerServer.instantiate()
 	new_player.player_id = player_id
 	new_player.melee_id = melee_id
 	new_player.ranged_id = ranged_id
 	new_player.armour_id = armour_id
 	new_player.ability_id = ability_id
+	new_player.ability_charge = ability_charge
 	if hearts:
 		new_player.hearts = hearts
 	if not player_id in player_ids:
@@ -107,11 +108,12 @@ func respawn_player(player_id: String) -> void:
 	var ranged_id: String = player.ranged_id
 	var armour_id: String = player.armour_id
 	var ability_id: String = player.ability_id
+	var ability_charge: int = player.ability_charge
 	
 	players.erase(player_id)
 	player.queue_free()
 	
-	spawn_player(player_id, melee_id, ranged_id, armour_id, ability_id, hearts)
+	spawn_player(player_id, melee_id, ranged_id, armour_id, ability_id, hearts, ability_charge)
 
 
 func spawn_bullet(position: Vector2, speed: int, damage: int, self_hit: bool, range: int, direction: Vector2, player_id: String) -> void:
@@ -141,6 +143,12 @@ func spawn_event(event: EventSnapshot) -> void:
 	event_send_count[event.event_id] = 0
 	event_counter += 1
 	events.append(event)
+
+
+func record_damage(attacker_player_id: String, damage: int) -> void:
+	if not players.has(attacker_player_id):
+		return
+	players[attacker_player_id].ability_charge += damage
 
 
 func _gameover() -> void:
@@ -238,7 +246,7 @@ func _build_player_snapshot(player_id: String) -> PlayerSnapshot:
 	player_snapshot.ranged_ammunition = player.ranged_ammunition
 	player_snapshot.ranged_recharge_time = player.ranged_recharge_time
 	player_snapshot.last_ability = player.last_ability
-	player_snapshot.ability_recharge_time = player.ability_recharge_time
+	player_snapshot.ability_charge = player.ability_charge
 	return player_snapshot
 
 

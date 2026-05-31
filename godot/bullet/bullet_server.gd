@@ -27,7 +27,7 @@ func tick(delta: float) -> void:
 func _on_hitbox_area_entered(area: Area2D) -> void:
 	if not self_hit and area.get_parent().player_id == player_id:
 		return
-	area.get_parent().apply_hit(damage)
+	area.get_parent().apply_hit(damage, player_id)
 	get_parent().get_parent().despawn_bullet(bullet_id)
 
 

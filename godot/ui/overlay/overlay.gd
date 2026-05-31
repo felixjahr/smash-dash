@@ -45,9 +45,9 @@ func poll() -> PlayerInput:
 func apply_snapshot(snapshot: PlayerSnapshot) -> void:
 	if ability_button.ability_id != snapshot.ability_id:
 		ability_button.set_ability(snapshot.ability_id)
-	var total_recharge_time = Data.ABILITY[snapshot.ability_id].recharge_time
-	var recharge_progress := clampf(snapshot.ability_recharge_time / total_recharge_time, 0.0, 1.0)
-	ability_button.set_texture_value((1.0 - recharge_progress) * 100.0)
+	var total_charge = Data.ABILITY[snapshot.ability_id].charge
+	var charge_progress: float = float(snapshot.ability_charge) / float(total_charge)
+	ability_button.set_texture_value(charge_progress * 100.0)
 
 
 func _input(event: InputEvent) -> void:
