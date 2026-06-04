@@ -5,9 +5,9 @@ Smash Dash is a multiplayer platform fighter built with Godot and a TypeScript b
 The project is designed as a complete game stack: a Godot client, a dedicated Godot game server, and a NestJS backend for accounts, rooms, authentication, and match startup. The game is available on both iOS and Android.
 
 <p>
-  <a href="https://apps.apple.com/app/your-app-id">App Store</a>
+  <a href="https://apps.apple.com/app/smash-dash/id6769724763">App Store</a>
   &nbsp;|&nbsp;
-  <a href="https://play.google.com/store/apps/details?id=your.package.name">Google Play</a>
+  <a href="https://play.google.com/store/apps/details?id=com.felixjahr.smashdash">Google Play</a>
 </p>
 
 ## Gameplay
